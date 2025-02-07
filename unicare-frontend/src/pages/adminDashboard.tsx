@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, UserPlus, Activity, Settings } from 'lucide-react';
 
-const AdminDashboard = () => {
+const AdminDashboard:React.FC = () => {
   const StaffRegistrationForm = () => (
     <form className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
