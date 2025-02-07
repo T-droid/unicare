@@ -1,10 +1,11 @@
 import AdminDashboard from "./pages/adminDashboard"
 
+
 function App() {
 
   return (
     <div>
-      <AdminDashboard />  
+      <AdminDashboard />       
     </div>
   )
 }
