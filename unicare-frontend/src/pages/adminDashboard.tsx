@@ -1,66 +1,21 @@
-import { useState, FormEvent } from 'react';
-import { Card, CardContent } from '../components/ui/card';
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Users, UserPlus, Activity, Settings } from 'lucide-react';
 
-interface StaffFormData {
-  fullName: string;
-  role: string;
-  email: string;
-  phone: string;
-  username: string;
-  password: string;
-}
-
 const AdminDashboard = () => {
-  const [] = useState('register');
-  const [formData, setFormData] = useState<StaffFormData>({
-    fullName: '',
-    role: '',
-    email: '',
-    phone: '',
-    username: '',
-    password: ''
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    //API call 
-  };
-
   const StaffRegistrationForm = () => (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Full Name</label>
-          <input
-            id="fullName"
-            name="fullName"
-            type="text"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            required
+    <form className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Full Name</label>
+          <input 
+            type="text" 
+            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
           />
         </div>
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
-          <select
-            id="role"
-            name="role"
-            value={formData.role}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            required
-          >
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Role</label>
+          <select className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
             <option value="">Select Role</option>
             <option value="doctor">Doctor</option>
             <option value="pharmacist">Pharmacist</option>
@@ -68,58 +23,38 @@ const AdminDashboard = () => {
             <option value="receptionist">Receptionist</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            required
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Email</label>
+          <input 
+            type="email" 
+            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
           />
         </div>
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            required
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Phone</label>
+          <input 
+            type="tel" 
+            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
           />
         </div>
-        <div>
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            value={formData.username}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            required
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Username</label>
+          <input 
+            type="text" 
+            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
           />
         </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-            required
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Password</label>
+          <input 
+            type="password" 
+            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" 
           />
         </div>
       </div>
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
+      <button 
+        type="submit" 
+        className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transform hover:scale-[1.02] transition-all duration-200 font-medium"
       >
         Register Staff Member
       </button>
@@ -127,57 +62,74 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-md p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-gray-800">UniCare Admin Portal</h1>
-          <button className="text-gray-600 hover:text-gray-800">Logout</button>
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              UniCare Admin
+            </h1>
+            <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 transition-all">
+              Logout
+            </button>
+          </div>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto py-6 px-4">
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <Card className="bg-blue-50 cursor-pointer hover:shadow-lg transition-shadow">
-            <CardContent className="flex items-center p-4">
-              <UserPlus className="w-8 h-8 text-blue-600 mr-3" />
-              <div>
-                <h3 className="font-semibold">Register Staff</h3>
-                <p className="text-sm text-gray-600">Add new members</p>
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <CardContent className="flex items-center p-6">
+              <div className="p-3 rounded-full bg-blue-100">
+                <UserPlus className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="font-semibold text-gray-900">Register Staff</h3>
+                <p className="text-sm text-gray-500">Add new members</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-green-50 cursor-pointer hover:shadow-lg transition-shadow">
-            <CardContent className="flex items-center p-4">
-              <Users className="w-8 h-8 text-green-600 mr-3" />
-              <div>
-                <h3 className="font-semibold">Manage Staff</h3>
-                <p className="text-sm text-gray-600">View all staff</p>
+          
+          <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <CardContent className="flex items-center p-6">
+              <div className="p-3 rounded-full bg-green-100">
+                <Users className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="font-semibold text-gray-900">Manage Staff</h3>
+                <p className="text-sm text-gray-500">View all staff</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-purple-50 cursor-pointer hover:shadow-lg transition-shadow">
-            <CardContent className="flex items-center p-4">
-              <Activity className="w-8 h-8 text-purple-600 mr-3" />
-              <div>
-                <h3 className="font-semibold">Activity Log</h3>
-                <p className="text-sm text-gray-600">System activities</p>
+          
+          <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <CardContent className="flex items-center p-6">
+              <div className="p-3 rounded-full bg-purple-100">
+                <Activity className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="font-semibold text-gray-900">Activity Log</h3>
+                <p className="text-sm text-gray-500">System activities</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-orange-50 cursor-pointer hover:shadow-lg transition-shadow">
-            <CardContent className="flex items-center p-4">
-              <Settings className="w-8 h-8 text-orange-600 mr-3" />
-              <div>
-                <h3 className="font-semibold">Settings</h3>
-                <p className="text-sm text-gray-600">System config</p>
+          
+          <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
+            <CardContent className="flex items-center p-6">
+              <div className="p-3 rounded-full bg-orange-100">
+                <Settings className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="font-semibold text-gray-900">Settings</h3>
+                <p className="text-sm text-gray-500">System config</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Card>
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Register New Staff Member</h2>
+        <Card className="hover:shadow-lg transition-all duration-200">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Register New Staff Member</h2>
             <StaffRegistrationForm />
           </CardContent>
         </Card>
