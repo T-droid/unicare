@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardContent } from '../components/ui/card';
 import { AlertCircle } from 'lucide-react';
 
 const AdminSignIn = () => {
@@ -7,11 +7,11 @@ const AdminSignIn = () => {
     username: '',
     password: ''
   });
-  const [error, setError] = useState('');
+  const [error] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    // Add authentication logic here
+ 
     console.log('Form submitted:', formData);
   };
 
