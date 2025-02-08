@@ -1,4 +1,4 @@
-import AdminDashboard from "./pages/adminDashboard"
+import AdminDashboard from "./pages/dashboard/AdminDashboard"
 
 
 function App() {
