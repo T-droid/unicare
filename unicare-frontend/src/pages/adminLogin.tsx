@@ -1,46 +1,57 @@
-import { useState } from 'react';
-import { Card, CardHeader, CardContent } from '../components/ui/card';
-import { AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { Card, CardHeader, CardContent } from "../components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 const AdminSignIn = () => {
   const [formData, setFormData] = useState({
-    username: '',
-    password: ''
+    username: "",
+    password: "",
   });
-  const [error] = useState('');
+  const [error] = useState("");
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
- 
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <h1 className="text-2xl font-bold text-center text-gray-800">UniCare Admin Portal</h1>
-          <p className="text-center text-gray-600">Sign in to manage staff and system</p>
+          <h1 className="text-2xl font-bold text-center text-gray-800">
+            UniCare Admin Portal
+          </h1>
+          <p className="text-center text-gray-600">
+            Sign in to manage staff and system
+          </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Username</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Username
+              </label>
               <input
                 type="text"
                 className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                 value={formData.username}
-                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
               <input
                 type="password"
                 className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 required
               />
             </div>
