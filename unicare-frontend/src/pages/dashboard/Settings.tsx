@@ -39,7 +39,7 @@ const Settings = () => {
       <h2 className="text-3xl font-bold">System Settings</h2>
 
       {/* Notifications Settings */}
-      <Card>
+      <Card className='dark:bg-boxdark border-none'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
@@ -71,7 +71,7 @@ const Settings = () => {
       </Card>
 
       {/* Security Settings */}
-      <Card>
+      <Card className='dark:bg-boxdark border-none'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
@@ -103,7 +103,7 @@ const Settings = () => {
       </Card>
 
       {/* Data Management */}
-      <Card>
+      <Card className='dark:bg-boxdark border-none'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="h-5 w-5" />
@@ -139,7 +139,7 @@ const Settings = () => {
       </Card>
 
       {/* System Preferences */}
-      <Card>
+      <Card className='dark:bg-boxdark border-none'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Moon className="h-5 w-5" />

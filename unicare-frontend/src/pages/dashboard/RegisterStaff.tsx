@@ -96,23 +96,23 @@ const StaffRegistration = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 dark:bg-boxdark rounded-lg">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Register New Staff Member</h1>
-        <p className="mt-2 text-gray-600">Enter the details of the new staff member below.</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-300">Register New Staff Member</h1>
+        <p className="text-gray-600 dark:text-slate-400">Enter the details of the new staff member below.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Full Name</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Full Name</label>
             <input 
               type="text"
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.fullName ? 'border-red-500' : 'border-gray-200'
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
+                errors.fullName ? 'border-red-500' : ''
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter full name"
             />
@@ -122,12 +122,12 @@ const StaffRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Role</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Role</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
                 errors.role ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             >
@@ -143,7 +143,7 @@ const StaffRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Email</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Email</label>
             <input 
               type="email"
               name="email"
@@ -160,7 +160,7 @@ const StaffRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Phone</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Phone</label>
             <input 
               type="tel"
               name="phone"
@@ -177,7 +177,7 @@ const StaffRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Username</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Username</label>
             <input 
               type="text"
               name="username"
@@ -194,7 +194,7 @@ const StaffRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Password</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Password</label>
             <input 
               type="password"
               name="password"

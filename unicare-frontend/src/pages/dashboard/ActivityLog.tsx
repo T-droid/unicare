@@ -74,9 +74,9 @@ const ActivityLog = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 dark:bg-boxdark p-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-gray-900">Activity Log</h2>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-300">Activity Log</h2>
         <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
           <Download className="h-4 w-4" />
           Export Log
@@ -84,14 +84,14 @@ const ActivityLog = () => {
       </div>
 
       {/* Filters and Search */}
-      <Card>
+      <Card className='dark:bg-gray-800 border-none'>
         <CardContent className="p-6">
           <div className="flex flex-wrap gap-4 items-center justify-between">
             <div className="flex gap-4">
               <div className="flex items-center gap-2">
                 <Filter className="h-5 w-5 text-gray-500" />
                 <select 
-                  className="border rounded-md p-2"
+                  className="border border-gray-500 rounded-md p-2"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 >
@@ -105,7 +105,7 @@ const ActivityLog = () => {
                 <input
                   type="text"
                   placeholder="Search activities..."
-                  className="pl-10 pr-4 py-2 border rounded-md w-64"
+                  className="pl-10 pr-4 py-2 border border-gray-500 rounded-md w-64"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -114,7 +114,7 @@ const ActivityLog = () => {
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-gray-500" />
-              <select className="border rounded-md p-2">
+              <select className="border border-gray-500 rounded-md p-2">
                 <option value="24h">Last 24 Hours</option>
                 <option value="7d">Last 7 Days</option>
                 <option value="30d">Last 30 Days</option>
@@ -126,7 +126,7 @@ const ActivityLog = () => {
       </Card>
 
       {/* Activity List */}
-      <Card>
+      <Card className='dark:bg-gray-800 border-none'>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
@@ -138,7 +138,7 @@ const ActivityLog = () => {
             {activities.map((activity) => (
               <div 
                 key={activity.id} 
-                className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-start gap-4 p-4 bg-gray-50 dark:bg-boxdark rounded-lg hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors"
               >
                 <div className={`p-2 rounded-full ${getSeverityColor(activity.severity)}`}>
                   {getTypeIcon(activity.type)}
@@ -146,12 +146,12 @@ const ActivityLog = () => {
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-medium text-gray-900">{activity.action}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium text-gray-900 dark:text-gray-300">{activity.action}</p>
+                      <p className="text-sm text-gray-600 dark:text-slate-400">
                         By {activity.user} • Target: {activity.target}
                       </p>
                     </div>
-                    <span className="text-sm text-gray-500">{activity.timestamp}</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{activity.timestamp}</span>
                   </div>
                 </div>
               </div>

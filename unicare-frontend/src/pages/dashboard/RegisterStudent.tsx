@@ -131,22 +131,22 @@ const StudentRegistration = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 dark:bg-boxdark rounded-lg">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Register New Student</h1>
-        <p className="mt-2 text-gray-600">Enter the student's information below.</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-300">Register New Student</h1>
+        <p className="text-gray-600 dark:text-slate-400">Enter the student's information below.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Full Name</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Full Name</label>
             <input 
               type="text"
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
                 errors.fullName ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter full name"
@@ -157,13 +157,13 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Student ID</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Student ID</label>
             <input 
               type="text"
               name="studentId"
               value={formData.studentId}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
                 errors.studentId ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter student ID"
@@ -174,13 +174,13 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Date of Birth</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Date of Birth</label>
             <input 
               type="date"
               name="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
                 errors.dateOfBirth ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             />
@@ -190,12 +190,12 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Gender</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Gender</label>
             <select
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark dark:text-gray-100 ${
                 errors.gender ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             >
@@ -210,13 +210,13 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Email</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Email</label>
             <input 
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
                 errors.email ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter email address"
@@ -227,13 +227,13 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Phone</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Phone</label>
             <input 
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
                 errors.phone ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter phone number"
@@ -244,12 +244,12 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Department</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Department</label>
             <select
               name="department"
               value={formData.department}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark dark:text-gray-100 ${
                 errors.department ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             >
@@ -266,12 +266,12 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Year Level</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Year Level</label>
             <select
               name="yearLevel"
               value={formData.yearLevel}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark dark:text-gray-100 ${
                 errors.yearLevel ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             >
@@ -287,13 +287,13 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Guardian Name</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Guardian Name</label>
             <input 
               type="text"
               name="guardianName"
               value={formData.guardianName}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
                 errors.guardianName ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter guardian name"
@@ -304,13 +304,13 @@ const StudentRegistration = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Guardian Phone</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Guardian Phone</label>
             <input 
               type="tel"
               name="guardianPhone"
               value={formData.guardianPhone}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
                 errors.guardianPhone ? 'border-red-500' : 'border-gray-200'
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter guardian phone"
@@ -322,13 +322,13 @@ const StudentRegistration = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Address</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-slate-400">Address</label>
           <textarea 
             name="address"
             value={formData.address}
             onChange={handleChange}
             rows={3}
-            className={`w-full px-4 py-2 rounded-lg border ${
+            className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
               errors.address ? 'border-red-500' : 'border-gray-200'
             } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             placeholder="Enter full address"

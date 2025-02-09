@@ -2,7 +2,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@layer base {
+/* @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -56,15 +56,54 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+} */
+
+@theme {
+  --color-midnight: #121063;
+  --color-white: #ffffff;
+  --color-black: #1c2434;
+  --color-black-2: #010101;
+  --color-body: #64748b;
+  --color-bodydark: #aeb7c0;
+  --color-bodydark1: #dee4ee;
+  --color-bodydark2: #8a99af;
+  --color-primary: #42c8b7;
+  --color-accent1: #0d4f8c;
+  --color-secondary: #80caee;
+  --color-stroke: #e2e8f0;
+  --color-gray1: #eff4fb;
+  --color-graydark: #333a48;
+  --color-gray-2: #f7f9fc;
+  --color-gray-3: #fafafa;
+  --color-whiten: #f1f5f9;
+  --color-whiter: #f5f7fd;
+  --color-boxdark: #24303f;
+  --color-boxdark-2: #1a222c;
+  --color-strokedark: #2e3a47;
+  --color-form-strokedark: #3d4d60;
+  --color-form-input: #1d2a39;
+  --color-meta-1: #dc3545;
+  --color-meta-2: #eff2f7;
+  --color-meta-3: #10b981;
+  --color-meta-4: #313d4a;
+  --color-meta-5: #259ae6;
+  --color-meta-6: #ffba00;
+  --color-meta-7: #ff6766;
+  --color-meta-8: #f0950c;
+  --color-meta-9: #e5e7eb;
+  --color-success: #219653;
+  --color-danger: #d34053;
+  --color-warning: #ffa70b;
 }
+
 @layer base {
   * {
-    border-color: hsl(var(--border)); /* Use direct CSS */
+    border-color: hsl(var(--border));
   }
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   }
   button {
