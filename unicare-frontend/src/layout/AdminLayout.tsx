@@ -21,9 +21,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
   return (
     <>
       {loggedIn && (
-        <div className="dark:bg-boxdark-2 dark:text-bodydark">
+        <div className="dark:bg-boxdark-2 bg-bodydark1 dark:text-bodydark">
           <div className="flex h-screen overflow-hidden">
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <Sidebar />
             
             <div id="content-area" className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden sm:m-2">
               <Header />

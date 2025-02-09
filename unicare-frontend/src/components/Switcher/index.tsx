@@ -22,10 +22,9 @@ const ThemeToggle: React.FC = () => {
         dispatch(setColorMode(colorMode === "light" ? "dark" : "light"))
       }
       className={`
-        relative w-16 h-8 rounded-full p-1
+        relative w-16 h-8 rounded-full p-1 border border-slate-500 shadow
         transition-colors duration-300
-        ${colorMode === "dark" ? "bg-blue-900" : "bg-blue-100"}
-        focus:outline-none focus:ring-2 focus:ring-blue-500
+        ${colorMode === "dark" ? "" : ""}
       `}
       aria-label={`Switch to ${colorMode === "dark" ? "light" : "dark"} mode`}
     >
@@ -37,9 +36,9 @@ const ThemeToggle: React.FC = () => {
         `}
       >
         {colorMode === "dark" ? (
-          <Moon className="w-6 h-6 text-yellow-300" />
+          <Moon className="w-6 h-6 text-slate-300" />
         ) : (
-          <Sun className="w-6 h-6 text-yellow-500" />
+          <Sun className="w-6 h-6 text-slate-700" />
         )}
       </div>
     </button>

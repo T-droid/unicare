@@ -8,13 +8,16 @@ export interface MessageProps {
 interface AppStateProps {
   colorMode: "light" | "dark";
   alert: MessageProps | undefined;
+  sidebarOpen: boolean;
 }
 
-const colorMode: "light" | "dark" = (localStorage.getItem('colorMode') as "light" | "dark") || "light";
+const colorMode: "light" | "dark" =
+  (localStorage.getItem("colorMode") as "light" | "dark") || "light";
 
 const initialAppState: AppStateProps = {
   colorMode: colorMode,
   alert: undefined,
+  sidebarOpen: false,
 };
 
 const appSlice = createSlice({
@@ -23,7 +26,11 @@ const appSlice = createSlice({
   reducers: {
     setColorMode(state, action) {
       state.colorMode = action.payload;
-	  localStorage.setItem('colorMode', action.payload);
+      localStorage.setItem("colorMode", action.payload);
+    },
+    setSidebarOpen(state, action) {
+      state.sidebarOpen = action.payload;
+      localStorage.setItem("sidebarOpen", state.sidebarOpen.toString());
     },
     setAlert(state, action) {
       state.alert = action.payload;
@@ -34,6 +41,7 @@ const appSlice = createSlice({
   },
 });
 
-export const { setColorMode, setAlert, clearMessage } = appSlice.actions;
+export const { setColorMode, setAlert, setSidebarOpen, clearMessage } =
+  appSlice.actions;
 
 export const appReducer = appSlice.reducer;
