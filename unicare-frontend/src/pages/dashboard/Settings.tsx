@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Bell, Lock, Mail, Shield, User, Database, Moon } from 'lucide-react';
+import { Bell, Shield, Database, Moon } from 'lucide-react';
 
 interface SettingsState {
   emailNotifications: boolean;
