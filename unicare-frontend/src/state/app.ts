@@ -5,26 +5,35 @@ export interface MessageProps {
   type: "success" | "error" | "info" | "warning" | undefined;
 }
 
-const initialMessageState: MessageProps = {
-  message: undefined,
-  type: undefined,
+interface AppStateProps {
+  colorMode: "light" | "dark";
+  alert: MessageProps | undefined;
+}
+
+const colorMode: "light" | "dark" = (localStorage.getItem('colorMode') as "light" | "dark") || "light";
+
+const initialAppState: AppStateProps = {
+  colorMode: colorMode,
+  alert: undefined,
 };
 
-const messageSlice = createSlice({
-  name: "message",
-  initialState: initialMessageState,
+const appSlice = createSlice({
+  name: "app",
+  initialState: initialAppState,
   reducers: {
-    setMessage(state, action) {
-      state.message = action.payload.message;
-      state.type = action.payload.type;
+    setColorMode(state, action) {
+      state.colorMode = action.payload;
+	  localStorage.setItem('colorMode', action.payload);
+    },
+    setAlert(state, action) {
+      state.alert = action.payload;
     },
     clearMessage(state) {
-      state.message = undefined;
-      state.type = undefined;
+      state.alert = undefined;
     },
   },
 });
 
-export const { setMessage, clearMessage } = messageSlice.actions;
+export const { setColorMode, setAlert, clearMessage } = appSlice.actions;
 
-export default messageSlice.reducer;
+export const appReducer = appSlice.reducer;
