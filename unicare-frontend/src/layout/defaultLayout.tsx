@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom"; // Import Outlet
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
 import Header from "./header";
 import { clearMessage } from "@/state/app";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,16 +12,32 @@ const DefaultLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(
     useSelector((state: any) => state.app.sidebarOpen)
   );
-  const message = useSelector((state: any) => state.app.message);
+  const message = useSelector((state: any) => state.app.alert);
+  const colorMode = useSelector((state: any) => state.app.colorMode);
+
+  setTimeout(() => {
+    dispatch(clearMessage());
+  }, 3000);
+
+  useEffect(() => {
+	console.log(colorMode);
+  }, [colorMode]);
+	
 
   return (
     <>
       {loggedIn && (
-        <div className="dark:bg-boxdark-2 dark:text-bodydark">
+        <div className="bg-blue-400 dark:bg-red-400">
           <div className="flex h-screen overflow-hidden">
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <Sidebar
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+            />
 
-            <div id="content-area" className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden sm:m-2">
+            <div
+              id="content-area"
+              className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden sm:m-2"
+            >
               <Header />
               {message && (
                 <MessageModal
