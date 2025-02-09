@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardHeader, CardContent } from "../components/ui/card";
+import { Card, CardHeader, CardContent } from "../../components/ui/card";
 import { AlertCircle } from "lucide-react";
 
 const AdminSignIn = () => {
