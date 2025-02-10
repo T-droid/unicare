@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { db } from "../../db"; // Ensure this is your Drizzle DB instance
-import { users } from "../../db/schema"; // Ensure you're using the correct table
+import bcrypt from "bcrypt"
+import * as jwt from "jsonwebtoken"
+import { db } from "../../config/drizzle/db";
+import { UserTable } from "../../config/drizzle/schema";
 import { eq } from "drizzle-orm";
 
 // Define JWT secret
@@ -18,14 +18,14 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
 
     try {
         // Fetch user from the database
-        const user = await db.select().from(users).where(eq(users.email, email));
+        const user = await db.select().from(UserTable).where(eq(UserTable.email, email));
 
         if (user.length === 0) {
             return res.status(404).json({ error: "User not found" });
         }
 
         // Extract user details
-        const { id, name, email: userEmail, password: hashedPassword } = user[0];
+        const { id, email: userEmail, password: hashedPassword } = user[0];
 
         // Compare passwords
         const isValidPassword = await bcrypt.compare(password, hashedPassword);
@@ -37,8 +37,7 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
         const token = jwt.sign({ id }, JWT_SECRET, { expiresIn: "1h" });
 
         return res.status(200).json({
-            name,
-            email: userEmail,
+            data: user,
             token
         });
 
