@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import * as SwitchPrimitives from "@radix-ui/react-switch";
-import { Moon, Sun } from "lucide-react";
+import { MinusCircle, Moon, Power, Sun } from "lucide-react";
 
 const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
 >(({ className, ...props }, ref) => (
-<SwitchPrimitives.Root
-    className="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-gray-200"
+  <SwitchPrimitives.Root
+    className="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-200"
     {...props}
     ref={ref}
   >
@@ -19,9 +19,9 @@ const Switch = React.forwardRef<
       >
         <div className="absolute inset-0 flex items-center justify-center text-xs">
           {props.checked ? (
-            <Sun size={12} className="text-blue-600" />
+            <Power size={12} className="text-green-600" />
           ) : (
-            <Moon size={12} className="text-gray-600" />
+            <MinusCircle size={12} className="text-gray-600" />
           )}
         </div>
       </SwitchPrimitives.Thumb>
