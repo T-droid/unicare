@@ -27,6 +27,8 @@ CREATE TABLE "users" (
 	"work_id" varchar(100) NOT NULL,
 	"department_id" uuid,
 	"role" "user_role" NOT NULL,
+	"email" varchar(70) NOT NULL,
+	"password" varchar(255) NOT NULL,
 	CONSTRAINT "users_phone_number_unique" UNIQUE("phone_number"),
 	CONSTRAINT "users_work_id_unique" UNIQUE("work_id")
 );
