@@ -23,6 +23,8 @@ export const UserTable = pgTable("users", {
     work_id: varchar("work_id", { length: 100 }).notNull().unique(),
     department_id: uuid("department_id").references(() => DepartmentsTable.id, { onDelete: "cascade" }),
     role: userRoleEnum("role").notNull(),
+    email: varchar("email", { length: 70 }).notNull(),
+    password: varchar("password", { length: 255 }).notNull()
 });
 
 // Users Relations
