@@ -18,8 +18,8 @@ dotenv.config({ path: envFile });
 console.log(`Loaded environment configuration from ${envFile}`);
 
 export const jwtConfig = {
-  secret: process.env.JWT_SECRET,
-  expiry: process.env.JWT_EXPIRY_HOUR,
+  secret: process.env.JWT_SECRET as string,
+  expiry: process.env.JWT_EXPIRY_HOUR as string,
   saltRound: 3,
 };
 

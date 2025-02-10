@@ -1,5 +1,7 @@
 import { Router } from "express";
 import userRouter from "./userRoutes";
+import docsRouter from "./docs";
+import departmentRouter from "./departmentRoutes";
 
 const appRouter = Router();
 
@@ -8,8 +10,15 @@ const appRoutes = [
     path: "/users",
     router: userRouter,
   },
-// add other routes hapa chini 
-  
+  {
+    path: "/docs",
+    router: docsRouter,
+  },
+  {
+    path: "/departments",
+    router: departmentRouter,
+  },
+  // add other routes hapa chini
 ];
 
 appRoutes.forEach((route) => {

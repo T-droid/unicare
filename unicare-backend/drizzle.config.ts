@@ -28,10 +28,10 @@ export default defineConfig({
 
   entities: {
     roles: {
-      provider: '',
+      provider: "",
       exclude: [],
-      include: []
-    }
+      include: [],
+    },
   },
 
   breakpoints: true,

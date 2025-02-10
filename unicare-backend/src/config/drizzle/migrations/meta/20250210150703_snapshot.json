@@ -1,6 +1,6 @@
 {
-  "id": "e79cae8b-256e-4ed0-af67-5212311048c4",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "aa9af9fe-8533-482e-b334-03c50a9879b0",
+  "prevId": "e79cae8b-256e-4ed0-af67-5212311048c4",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -177,6 +177,18 @@
           "name": "role",
           "type": "user_role",
           "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(70)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         }
