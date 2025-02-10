@@ -18,8 +18,8 @@ dotenv.config({ path: envFile });
 console.log(`Loaded environment configuration from ${envFile}`);
 
 export const jwtConfig = {
-  secret: process.env.JWT_SECRET,
-  expiry: process.env.JWT_EXPIRY_HOUR,
+  secret: process.env.JWT_SECRET as string,
+  expiry: process.env.JWT_EXPIRY_HOUR as string,
   saltRound: 3,
 };
 
@@ -35,3 +35,7 @@ export const emailConfig = {
 export const frontendConfig = {
   frontendUrl: process.env.FRONTEND_BASE_URL || "http://localhost:3000",
 };
+
+export const dbConfig = {
+  databaseUrl: process.env.DATABASE_URI as string
+}

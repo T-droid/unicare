@@ -25,10 +25,10 @@ const env = app.get("env");
 
 if (process.env.NODE_ENV === "production") {
   // Use HTTPS in production when we get ssl key
-//   https.createServer(httpsOptions, app).listen(port, () => {
-//     console.log("App is running at https://localhost:%d in %s mode", port, env);
-//     console.log("Press CTRL-C to stop\n");
-//   });
+  //   https.createServer(httpsOptions, app).listen(port, () => {
+  //     console.log("App is running at https://localhost:%d in %s mode", port, env);
+  //     console.log("Press CTRL-C to stop\n");
+  //   });
   https.createServer(app).listen(port, () => {
     console.log("App is running at https://localhost:%d in %s mode", port, env);
     console.log("Press CTRL-C to stop\n");
