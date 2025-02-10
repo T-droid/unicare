@@ -20,7 +20,14 @@ export const saveUser = async (payload: any) => {
         ...payload,
         password: hashedPassword,
       })
-      .returning();
+      .returning({
+        id: UserTable.id,
+        name: UserTable.name,
+        phone_number: UserTable.phone_number,
+        work_id: UserTable.phone_number,
+        role: UserTable.role,
+        email: UserTable.email,
+      });
   } catch (error) {
     throw error;
   }

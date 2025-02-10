@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { DepartmentsTable } from "../../config/drizzle/schema";
 import { db } from "../../config/drizzle/db";
+import { saveDepartment } from "../../services/departmentService";
 
 export const createDepartment = async (
   req: Request,
@@ -9,10 +10,7 @@ export const createDepartment = async (
   try {
     const { name } = req.body;
 
-    const [newDepartment] = await db
-      .insert(DepartmentsTable)
-      .values({ name })
-      .returning(); // Returns the inserted row
+    const newDepartment = await saveDepartment(name);
 
     res.status(201).json({
       message: "Department created successfully",
