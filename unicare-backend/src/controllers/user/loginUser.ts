@@ -9,11 +9,12 @@ import { eq } from "drizzle-orm";
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
 // Explicitly type as Express request handler
-export const loginUser = async (req: Request, res: Response): Promise<Response> => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const { email, password }: { email: string; password: string } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required" });
+        res.status(400).json({ error: "Email and password are required" });
+        return;
     }
 
     try {
@@ -21,7 +22,8 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
         const user = await db.select().from(UserTable).where(eq(UserTable.email, email));
 
         if (user.length === 0) {
-            return res.status(404).json({ error: "User not found" });
+            res.status(404).json({ error: "User not found" });
+            return;
         }
 
         // Extract user details
@@ -30,19 +32,22 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
         // Compare passwords
         const isValidPassword = await bcrypt.compare(password, hashedPassword);
         if (!isValidPassword) {
-            return res.status(401).json({ error: "Invalid credentials" });
+            res.status(401).json({ error: "Invalid credentials" });
+            return;
         }
 
         // Generate JWT token
         const token = jwt.sign({ id }, JWT_SECRET, { expiresIn: "1h" });
 
-        return res.status(200).json({
+        res.status(200).json({
             data: user,
             token
         });
+        return;
 
     } catch (error) {
         console.error("Login error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: "Internal server error" });
+        return;
     }
 };
