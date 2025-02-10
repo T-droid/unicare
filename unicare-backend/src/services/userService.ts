@@ -1,6 +1,7 @@
 import { UserTable } from "../config/drizzle/schema";
 import { db } from "../config/drizzle/db";
 import { eq } from "drizzle-orm";
+import { hashPassword } from "../util/password";
 
 export const findUserByEmail = async (email: string) => {
   try {
@@ -12,7 +13,14 @@ export const findUserByEmail = async (email: string) => {
 
 export const saveUser = async (payload: any) => {
   try {
-    return await db.insert(UserTable).values(payload).returning();
+    const hashedPassword = await hashPassword(payload.password);
+    return await db
+      .insert(UserTable)
+      .values({
+        ...payload,
+        password: hashedPassword,
+      })
+      .returning();
   } catch (error) {
     throw error;
   }

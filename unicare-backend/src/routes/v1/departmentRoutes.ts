@@ -3,16 +3,13 @@ import { Router } from "express";
 
 const departmentRouter = Router();
 
-departmentRouter.post(
-    "/create",
-    createDepartment
-)
+departmentRouter.post("/create", createDepartment);
 
 export default departmentRouter;
 
 /**
  * @swagger
- * /departments:
+ * /v1/departments/create:
  *   post:
  *     summary: Create a new department
  *     description: Creates a department with a unique name.

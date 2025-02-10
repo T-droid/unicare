@@ -8,7 +8,7 @@ export const registerUser = async (
   res: Response,
 ): Promise<void> => {
   try {
-    let { department, password, ...otherData } = req.body;
+    let { department, ...otherData } = req.body;
     department = await findDepartmentByName(department);
 
     const userExists = await findUserByEmail(otherData.email);
@@ -17,14 +17,12 @@ export const registerUser = async (
       return;
     }
 
-    password = hashPassword(password);
-
     let payload = {
       id: department[0].id,
       name: otherData.name,
       phone_number: otherData.phone_number,
       work_id: otherData.work_id,
-      password,
+      password: otherData.password,
       email: otherData.email,
       role: otherData.role,
     };
@@ -35,7 +33,9 @@ export const registerUser = async (
       role: savedObject[0].role,
       email: savedObject[0].email,
     };
+
     const token = generateToken(jwtData);
+    
     res.status(200).json({
       message: "User created",
       err: false,
