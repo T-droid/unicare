@@ -3,9 +3,9 @@ import "dotenv/config";
 
 const dbUrl = process.env.DATABASE_URL as string;
 export default defineConfig({
-  out: "./src/config/drizzle/migrations",
+  out: "./src/db/migrations",
   dialect: "postgresql",
-  schema: "./src/config/drizzle/schema.ts",
+  schema: "./src/db/schema.ts",
 
   driver: "pglite",
   dbCredentials: {
@@ -23,7 +23,7 @@ export default defineConfig({
   migrations: {
     prefix: "timestamp",
     table: "__drizzle_migrations__",
-    schema: "./src/drizzle/schema.ts",
+    schema: "./src/db/schema.ts",
   },
 
   entities: {

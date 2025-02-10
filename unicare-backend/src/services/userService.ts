@@ -1,5 +1,5 @@
-import { UserTable } from "../config/drizzle/schema";
-import { db } from "../config/drizzle/db";
+import { UserTable } from "../db/schema";
+import { db } from "../db";
 import { eq } from "drizzle-orm";
 import { hashPassword } from "../util/password";
 

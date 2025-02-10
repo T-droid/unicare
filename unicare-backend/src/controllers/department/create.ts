@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { DepartmentsTable } from "../../config/drizzle/schema";
-import { db } from "../../config/drizzle/db";
+import { DepartmentsTable } from "../../db/schema";
+import { db } from "../../db";
 import { saveDepartment } from "../../services/departmentService";
 
 export const createDepartment = async (

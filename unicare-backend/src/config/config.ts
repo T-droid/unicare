@@ -35,3 +35,7 @@ export const emailConfig = {
 export const frontendConfig = {
   frontendUrl: process.env.FRONTEND_BASE_URL || "http://localhost:3000",
 };
+
+export const dbConfig = {
+  databaseUrl: process.env.DATABASE_URI as string
+}

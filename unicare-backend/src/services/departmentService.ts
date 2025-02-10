@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import { db } from "../config/drizzle/db";
-import { DepartmentsTable, UserTable } from "../config/drizzle/schema";
+import { db } from "../db";
+import { DepartmentsTable, UserTable } from "../db/schema";
 
 export const findDepartmentByName = async (departmentName: string) => {
   try {
