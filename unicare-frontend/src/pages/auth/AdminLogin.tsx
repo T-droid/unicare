@@ -1,17 +1,48 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useDispatch, UseDispatch } from "react-redux";
 import { Card, CardHeader, CardContent } from "../../components/ui/card";
 import { AlertCircle } from "lucide-react";
+import { setAlert } from "@/state/app";
+import axios from "axios";
+import { setCurrentUser, setToken } from "@/state/auth";
 
-const AdminSignIn = () => {
+const AdminSignIn: React.FC = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [error] = useState("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    try {
+      setSubmitting(true);
+      const loginResponse = await axios.post(
+        `${import.meta.env.VITE_SERVER_HEAD}/users/login`,
+        formData
+      );
+
+      if (loginResponse.status !== 200) {
+        throw new Error(loginResponse.data.message || "Login failed");
+      }
+      const loginData = loginResponse.data;
+      dispatch(
+        setAlert({ message: "Login successful", type: "success" }),
+        setCurrentUser(loginData.user),
+        setToken(loginData.token)
+      );
+    } catch (error: any) {
+      dispatch(
+        setAlert({
+          message: error.response.data.error || error.message,
+          type: `${error.response.status === 404  ? "warning" : "error"}`,
+        })
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,14 +60,16 @@ const AdminSignIn = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Username
+                Email
               </label>
               <input
-                type="text"
+                type="email"
+                name="email"
+                placeholder="johndoe@example.com"
                 className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                value={formData.username}
+                value={formData.email}
                 onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
+                  setFormData({ ...formData, email: e.target.value })
                 }
                 required
               />
@@ -47,6 +80,7 @@ const AdminSignIn = () => {
               </label>
               <input
                 type="password"
+                name="password"
                 className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                 value={formData.password}
                 onChange={(e) =>
@@ -65,7 +99,7 @@ const AdminSignIn = () => {
               type="submit"
               className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
             >
-              Sign In
+              {submitting ? "Signing in..." : "Sign in"}
             </button>
           </form>
         </CardContent>

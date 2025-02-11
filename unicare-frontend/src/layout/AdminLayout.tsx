@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
-import React, { useState } from "react";
+import React from "react";
 import Header from "./header";
 import { clearMessage } from "@/state/app";
 import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "@/components/SideBar";
 import MessageModal from "@/components/alerts/MessageModal";
+import Footer from "./footer";
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
@@ -13,19 +14,21 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = () => {
   const dispatch = useDispatch();
   const loggedIn = true; // useSelector((state: any) => state.auth.token);
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(
-    useSelector((state: any) => state.app.sidebarOpen)
-  );
-  const message = useSelector((state: any) => state.app.message);
-
+  // const [sidebarOpen, setSidebarOpen] = useState<boolean>(
+  //   useSelector((state: any) => state.app.sidebarOpen)
+  // );
+  const message = useSelector((state: any) => state.app.alert);
   return (
     <>
       {loggedIn && (
         <div className="dark:bg-boxdark-2 bg-bodydark1 dark:text-bodydark">
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
-            
-            <div id="content-area" className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden sm:m-2">
+
+            <div
+              id="content-area"
+              className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden sm:m-2"
+            >
               <Header />
               {message && (
                 <MessageModal
@@ -34,11 +37,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
                   onClose={() => dispatch(clearMessage())}
                 />
               )}
-              
+
               {/* Render nested route components */}
               <main className="p-2">
                 <Outlet />
               </main>
+              <Footer />
             </div>
           </div>
         </div>

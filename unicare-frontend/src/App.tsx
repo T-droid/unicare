@@ -7,6 +7,7 @@ import StaffRegistration from "./pages/dashboard/RegisterStaff";
 import ActivityLog from "./pages/dashboard/ActivityLog";
 import Settings from "./pages/dashboard/Settings";
 import AdminSignIn from "./pages/auth/AdminLogin";
+import DefaultLayout from "./layout/DefaultLayout";
 
 function App() {
   return (
@@ -76,8 +77,8 @@ function App() {
               </>
             }
           />
+          <Route path="/admin/login" element={<AdminSignIn />} />
         </Route>
-        <Route path="/admin/login" element={<AdminSignIn />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>
