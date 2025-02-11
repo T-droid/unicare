@@ -1,9 +1,14 @@
 import { createDepartment } from "../../controllers/department/create";
 import { Router } from "express";
-
+import validateRequest from "../../middleware/validateRequest";
+import { createDeptSchema } from "../../validation/departmentValidation";
 const departmentRouter = Router();
 
-departmentRouter.post("/create", createDepartment);
+departmentRouter.post(
+    "/create",
+    validateRequest(createDeptSchema),
+    createDepartment
+);
 
 export default departmentRouter;
 

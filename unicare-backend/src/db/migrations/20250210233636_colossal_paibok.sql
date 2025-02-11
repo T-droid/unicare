@@ -9,8 +9,7 @@ CREATE TABLE "appointments" (
 --> statement-breakpoint
 CREATE TABLE "departments" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar(200) NOT NULL,
-	CONSTRAINT "departments_name_unique" UNIQUE("name")
+	"name" varchar(200) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "students" (

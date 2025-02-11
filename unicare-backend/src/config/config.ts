@@ -37,5 +37,5 @@ export const frontendConfig = {
 };
 
 export const dbConfig = {
-  databaseUrl: process.env.DATABASE_URI as string
-}
+  databaseUrl: process.env.DATABASE_URI as string,
+};
