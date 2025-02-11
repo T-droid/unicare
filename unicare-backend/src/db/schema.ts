@@ -12,7 +12,7 @@ export const userRoleEnum = pgEnum("user_role", [
 // Departments Table
 export const DepartmentsTable = pgTable("departments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 200 }).unique().notNull(),
+  name: varchar("name", { length: 200 }).notNull(),
 });
 
 // Departments Relations

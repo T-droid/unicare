@@ -9,8 +9,8 @@ export const createDepartment = async (
 ): Promise<void> => {
   try {
     const { name } = req.body;
-
-    const newDepartment = await saveDepartment(name);
+    console.log("name :", name)
+    const newDepartment = await saveDepartment({name});
 
     res.status(201).json({
       message: "Department created successfully",

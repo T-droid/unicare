@@ -15,7 +15,7 @@ export const findDepartmentByName = async (departmentName: string) => {
 
 export const saveDepartment = async (payload: any) => {
   try {
-    return await db.insert(UserTable).values(payload).returning();
+    return await db.insert(DepartmentsTable).values(payload).returning();
   } catch (error) {
     throw error;
   }
