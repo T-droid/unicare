@@ -18,7 +18,7 @@ export const registerUser = async (
     }
 
     let payload = {
-      id: department[0].id,
+      department_id: department[0].id,
       name: otherData.name,
       phone_number: otherData.phone_number,
       work_id: otherData.work_id,
