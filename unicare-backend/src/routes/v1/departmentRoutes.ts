@@ -5,9 +5,9 @@ import { createDeptSchema } from "../../validation/departmentValidation";
 const departmentRouter = Router();
 
 departmentRouter.post(
-    "/create",
-    validateRequest(createDeptSchema),
-    createDepartment
+  "/create",
+  validateRequest(createDeptSchema),
+  createDepartment,
 );
 
 export default departmentRouter;
