@@ -14,7 +14,7 @@ export interface Student {
     status: 'Waiting' | 'In Treatment' | 'Pending Discharge';
     assignedTo: string;
     type: 'Outpatient' | 'Inpatient';
-    room?: string;  // Optional since only inpatients have rooms
+    room?: string;  // Optional as only inpatients have rooms
   }
   
   export interface Doctor {

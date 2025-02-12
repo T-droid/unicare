@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Search } from "lucide-react";
 import type { Student, Patient } from './types';
 
-// Components Imported
 import StudentSearch from './components/StudentSearch';
 import AppointmentModal from './components/AppointmentModal';
 import RoomAssignmentModal from './components/RoomAssignmentModal';
@@ -15,9 +14,9 @@ const ReceptionistPage = () => {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | undefined>(undefined); 
 
-  // Sample data - replace with API calls
+  // Sample data - API calls
   const currentPatients: Patient[] = [
     {
       id: "1",
@@ -48,12 +47,11 @@ const ReceptionistPage = () => {
     console.log('Appointment created:', appointmentData);
     setShowAppointmentModal(false);
     setSelectedStudent(null);
-    setSelectedPatient(null);
+    setSelectedPatient(undefined); 
   };
 
-  const handleScheduleAppointment = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setShowAppointmentModal(true);
+  const handleScheduleAppointment = () => {
+    setShowStudentSearch(true);
   };
 
   const handleAssignRoom = (patient: Patient) => {
@@ -61,10 +59,14 @@ const ReceptionistPage = () => {
     setShowRoomModal(true);
   };
 
+  const handleManageRooms = () => {
+    setSelectedPatient(undefined); 
+    setShowRoomModal(true);
+  };
+
   const handleRoomAssign = (roomId: string) => {
     console.log('Room assigned:', roomId, 'to patient:', selectedPatient?.id);
     setShowRoomModal(false);
-    setSelectedPatient(null);
   };
 
   const handlePatientDischarge = (patient: Patient) => {
@@ -91,13 +93,16 @@ const ReceptionistPage = () => {
 
         <QuickActions
           onSearchStudent={() => setShowStudentSearch(true)}
-          onScheduleAppointment={() => setShowAppointmentModal(true)}
-          onManageRooms={() => setShowRoomModal(true)}
+          onScheduleAppointment={handleScheduleAppointment}
+          onManageRooms={handleManageRooms}
         />
 
         <PatientTable
           patients={currentPatients}
-          onScheduleAppointment={handleScheduleAppointment}
+          onScheduleAppointment={(patient) => {
+            setSelectedPatient(patient);
+            setShowAppointmentModal(true);
+          }}
           onAssignRoom={handleAssignRoom}
           onDischarge={handlePatientDischarge}
         />
@@ -112,30 +117,31 @@ const ReceptionistPage = () => {
             </div>
           </div>
         )}
-{showAppointmentModal && (selectedStudent || selectedPatient) && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="max-w-2xl w-full mx-4">
-      <AppointmentModal
-        subject={selectedStudent || selectedPatient!}
-        onClose={() => {
-          setShowAppointmentModal(false);
-          setSelectedStudent(null);
-          setSelectedPatient(null);
-        }}
-        onSubmit={handleAppointmentSubmit}
-      />
-    </div>
-  </div>
-)}
 
-        {showRoomModal && selectedPatient && (
+        {showAppointmentModal && (selectedStudent || selectedPatient) && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="max-w-2xl w-full mx-4">
+              <AppointmentModal
+                subject={selectedStudent || selectedPatient!}
+                onClose={() => {
+                  setShowAppointmentModal(false);
+                  setSelectedStudent(null);
+                  setSelectedPatient(undefined); 
+                }}
+                onSubmit={handleAppointmentSubmit}
+              />
+            </div>
+          </div>
+        )}
+
+        {showRoomModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="max-w-2xl w-full mx-4">
               <RoomAssignmentModal
                 patient={selectedPatient}
                 onClose={() => {
                   setShowRoomModal(false);
-                  setSelectedPatient(null);
+                  setSelectedPatient(undefined); 
                 }}
                 onAssign={handleRoomAssign}
               />
@@ -147,4 +153,4 @@ const ReceptionistPage = () => {
   );
 };
 
-export default ReceptionistPage
+export default ReceptionistPage;

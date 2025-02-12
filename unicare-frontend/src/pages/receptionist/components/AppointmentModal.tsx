@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Student, Doctor, Patient } from '../types';
 
-// Create a union type for the props that includes both Student and Patient
 interface AppointmentModalProps {
   subject: Student | Patient;
   onClose: () => void;
@@ -22,21 +21,27 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
     { id: '3', name: 'Dr. Lisa Anderson', specialty: 'Emergency Medicine', availability: false }
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({
-      // Use the appropriate ID based on whether it's a student or patient
-      studentId: 'studentId' in subject ? subject.studentId : subject.id,
-      doctorId: selectedDoctor,
-      date: appointmentDate,
-      time: appointmentTime,
-      type: appointmentType
-    });
-  };
-
   // Helper function to determine if subject is a Student
   const isStudent = (subject: Student | Patient): subject is Student => {
     return 'course' in subject && 'yearOfStudy' in subject;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedDoctor || !appointmentDate || !appointmentTime) {
+      return;
+    }
+
+    const subjectId = isStudent(subject) ? subject.studentId : subject.studentId;
+    
+    onSubmit({
+      studentId: subjectId,
+      doctorId: selectedDoctor,
+      date: appointmentDate,
+      time: appointmentTime,
+      type: appointmentType,
+      patientName: subject.name
+    });
   };
 
   return (
@@ -59,7 +64,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
             <div className="p-3 bg-gray-100 rounded-lg">
               <p className="font-medium">{subject.name}</p>
               <p className="text-sm text-gray-500">
-                ID: {isStudent(subject) ? subject.studentId : subject.id}
+                ID: {isStudent(subject) ? subject.studentId : subject.studentId}
                 {isStudent(subject) && (
                   <>
                     <br />
@@ -81,6 +86,8 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
             >
               <option value="Regular">Regular Checkup</option>
               <option value="Emergency">Emergency</option>
+              <option value="Follow-up">Follow-up</option>
+              <option value="Consultation">Consultation</option>
             </select>
           </div>
 
@@ -90,6 +97,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
               value={selectedDoctor}
               onChange={(e) => setSelectedDoctor(e.target.value)}
               className="w-full p-2 border rounded-lg"
+              required
             >
               <option value="">Select a doctor...</option>
               {doctors.map(doctor => (
@@ -108,6 +116,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
                 value={appointmentDate}
                 onChange={(e) => setAppointmentDate(e.target.value)}
                 className="w-full p-2 border rounded-lg"
+                required
               />
             </div>
             <div className="space-y-2">
@@ -117,6 +126,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
                 value={appointmentTime}
                 onChange={(e) => setAppointmentTime(e.target.value)}
                 className="w-full p-2 border rounded-lg"
+                required
               />
             </div>
           </div>
