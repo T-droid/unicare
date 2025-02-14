@@ -152,7 +152,9 @@ export const RoomsTableRelations = relations(RoomsTable, ({ many }) => ({
 }));
 
 // inpatients table
-export const InpatientTable = pgTable("inpatients", {
+export const InpatientTable = pgTable(
+  "inpatients",
+  {
     reg_no: uuid("reg_no").references(() => StudentTable.reg_no),
     room_id: uuid("room_id").references(() => RoomsTable.id),
     admission_date: timestamp("admission_date").defaultNow(),
