@@ -10,6 +10,7 @@ import AdminSignIn from "./pages/auth/AdminLogin";
 import MessageModal from "./components/alerts/MessageModal";
 import { useDispatch, useSelector } from "react-redux";
 import { clearMessage } from "./state/app";
+import ReceptionistPage from "./pages/receptionist";
 
 function App() {
   const message = useSelector((state: any) => state.app.alert);
@@ -91,6 +92,10 @@ function App() {
         </Route>
         <Route path="/admin/login" element={<AdminSignIn />} />
         <Route path="*" element={<h1>Not Found</h1>} />
+
+        {/* Reception route */}
+        <Route path="/reception" element={<ReceptionistPage />} />
+
       </Routes>
     </BrowserRouter>
   );
