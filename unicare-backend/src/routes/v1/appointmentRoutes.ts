@@ -1,8 +1,8 @@
 import express from "express";
-import { createAppointment } from "../controllers/appointmentController";
+import { createAppointment } from "../../controllers/appointments/appointment controller";
 
-const router = express.Router();
+const appointmentRouter = express.Router();
 
-router.post("/appointments", createAppointment);
+appointmentRouter.post("/appointments", createAppointment);
 
-export default router;
+export default appointmentRouter;
