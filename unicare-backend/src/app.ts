@@ -4,6 +4,8 @@ import logger from "morgan"; // for displaying http logs
 import appRouter from "./routes/v1";
 import cors from "cors";
 import { errorHandler } from "./middleware/error";
+import receptionistRouter from "./routes/v1/receptionistRoutes";
+import appointmentRouter from "./routes/v1/appointmentRoutes";
 // Create Express server
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(express.urlencoded({ extended: false }));
  * Primary app routes.
  */
 app.use("/api/v1", appRouter);
+app.use("/api/v1/receptionist", receptionistRouter);
+app.use("/api/v1/appointments", appointmentRouter)
 
 /**
  * route to test server
