@@ -1,4 +1,4 @@
-import { UserTable } from "../db/schema";
+import { UserTable, StudentTable } from "../db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 import { hashPassword } from "../util/password";
@@ -6,6 +6,25 @@ import { hashPassword } from "../util/password";
 export const findUserByEmail = async (email: string) => {
   try {
     return await db.select().from(UserTable).where(eq(UserTable.email, email));
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const findUserById = async (id: string) => {
+  try {
+    return await db.select().from(UserTable).where(eq(UserTable.id, id));
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const findStudentByRegNo = async (regNo: string) => {
+  try {
+    return await db
+      .select()
+      .from(StudentTable)
+      .where(eq(StudentTable.reg_no, regNo));
   } catch (error) {
     throw error;
   }
