@@ -12,12 +12,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = () => {
-  const dispatch = useDispatch();
-  const loggedIn = true; // useSelector((state: any) => state.auth.token);
-  // const [sidebarOpen, setSidebarOpen] = useState<boolean>(
-  //   useSelector((state: any) => state.app.sidebarOpen)
-  // );
-  const message = useSelector((state: any) => state.app.alert);
+  const loggedIn = true;
   return (
     <>
       {loggedIn && (
@@ -30,13 +25,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
               className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden sm:m-2"
             >
               <Header />
-              {message && (
-                <MessageModal
-                  message={message.message}
-                  type={message.type}
-                  onClose={() => dispatch(clearMessage())}
-                />
-              )}
 
               {/* Render nested route components */}
               <main className="p-2">

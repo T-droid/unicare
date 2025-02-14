@@ -7,11 +7,22 @@ import StaffRegistration from "./pages/dashboard/RegisterStaff";
 import ActivityLog from "./pages/dashboard/ActivityLog";
 import Settings from "./pages/dashboard/Settings";
 import AdminSignIn from "./pages/auth/AdminLogin";
-import DefaultLayout from "./layout/DefaultLayout";
+import MessageModal from "./components/alerts/MessageModal";
+import { useDispatch, useSelector } from "react-redux";
+import { clearMessage } from "./state/app";
 
 function App() {
+  const message = useSelector((state: any) => state.app.alert);
+  const dispatch = useDispatch();
   return (
     <BrowserRouter>
+      {message && (
+        <MessageModal
+          message={message.message}
+          type={message.type}
+          onClose={() => dispatch(clearMessage())}
+        />
+      )}
       <Routes>
         <Route element={<AdminLayout />}>
           <Route
@@ -77,8 +88,8 @@ function App() {
               </>
             }
           />
-          <Route path="/admin/login" element={<AdminSignIn />} />
         </Route>
+        <Route path="/admin/login" element={<AdminSignIn />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>

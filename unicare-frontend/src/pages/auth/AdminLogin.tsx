@@ -37,7 +37,7 @@ const AdminSignIn: React.FC = () => {
       dispatch(
         setAlert({
           message: error.response.data.error || error.message,
-          type: `${error.response.status === 404  ? "warning" : "error"}`,
+          type: `${error.response.status === 404 ? "warning" : "error"}`,
         })
       );
     } finally {
