@@ -8,6 +8,11 @@ export const userRoleEnum = pgEnum("user_role", [
   "receptionist",
   "lab_technician",
 ]);
+export const appontmentStatus = pgEnum("status", [
+  "pending",
+  "in session",
+  "done"
+]);
 
 // Departments Table
 export const DepartmentsTable = pgTable("departments", {
@@ -70,7 +75,8 @@ export const AppointmentsTable = pgTable("appointments", {
     .references(() => UserTable.id, { onDelete: "cascade" })
     .notNull(),
   appointment_date: timestamp("appointment_date").notNull(),
-  status: varchar("status", { length: 50 }).default("scheduled").notNull(),
+  // status: varchar("status", { length: 50 }).default("scheduled").notNull(),
+  status: appontmentStatus("status").default("pending")
 });
 
 // Appointments Relations
