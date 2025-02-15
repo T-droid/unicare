@@ -16,9 +16,9 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
 
   // Sample data - replace with API call
   const doctors: Doctor[] = [
-    { id: '1', name: 'Dr. Sarah Wilson', specialty: 'General Practice', availability: true },
-    { id: '2', name: 'Dr. Michael Chen', specialty: 'Internal Medicine', availability: true },
-    { id: '3', name: 'Dr. Lisa Anderson', specialty: 'Emergency Medicine', availability: false }
+    { id: '1', name: 'Dr. Sarah Wilson', specialty: 'General Practice', availability: true, department: 'Family Medicine' },
+    { id: '2', name: 'Dr. Michael Chen', specialty: 'Internal Medicine', availability: true, department: 'Internal Medicine' },
+    { id: '3', name: 'Dr. Lisa Anderson', specialty: 'Emergency Medicine', availability: false, department: 'Emergency' }
   ];
 
   // Helper function to determine if subject is a Student
@@ -32,7 +32,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
       return;
     }
 
-    const subjectId = isStudent(subject) ? subject.studentId : subject.studentId;
+    const subjectId = isStudent(subject) ? subject.studentId : subject.patientId;
     
     onSubmit({
       studentId: subjectId,
@@ -45,7 +45,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
   };
 
   return (
-    <Card className="bg-slate-50">
+    <Card className="bg-slate-50 dark:bg-boxdark dark:border-gray-500">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Schedule Appointment</span>
@@ -61,7 +61,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium">Patient</label>
-            <div className="p-3 bg-gray-100 rounded-lg">
+            <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
               <p className="font-medium">{subject.name}</p>
               <p className="text-sm text-gray-500">
                 ID: {isStudent(subject) ? subject.studentId : subject.studentId}
@@ -77,12 +77,12 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 bg-boxdark">
             <label className="block text-sm font-medium">Appointment Type</label>
             <select
               value={appointmentType}
               onChange={(e) => setAppointmentType(e.target.value)}
-              className="w-full p-2 border rounded-lg"
+              className="w-full p-2 border border-gray-500 rounded-lg dark:bg-boxdark dark:text-gray-300"
             >
               <option value="Regular">Regular Checkup</option>
               <option value="Emergency">Emergency</option>
@@ -96,13 +96,13 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
             <select
               value={selectedDoctor}
               onChange={(e) => setSelectedDoctor(e.target.value)}
-              className="w-full p-2 border rounded-lg"
+              className="w-full p-2 border rounded-lg dark:bg-boxdark dark:text-gray-300"
               required
             >
               <option value="">Select a doctor...</option>
               {doctors.map(doctor => (
                 <option key={doctor.id} value={doctor.id} disabled={!doctor.availability}>
-                  {doctor.name} - {doctor.specialty}
+                  {doctor.name} - {doctor.specialty} {doctor.availability ? '' : '(Not available)'}
                 </option>
               ))}
             </select>

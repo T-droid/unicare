@@ -20,20 +20,24 @@ const ReceptionistPage = () => {
   const currentPatients: Patient[] = [
     {
       id: "1",
-      studentId: "STD001",
+      patientId: "STD001",
+      studentId: "S001",
       name: "John Smith",
       status: "Waiting",
       assignedTo: "Dr. Sarah Wilson",
       type: "Outpatient",
+      course: "Computer Science"
     },
     {
       id: "2",
-      studentId: "STD002",
+      patientId: "STD002",
+      studentId: "S002",
       name: "Emily Brown",
       status: "In Treatment",
       assignedTo: "Dr. Michael Chen",
       type: "Inpatient",
-      room: "205"
+      room: "205",
+      course: "Biology"
     }
   ];
 
@@ -75,10 +79,10 @@ const ReceptionistPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-boxdark-2">
       <div className="space-y-6 p-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold text-gray-900">UniCare Reception</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-400">UniCare Reception</h2>
           <div className="relative">
             <input
               type="text"
@@ -108,7 +112,7 @@ const ReceptionistPage = () => {
         />
 
         {showStudentSearch && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
             <div className="max-w-2xl w-full mx-4">
               <StudentSearch
                 onSelect={handleStudentSelect}
@@ -119,7 +123,7 @@ const ReceptionistPage = () => {
         )}
 
         {showAppointmentModal && (selectedStudent || selectedPatient) && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
             <div className="max-w-2xl w-full mx-4">
               <AppointmentModal
                 subject={selectedStudent || selectedPatient!}
@@ -135,7 +139,7 @@ const ReceptionistPage = () => {
         )}
 
         {showRoomModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-transparent flex items-center justify-center">
             <div className="max-w-2xl w-full mx-4">
               <RoomAssignmentModal
                 patient={selectedPatient}

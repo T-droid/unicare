@@ -17,7 +17,7 @@ const PatientTable: React.FC<PatientTableProps> = ({
   onDischarge
 }) => {
   return (
-    <Card className="bg-slate-50">
+    <Card className="bg-slate-50 dark:bg-boxdark dark:border-none">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Users className="h-5 w-5 text-blue-600" />
@@ -28,7 +28,7 @@ const PatientTable: React.FC<PatientTableProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b">
+              <tr className="bg-gray-200 dark:bg-gray-800">
                 <th className="text-left p-4">Student ID</th>
                 <th className="text-left p-4">Patient Name</th>
                 <th className="text-left p-4">Status</th>
@@ -38,9 +38,9 @@ const PatientTable: React.FC<PatientTableProps> = ({
                 <th className="text-left p-4">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className='divide-y divide-gray-300 dark:divide-gray-600'>
               {patients.map((patient) => (
-                <tr key={`patient-${patient.id}`} className="border-b hover:bg-slate-100">
+                <tr key={`patient-${patient.id}`} className="hover:bg-slate-100 hover:dark:bg-gray-700 transition-colors duration-300">
                   <td className="p-4">{patient.studentId}</td>
                   <td className="p-4">{patient.name}</td>
                   <td className="p-4">

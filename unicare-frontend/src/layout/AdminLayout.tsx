@@ -13,6 +13,9 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = () => {
   const loggedIn = true;
+  if (!loggedIn) {
+    window.location.href = "/auth/login";
+  }
   return (
     <>
       {loggedIn && (
@@ -30,7 +33,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
               <main className="p-2">
                 <Outlet />
               </main>
-              <Footer />
             </div>
           </div>
         </div>

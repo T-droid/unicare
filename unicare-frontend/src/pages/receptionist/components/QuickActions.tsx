@@ -16,7 +16,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card 
-        className="bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors"
+        className="bg-slate-50 dark:bg-boxdark dark:border-none hover:bg-slate-100 hover:dark:bg-slate-800 cursor-pointer transition-colors"
         onClick={onSearchStudent}
       >
         <CardContent className="p-6">
@@ -33,7 +33,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       </Card>
 
       <Card 
-        className="bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors"
+        className="bg-slate-50 dark:bg-boxdark dark:border-none hover:bg-slate-100 hover:dark:bg-slate-800 cursor-pointer transition-colors"
         onClick={onScheduleAppointment}
       >
         <CardContent className="p-6">
@@ -50,7 +50,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       </Card>
 
       <Card 
-        className="bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors"
+        className="bg-slate-50 dark:bg-boxdark dark:border-none hover:bg-slate-100 hover:dark:bg-slate-800 cursor-pointer transition-colors"
         onClick={onManageRooms}
       >
         <CardContent className="p-6">

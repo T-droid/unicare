@@ -28,11 +28,12 @@ const AdminSignIn: React.FC = () => {
         throw new Error(loginResponse.data.message || "Login failed");
       }
       const loginData = loginResponse.data;
-      dispatch(
-        setAlert({ message: "Login successful", type: "success" }),
-        setCurrentUser(loginData.user),
-        setToken(loginData.token)
-      );
+      console.log(loginData);
+
+      dispatch(setAlert({ message: "Login successful", type: "success" }));
+      dispatch(setCurrentUser(loginData.data));
+      dispatch(setToken(loginData.token));
+      window.location.href = "/admin";
     } catch (error: any) {
       dispatch(
         setAlert({
@@ -101,6 +102,18 @@ const AdminSignIn: React.FC = () => {
             >
               {submitting ? "Signing in..." : "Sign in"}
             </button>
+            <div className="flex justify-end">
+              <a href="#" className="text-blue-600 hover:underline">
+                Forgot password?
+              </a>
+              <a
+                href="/auth/register"
+                className="text-blue-600 hover:underline"
+              >
+                <span className="ml-2">|</span>
+                <span className="ml-2">Create an account</span>
+              </a>
+            </div>
           </form>
         </CardContent>
       </Card>

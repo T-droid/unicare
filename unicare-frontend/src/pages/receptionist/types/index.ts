@@ -4,16 +4,16 @@ export interface Student {
     name: string;
     studentId: string;
     course: string;
-    yearOfStudy: number;
+    yearOfStudy?: number;
   }
   
-  export interface Patient {
-    id: String;
+  export interface Patient extends Partial<Student> {
+    id: string;
     studentId: string;
-    name: string;
-    status: 'Waiting' | 'In Treatment' | 'Pending Discharge';
-    assignedTo: string;
-    type: 'Outpatient' | 'Inpatient';
+    patientId: string;
+    status: 'Waiting' | 'Ready' | 'In Treatment' | 'Pending Discharge' | 'Discharged';
+    assignedTo?: string;
+    type?: 'Outpatient' | 'Inpatient';
     room?: string;  // Optional as only inpatients have rooms
   }
   
@@ -22,6 +22,7 @@ export interface Student {
     name: string;
     specialty: string;
     availability: boolean;
+    department: string;
   }
   
   export interface Appointment {

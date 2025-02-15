@@ -1,5 +1,18 @@
-import React from "react";
-import { UserPlus, Activity, Settings, Menu, X, UserCheck, AppWindow, AppWindowMac, LucideAppWindow } from "lucide-react";
+import React, { useEffect } from "react";
+import {
+  UserPlus,
+  Activity,
+  Settings,
+  Menu,
+  X,
+  UserCheck,
+  AppWindow,
+  AppWindowMac,
+  LucideAppWindow,
+  FileText,
+  Calendar,
+  CalendarDays,
+} from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import { Avatar } from "@mui/material";
@@ -15,51 +28,76 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const sidebar = useSelector((state: any) => state.app.sidebarOpen);
+  // const currentUser = useSelector((state: any) => state.auth.user);
   const dispatch = useDispatch();
 
-  const User = {
-    name: "John Doe",
-    email: "example@gmail.com",
-    avatar: "/images/avatar.jpg",
-    department: "Administrator",
+  const currentUser = {
+    name: "Dr Zahra",
+    department: "Cardiology",
+    avatar: "https://randomuser.me/api/port",
+    role: "doctor",
   };
+
+  useEffect(() => {
+    console.log("Current user", currentUser, typeof currentUser);
+  }, [currentUser]);
 
   const menuItems = [
     {
       label: "Dashboard",
-      route: "/admin",
+      route: `${currentUser.role === "admin" ? "/admin" : "/doctor"}`,
       icon: AppWindow,
       color: "text-gray-400",
     },
-    {
-      icon: UserPlus,
-      label: "Manage Staff",
-      route: "/admin/register-staff",
-      color: "text-blue-600",
-    },
-    {
-      icon: UserCheck,
-      label: "Manage Students",
-      route: "/admin/register-student",
-      color: "text-indigo-600",
-    },
-    {
-      icon: Activity,
-      label: "Activity Log",
-      route: "/admin/activity-log",
-      color: "text-purple-600",
-    },
+    ...(currentUser.role === "admin"
+      ? [
+          {
+            icon: UserPlus,
+            label: "Manage Staff",
+            route: "/admin/register-staff",
+            color: "text-blue-600",
+          },
+          {
+            icon: UserCheck,
+            label: "Manage Students",
+            route: "/admin/register-student",
+            color: "text-indigo-600",
+          },
+          {
+            icon: Activity,
+            label: "Activity Log",
+            route: "/admin/activity-log",
+            color: "text-purple-600",
+          },
+        ]
+      : currentUser.role === "doctor"
+      ? [
+          {
+            icon: FileText,
+            label: "Lab Reports",
+            route: "/doctor/lab",
+            color: "text-purple-600",
+          },
+          {
+            icon: CalendarDays,
+            label: "My Schedule",
+            route: "/doctor/appointments",
+            color: "text-blue-600",
+          },
+        ]
+      : currentUser.role === 'receptionist' ? [
+
+      ] : []),
     {
       icon: Settings,
       label: "Settings",
-      route: "/admin/settings",
+      route: "/account/settings",
       color: "text-orange-600",
     },
   ];
 
   return (
     <>
-
       {/* Sidebar */}
       <div
         className={`
@@ -79,7 +117,8 @@ const Sidebar: React.FC = () => {
           </div>
 
           <nav className="mt-6">
-            {menuItems.map((item) => (
+            {menuItems.map((item: any) => (
+              item && (
               <div
                 key={item.route}
                 className={`
@@ -101,18 +140,22 @@ const Sidebar: React.FC = () => {
                   {item.label}
                 </span>
               </div>
+              )
             ))}
           </nav>
         </div>
         <div className="flex justify-between p-2 w-full mb-4 gap-4">
           <Avatar
-            src={User.avatar || "https://api.placeholder.com/150"}
+            src={currentUser?.avatar}
+            alt={currentUser?.name || "User"}
             className="mx-auto"
             sx={{ width: 50, height: 50 }}
           />
           <div className="flex justify-center flex-col w-full">
-            <h3 className="font-semibold">{User.name}</h3>
-            <p className="text-sm text-slate-700 dark:text-slate-400">{User.department}</p>
+            <h3 className="font-semibold">{currentUser?.name}</h3>
+            <p className="text-sm text-slate-700 dark:text-slate-400">
+              {currentUser?.department}
+            </p>
           </div>
         </div>
       </div>

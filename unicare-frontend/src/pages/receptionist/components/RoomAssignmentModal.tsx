@@ -37,7 +37,7 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
   };
 
   return (
-    <Card className="bg-slate-50">
+    <Card className="bg-slate-50 dark:bg-boxdark dark:border-gray-500">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Room Management</span>
@@ -54,7 +54,7 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
             placeholder="Search rooms..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="pl-10 pr-4 py-2 border border-gray-500 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <Search className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
         </div>
@@ -80,8 +80,8 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
                   onClick={() => setSelectedRoom(room.id)}
                   className={`p-4 rounded-lg cursor-pointer border-2 transition-colors ${
                     selectedRoom === room.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-transparent bg-gray-100 hover:bg-gray-200'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900'
+                      : 'border-transparent bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-900 hover:bg-gray-200'
                   }`}
                 >
                   <div className="flex items-center justify-between">

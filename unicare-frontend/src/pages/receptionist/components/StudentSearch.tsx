@@ -24,8 +24,8 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
   );
 
   return (
-    <Card className="bg-white shadow-2xl border-0">
-      <CardHeader className="border-b bg-gray-50/50 pb-4">
+    <Card className="bg-white dark:bg-boxdark shadow-2xl border-gray-500">
+      <CardHeader className="border-b bg-gray-50/50 dark:bg-gray-800 pb-4">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <User className="h-5 w-5 text-blue-600" />
@@ -45,23 +45,23 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
               placeholder="Search by name or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-3 border rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              className="pl-10 pr-4 py-3 border border-gray-700 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-boxdark"
             />
             <Search className="h-5 w-5 text-gray-400 absolute left-3 top-3.5" />
           </div>
         </div>
       </CardHeader>
       <CardContent className="p-0 max-h-[400px] overflow-y-auto">
-        <div className="divide-y">
+        <div className="divide-y dark:divide-gray-500">
           {filteredStudents.map((student) => (
             <div
               key={student.id}
               onClick={() => onSelect(student)}
-              className="flex items-start p-4 hover:bg-blue-50 transition-colors cursor-pointer group"
+              className="flex items-start p-4 hover:bg-blue-50 hover:dark:bg-gray-800 transition-colors cursor-pointer group"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-gray-900">{student.name}</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-400">{student.name}</h4>
                   <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
                     {student.studentId}
                   </span>
