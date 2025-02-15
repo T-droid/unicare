@@ -1,7 +1,7 @@
 import { defineConfig } from "drizzle-kit";
 import "dotenv/config";
 
-const dbUrl = process.env.DATABASE_URL as string;
+const dbUrl = process.env.DATABASE_URI as string;
 export default defineConfig({
   out: "./src/db/migrations",
   dialect: "postgresql",

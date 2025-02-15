@@ -1,0 +1,8 @@
+POST http://localhost:3000/api/v1/appointments
+Content-Type: application/json
+
+{
+    "regNo": "S13/54775/25",
+    "doctorId": "eruigfbnvvn",
+    "date": "2024-04-12T15:32:40.000Z"
+}
