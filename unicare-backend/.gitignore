@@ -34,3 +34,6 @@ Thumbs.db
 # ts-node cache (if using ts-node)
 .nyc_output
 .tsbuildinfo
+
+
+migrations
