@@ -20,3 +20,11 @@ export const saveDepartment = async (payload: any) => {
     throw error;
   }
 };
+
+export const getDepartments = async () => {
+  try {
+    return await db.select().from(DepartmentsTable)
+  } catch (error) {
+    throw error;
+  }
+}
