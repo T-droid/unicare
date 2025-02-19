@@ -9,9 +9,9 @@ const clearDatabase = async () => {
     console.log("✅ Database cleared!");
   } catch (error) {
     console.error("❌ Error clearing database:", error);
-    process.exit(1)
-  } finally{
-    process.exit(0)
+    process.exit(1);
+  } finally {
+    process.exit(0);
   }
 };
 

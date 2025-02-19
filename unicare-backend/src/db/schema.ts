@@ -69,7 +69,7 @@ export const StudentTable = pgTable("students", {
   phone_number: varchar("phone_number", { length: 15 }).unique().notNull(),
   reg_no: varchar("reg_no", { length: 15 }).unique().notNull().primaryKey(),
   emergency_contact: varchar("emergency_contact", { length: 15 }), // Optional emergency contact
-  special_conditions: text("special_conditions"), 
+  special_conditions: text("special_conditions"),
 });
 
 // Students  Relations

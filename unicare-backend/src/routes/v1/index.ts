@@ -21,7 +21,7 @@ const appRoutes = [
   {
     path: "/students",
     router: studentRouter,
-  }
+  },
   // add other routes hapa chini
 ];
 
