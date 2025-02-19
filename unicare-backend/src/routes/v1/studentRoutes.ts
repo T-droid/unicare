@@ -2,10 +2,8 @@ import { Router } from "express";
 import { registerStudent } from "../../controllers/student/create";
 import validateRequest from "../../middleware/validateRequest";
 import { registerStudentSchema } from "../../validation/studentValidation";
-import { listStudents } from "../../controllers/student/list";
 const studentRouter = Router();
 
-studentRouter.get("/", listStudents);
 studentRouter.post(
   "/register",
   validateRequest(registerStudentSchema),

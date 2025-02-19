@@ -1,1 +1,0 @@
-GET http://localhost:3001/api/v1/students?name=jOhn&page=1&limit=10 HTTP/1.1

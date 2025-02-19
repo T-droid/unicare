@@ -26,5 +26,5 @@ export const registerStudentSchema = Joi.object({
     .messages({
       "string.pattern.base": "Emergency contact must be 10-15 digits long.",
     }),
-  special_conditions: Joi.string().optional(),
+  special_conditions: Joi.string().optional()
 });
