@@ -34,7 +34,7 @@ export const assignPatientRoom = async (req: Request, res: Response) => {
   const { regNo, roomId } = req.body;
 
   // TODO: the validator will handle the missing attrbutes no need to handle logic here too
-  if (!regNo){
+  if (!regNo) {
     res.status(403).json({ message: "registration number required" });
     return;
   }
