@@ -2,7 +2,7 @@ import { RoomsTable, InpatientTable } from "../db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
-export const getRoomById = async (roomId: any) => {
+export const getRoomById = async (roomId: string) => {
   try {
     return await db.select().from(RoomsTable).where(eq(RoomsTable.id, roomId));
   } catch (err) {
