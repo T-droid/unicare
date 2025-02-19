@@ -3,7 +3,6 @@ import { db } from "../db";
 import { StudentTable } from "../db/schema";
 
 export const addStudent = async (payload: any) => {
-  try {
     // Check if a student with the given reg_no already exists
     const existingStudent = await db
       .select()
@@ -16,7 +15,4 @@ export const addStudent = async (payload: any) => {
 
     // Insert new student if no duplicate found
     return await db.insert(StudentTable).values(payload).returning();
-  } catch (error) {
-    throw error;
-  }
 };
