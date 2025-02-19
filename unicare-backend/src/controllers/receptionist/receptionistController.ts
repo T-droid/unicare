@@ -17,22 +17,30 @@ export const getStudent = async (req: Request, res: Response) => {
           message: "Student found",
           student,
         });
+        return;
       } else {
         res.status(404).json({ message: "Student not found" });
+        return;
       }
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
+    return;
   }
 };
 
 export const assignPatientRoom = async (req: Request, res: Response) => {
   const { regNo, roomId } = req.body;
 
-  if (!regNo)
-    return res.status(403).json({ message: "registration number required" });
-  if (!roomId) return res.status(403).json({ message: "roomId is required" });
+  // TODO: the validator will handle the missing attrbutes no need to handle logic here too
+  if (!regNo){
+    res.status(403).json({ message: "registration number required" });
+    return;
+  }
+  if (!roomId) {
+    res.status(403).json({ message: "roomId is required" });
+  }
 
   try {
     findStudentByRegNo(regNo).then(async (student) => {
