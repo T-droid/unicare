@@ -8,6 +8,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  text,
 } from "drizzle-orm/pg-core";
 
 // role ENUM
@@ -67,6 +68,8 @@ export const StudentTable = pgTable("students", {
   name: varchar("name", { length: 200 }).notNull(),
   phone_number: varchar("phone_number", { length: 15 }).unique().notNull(),
   reg_no: varchar("reg_no", { length: 15 }).unique().notNull().primaryKey(),
+  emergency_contact: varchar("emergency_contact", { length: 15 }), // Optional emergency contact
+  special_conditions: text("special_conditions"), 
 });
 
 // Students  Relations

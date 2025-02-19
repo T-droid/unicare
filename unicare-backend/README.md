@@ -88,6 +88,11 @@ npm run lint
 #  format files
 npm run format
 
+# Seed database (populate the db with data)
+`sh npm run db:seed`
+
+# reset migration (drop tables and generate new migration file and migrate)
+`sh npm run db:reset`
 ```
 ## Project Structure
 
