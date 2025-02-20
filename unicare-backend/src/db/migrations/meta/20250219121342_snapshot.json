@@ -48,12 +48,8 @@
           "name": "appointments_reg_no_students_reg_no_fk",
           "tableFrom": "appointments",
           "tableTo": "students",
-          "columnsFrom": [
-            "reg_no"
-          ],
-          "columnsTo": [
-            "reg_no"
-          ],
+          "columnsFrom": ["reg_no"],
+          "columnsTo": ["reg_no"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -61,12 +57,8 @@
           "name": "appointments_doctor_id_users_id_fk",
           "tableFrom": "appointments",
           "tableTo": "users",
-          "columnsFrom": [
-            "doctor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["doctor_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -171,12 +163,8 @@
           "name": "inpatients_reg_no_students_reg_no_fk",
           "tableFrom": "inpatients",
           "tableTo": "students",
-          "columnsFrom": [
-            "reg_no"
-          ],
-          "columnsTo": [
-            "reg_no"
-          ],
+          "columnsFrom": ["reg_no"],
+          "columnsTo": ["reg_no"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -184,12 +172,8 @@
           "name": "inpatients_room_id_rooms_id_fk",
           "tableFrom": "inpatients",
           "tableTo": "rooms",
-          "columnsFrom": [
-            "room_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["room_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -197,10 +181,7 @@
       "compositePrimaryKeys": {
         "inpatients_reg_no_room_id_pk": {
           "name": "inpatients_reg_no_room_id_pk",
-          "columns": [
-            "reg_no",
-            "room_id"
-          ]
+          "columns": ["reg_no", "room_id"]
         }
       },
       "uniqueConstraints": {},
@@ -295,12 +276,8 @@
           "name": "medical_records_reg_no_students_reg_no_fk",
           "tableFrom": "medical_records",
           "tableTo": "students",
-          "columnsFrom": [
-            "reg_no"
-          ],
-          "columnsTo": [
-            "reg_no"
-          ],
+          "columnsFrom": ["reg_no"],
+          "columnsTo": ["reg_no"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -308,12 +285,8 @@
           "name": "medical_records_prescribed_by_id_users_id_fk",
           "tableFrom": "medical_records",
           "tableTo": "users",
-          "columnsFrom": [
-            "prescribed_by_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["prescribed_by_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -321,12 +294,8 @@
           "name": "medical_records_tested_by_id_users_id_fk",
           "tableFrom": "medical_records",
           "tableTo": "users",
-          "columnsFrom": [
-            "tested_by_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["tested_by_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -379,16 +348,12 @@
         "students_phone_number_unique": {
           "name": "students_phone_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "phone_number"
-          ]
+          "columns": ["phone_number"]
         },
         "students_reg_no_unique": {
           "name": "students_reg_no_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "reg_no"
-          ]
+          "columns": ["reg_no"]
         }
       },
       "policies": {},
@@ -456,12 +421,8 @@
           "name": "users_department_id_departments_id_fk",
           "tableFrom": "users",
           "tableTo": "departments",
-          "columnsFrom": [
-            "department_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["department_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -471,16 +432,12 @@
         "users_phone_number_unique": {
           "name": "users_phone_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "phone_number"
-          ]
+          "columns": ["phone_number"]
         },
         "users_work_id_unique": {
           "name": "users_work_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "work_id"
-          ]
+          "columns": ["work_id"]
         }
       },
       "policies": {},
@@ -492,21 +449,12 @@
     "public.status": {
       "name": "status",
       "schema": "public",
-      "values": [
-        "pending",
-        "in session",
-        "done"
-      ]
+      "values": ["pending", "in session", "done"]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "doctor",
-        "nurse",
-        "receptionist",
-        "lab_technician"
-      ]
+      "values": ["doctor", "nurse", "receptionist", "lab_technician"]
     }
   },
   "schemas": {},
