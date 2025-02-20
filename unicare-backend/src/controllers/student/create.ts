@@ -7,7 +7,7 @@ export const registerStudent = async (
 ): Promise<void> => {
   try {
     const data = req.body;
-    const newStudent = await addStudent(data)
+    const newStudent = await addStudent(data);
     res.status(201).json({
       message: "Student created successfully",
       data: newStudent,
@@ -15,7 +15,7 @@ export const registerStudent = async (
     return;
   } catch (err) {
     console.error("Error creating student:", err);
-    if(err instanceof Error){
+    if (err instanceof Error) {
       res.status(400).json({ error: err });
       return;
     }

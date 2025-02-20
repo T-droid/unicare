@@ -10,14 +10,9 @@ export const findDepartmentByName = async (departmentName: string) => {
 };
 
 export const saveDepartment = async (payload: any) => {
-  return await db
-    .insert(DepartmentsTable)
-    .values(payload)
-    .returning();
+  return await db.insert(DepartmentsTable).values(payload).returning();
 };
 
 export const getDepartments = async () => {
-  return await db
-    .select()
-    .from(DepartmentsTable)
-}
+  return await db.select().from(DepartmentsTable);
+};
