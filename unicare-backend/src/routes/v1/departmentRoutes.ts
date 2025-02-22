@@ -42,3 +42,55 @@ export default departmentRouter;
  *       500:
  *         description: Internal server error
  */
+
+/**
+ * @swagger
+ * /v1/departments:
+ *   get:
+ *     summary: Retrieve a list of departments
+ *     description: Fetches all available departments from the database.
+ *     tags:
+ *       - Departments
+ *     responses:
+ *       200:
+ *         description: A list of departments retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 departments:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         example: "Computer Science"
+ *                       description:
+ *                         type: string
+ *                         example: "Department focused on computing and programming."
+ *       400:
+ *         description: Bad request error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Invalid request parameters"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unknown Error occurred"
+ */

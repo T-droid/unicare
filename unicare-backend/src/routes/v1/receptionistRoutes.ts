@@ -3,17 +3,19 @@ import {
   assignPatientRoom,
   getStudent,
 } from "../../controllers/receptionist/receptionistController";
+import validateRequest from "../../middleware/validateRequest";
+import { receptionistSchema } from "../../validation/receptionist";
 
 const receptionistRouter = express.Router();
 
 receptionistRouter
-  .get("/", (req: Request, res: Response) => {
+  .get("/", validateRequest(receptionistSchema), (req: Request, res: Response) => {
     getStudent(req, res);
   })
-  .post("/", (req: Request, res: Response) => {
+  .post("/", validateRequest(receptionistSchema), (req: Request, res: Response) => {
     assignPatientRoom(req, res);
   })
-  .patch("/", (req: Request, res: Response) => {
+  .patch("/", validateRequest(receptionistSchema), (req: Request, res: Response) => {
     res.send("receptionist updates student room details");
   })
   .delete("/", (req: Request, res: Response) => {
