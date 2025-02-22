@@ -7,7 +7,6 @@ import { Suspense, lazy } from "react";
 import AdminLayout from "./layout/AdminLayout";
 import PageTitle from "./pageTitle";
 import MessageModal from "./components/alerts/MessageModal";
-import { Loader } from "lucide-react";
 import { CircularProgress } from "@mui/material";
 import ScheduleManager from "./pages/doctor/ScheduleManager";
 
