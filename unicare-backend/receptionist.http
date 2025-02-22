@@ -1,5 +1,10 @@
 ###
-GET http://localhost:3000/api/v1/receptionist
+GET http://localhost:3000/api/v1/receptionist/
+Content-Type: application/json
+
+{
+    "regNo": "S13/07838/22"
+}
 
 ###
 POST http://localhost:3000/api/v1/receptionist

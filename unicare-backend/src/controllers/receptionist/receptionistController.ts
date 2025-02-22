@@ -8,8 +8,6 @@ import {
 
 export const getStudent = async (req: Request, res: Response) => {
   const { regNo } = req.body;
-
-  if (!regNo) return res.status(403).json({ message: "Reg No is required" });
   try {
     findStudentByRegNo(regNo).then((student) => {
       if (student.length > 0) {
@@ -33,11 +31,6 @@ export const getStudent = async (req: Request, res: Response) => {
 export const assignPatientRoom = async (req: Request, res: Response) => {
   const { regNo, roomId } = req.body;
 
-  // TODO: the validator will handle the missing attrbutes no need to handle logic here too
-  if (!regNo) {
-    res.status(403).json({ message: "registration number required" });
-    return;
-  }
   if (!roomId) {
     res.status(403).json({ message: "roomId is required" });
   }
@@ -64,8 +57,6 @@ export const assignPatientRoom = async (req: Request, res: Response) => {
 
 export const dischargePatient = async (req: Request, res: Response) => {
   const { regNo } = req.body;
-  if (!regNo)
-    return res.status(403).json({ message: "registration number required" });
 
   try {
     const discharged = await updateDischargePatient(regNo);
