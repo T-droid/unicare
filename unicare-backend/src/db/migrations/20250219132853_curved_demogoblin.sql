@@ -2,7 +2,7 @@ CREATE TYPE "public"."status" AS ENUM('pending', 'in session', 'done');--> state
 CREATE TYPE "public"."user_role" AS ENUM('doctor', 'nurse', 'receptionist', 'lab_technician');--> statement-breakpoint
 CREATE TABLE "appointments" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"student_id" uuid NOT NULL,
+	"reg_no" varchar(15) NOT NULL,
 	"doctor_id" uuid NOT NULL,
 	"appointment_date" timestamp NOT NULL,
 	"status" "status" DEFAULT 'pending'
@@ -20,11 +20,11 @@ CREATE TABLE "drugs" (
 );
 --> statement-breakpoint
 CREATE TABLE "inpatients" (
-	"student_id" uuid,
+	"reg_no" varchar(15),
 	"room_id" uuid,
-	"admission_date" date DEFAULT now(),
-	"discharge_date" date,
-	CONSTRAINT "inpatients_student_id_room_id_pk" PRIMARY KEY("student_id","room_id")
+	"admission_date" timestamp DEFAULT now(),
+	"discharge_date" timestamp,
+	CONSTRAINT "inpatients_reg_no_room_id_pk" PRIMARY KEY("reg_no","room_id")
 );
 --> statement-breakpoint
 CREATE TABLE "rooms" (
@@ -35,7 +35,7 @@ CREATE TABLE "rooms" (
 --> statement-breakpoint
 CREATE TABLE "medical_records" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"student_id" uuid NOT NULL,
+	"reg_no" varchar(15) NOT NULL,
 	"prescription" varchar(400),
 	"prescribed_by_id" uuid,
 	"lab_results" varchar(400),
@@ -44,12 +44,13 @@ CREATE TABLE "medical_records" (
 );
 --> statement-breakpoint
 CREATE TABLE "students" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(200) NOT NULL,
 	"phone_number" varchar(15) NOT NULL,
-	"regNo" varchar(15) NOT NULL,
+	"reg_no" varchar(15) PRIMARY KEY NOT NULL,
+	"emergency_contact" varchar(15),
+	"special_conditions" text,
 	CONSTRAINT "students_phone_number_unique" UNIQUE("phone_number"),
-	CONSTRAINT "students_regNo_unique" UNIQUE("regNo")
+	CONSTRAINT "students_reg_no_unique" UNIQUE("reg_no")
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -65,11 +66,11 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_work_id_unique" UNIQUE("work_id")
 );
 --> statement-breakpoint
-ALTER TABLE "appointments" ADD CONSTRAINT "appointments_student_id_students_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."students"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "appointments" ADD CONSTRAINT "appointments_reg_no_students_reg_no_fk" FOREIGN KEY ("reg_no") REFERENCES "public"."students"("reg_no") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "appointments" ADD CONSTRAINT "appointments_doctor_id_users_id_fk" FOREIGN KEY ("doctor_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "inpatients" ADD CONSTRAINT "inpatients_student_id_students_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."students"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "inpatients" ADD CONSTRAINT "inpatients_reg_no_students_reg_no_fk" FOREIGN KEY ("reg_no") REFERENCES "public"."students"("reg_no") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "inpatients" ADD CONSTRAINT "inpatients_room_id_rooms_id_fk" FOREIGN KEY ("room_id") REFERENCES "public"."rooms"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "medical_records" ADD CONSTRAINT "medical_records_student_id_students_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."students"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "medical_records" ADD CONSTRAINT "medical_records_reg_no_students_reg_no_fk" FOREIGN KEY ("reg_no") REFERENCES "public"."students"("reg_no") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "medical_records" ADD CONSTRAINT "medical_records_prescribed_by_id_users_id_fk" FOREIGN KEY ("prescribed_by_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "medical_records" ADD CONSTRAINT "medical_records_tested_by_id_users_id_fk" FOREIGN KEY ("tested_by_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_department_id_departments_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."departments"("id") ON DELETE cascade ON UPDATE no action;

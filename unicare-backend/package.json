@@ -16,7 +16,10 @@
     "dev": "npm run format && nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"tsnd --respawn src/server.ts\"",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\"  \"npm run watch-ts\" \"npm run watch-node\"",
     "db:generate": "npx drizzle-kit generate",
-    "db:migrate": "tsx src/db/migrate.ts"
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:clear": "tsx src/db/clear.ts",
+    "db:seed": "tsx src/db/seeders/index.ts",
+    "db:reset": "npm run db:clear && npm run db:generate && npm run db:migrate && npm run db:seed"
   },
   "keywords": [],
   "author": "",
@@ -65,7 +68,7 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
-    "pg": "^8.13.1",
+    "pg": "^8.13.3",
     "postgres": "^3.4.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",

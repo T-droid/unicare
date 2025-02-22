@@ -1,5 +1,8 @@
 import express, { Request, Response } from "express";
-import { assignPatientRoom, getStudent } from "../../controllers/receptionist/receptionistController";
+import {
+  assignPatientRoom,
+  getStudent,
+} from "../../controllers/receptionist/receptionistController";
 
 const receptionistRouter = express.Router();
 

@@ -25,7 +25,7 @@ const Header = () => {
             </h1>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             <ThemeToggle />
             <button className="hidden lg:flex justify-center items-center gap-2 px-4 py-2 text-sm font-semibold text-black rounded-lg bg-red-500 hover:bg-gray-100 transition-all">
               <LogOut />

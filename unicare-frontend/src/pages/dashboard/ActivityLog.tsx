@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 const ActivityLog = () => {
-  // Sample activity data - connect to your backend
+  // Sample activity data - connect to backend
   const [activities] = useState([
     {
       id: 1,

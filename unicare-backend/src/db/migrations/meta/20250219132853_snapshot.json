@@ -1,5 +1,5 @@
 {
-  "id": "a236c653-ed66-4c35-822b-7ab257ea95f8",
+  "id": "15414632-0731-40dd-83ac-212b29031087",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -15,9 +15,9 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "student_id": {
-          "name": "student_id",
-          "type": "uuid",
+        "reg_no": {
+          "name": "reg_no",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
@@ -44,12 +44,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "appointments_student_id_students_id_fk": {
-          "name": "appointments_student_id_students_id_fk",
+        "appointments_reg_no_students_reg_no_fk": {
+          "name": "appointments_reg_no_students_reg_no_fk",
           "tableFrom": "appointments",
           "tableTo": "students",
-          "columnsFrom": ["student_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": ["reg_no"],
+          "columnsTo": ["reg_no"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -131,9 +131,9 @@
       "name": "inpatients",
       "schema": "",
       "columns": {
-        "student_id": {
-          "name": "student_id",
-          "type": "uuid",
+        "reg_no": {
+          "name": "reg_no",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": false
         },
@@ -145,26 +145,26 @@
         },
         "admission_date": {
           "name": "admission_date",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
         "discharge_date": {
           "name": "discharge_date",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "inpatients_student_id_students_id_fk": {
-          "name": "inpatients_student_id_students_id_fk",
+        "inpatients_reg_no_students_reg_no_fk": {
+          "name": "inpatients_reg_no_students_reg_no_fk",
           "tableFrom": "inpatients",
           "tableTo": "students",
-          "columnsFrom": ["student_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": ["reg_no"],
+          "columnsTo": ["reg_no"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -179,9 +179,9 @@
         }
       },
       "compositePrimaryKeys": {
-        "inpatients_student_id_room_id_pk": {
-          "name": "inpatients_student_id_room_id_pk",
-          "columns": ["student_id", "room_id"]
+        "inpatients_reg_no_room_id_pk": {
+          "name": "inpatients_reg_no_room_id_pk",
+          "columns": ["reg_no", "room_id"]
         }
       },
       "uniqueConstraints": {},
@@ -233,9 +233,9 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "student_id": {
-          "name": "student_id",
-          "type": "uuid",
+        "reg_no": {
+          "name": "reg_no",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
@@ -272,12 +272,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "medical_records_student_id_students_id_fk": {
-          "name": "medical_records_student_id_students_id_fk",
+        "medical_records_reg_no_students_reg_no_fk": {
+          "name": "medical_records_reg_no_students_reg_no_fk",
           "tableFrom": "medical_records",
           "tableTo": "students",
-          "columnsFrom": ["student_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": ["reg_no"],
+          "columnsTo": ["reg_no"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -310,13 +310,6 @@
       "name": "students",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
         "name": {
           "name": "name",
           "type": "varchar(200)",
@@ -329,11 +322,23 @@
           "primaryKey": false,
           "notNull": true
         },
-        "regNo": {
-          "name": "regNo",
+        "reg_no": {
+          "name": "reg_no",
+          "type": "varchar(15)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "emergency_contact": {
+          "name": "emergency_contact",
           "type": "varchar(15)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "special_conditions": {
+          "name": "special_conditions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -345,10 +350,10 @@
           "nullsNotDistinct": false,
           "columns": ["phone_number"]
         },
-        "students_regNo_unique": {
-          "name": "students_regNo_unique",
+        "students_reg_no_unique": {
+          "name": "students_reg_no_unique",
           "nullsNotDistinct": false,
-          "columns": ["regNo"]
+          "columns": ["reg_no"]
         }
       },
       "policies": {},
