@@ -9,6 +9,7 @@ import PageTitle from "./pageTitle";
 import MessageModal from "./components/alerts/MessageModal";
 import { CircularProgress } from "@mui/material";
 import ScheduleManager from "./pages/doctor/ScheduleManager";
+import LabTechnicianDashboard from "./pages/labtech/LabTechnicianDashboard";
 
 // Lazy-loaded Admin Pages
 const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
@@ -163,6 +164,19 @@ function App() {
                 <>
                   <PageTitle title="Receptionist Dashboard" />
                   <ReceptionistPage />
+                </>
+              }
+            />
+          </Route>
+
+            {/* Labtech Route */}
+            <Route element={<AdminLayout />}>
+            <Route
+              path="/labtech"
+              element={
+                <>
+                  <PageTitle title="LabTech Dashboard" />
+                  <LabTechnicianDashboard />
                 </>
               }
             />
