@@ -1,0 +1,6 @@
+name: Setup project, Linting and running tests
+on: push
+
+
+
+
