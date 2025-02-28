@@ -10,12 +10,15 @@ import appointmentRouter from "./routes/v1/appointmentRoutes";
 // Create Express server
 const app = express();
 
-app.use(cors(
-  {
-    origin: "*", // allow all origins
-    credentials: true, // allow cookies to b sent
-  }
-));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      callback(null, origin || "*"); // Allow all origins dynamically
+    },
+    credentials: true, // Allow cookies
+  })
+);
+
 app.use(cookieParser());
 
 app.use(logger("dev"));
