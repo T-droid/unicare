@@ -20,7 +20,7 @@ const pharmacistRouter = express.Router();
 
 /**
  * @swagger
- * /pharmacist/add:
+ * /v1/pharmacist/drug/add:
  *   post:
  *     summary: Add a new drug
  *     tags: [Pharmacist]
@@ -54,7 +54,7 @@ pharmacistRouter.post("/add", validateRequest(drugSchema), createDrug);
 
 /**
  * @swagger
- * /pharmacist/list:
+ * /v1/pharmacist/drug/list:
  *   get:
  *     summary: Get all available drugs
  *     tags: [Pharmacist]
@@ -70,7 +70,7 @@ pharmacistRouter.post("/add", validateRequest(drugSchema), createDrug);
 pharmacistRouter.get("/list", listDrugs);
 /**
  * @swagger
- * /pharmacist/administer:
+ * /v1/pharmacist/drug/administer:
  *   post:
  *     summary: Administer a drug (reduce stock)
  *     tags: [Pharmacist]
