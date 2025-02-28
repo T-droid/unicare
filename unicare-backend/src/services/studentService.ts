@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql, ilike } from "drizzle-orm";
 import { db } from "../db";
 import { StudentTable } from "../db/schema";
 

@@ -1,6 +1,5 @@
 # Node.js dependencies
 node_modules/
-package-lock.json
 yarn.lock
 
 # TypeScript build outputs
@@ -34,3 +33,6 @@ Thumbs.db
 # ts-node cache (if using ts-node)
 .nyc_output
 .tsbuildinfo
+
+
+migrations

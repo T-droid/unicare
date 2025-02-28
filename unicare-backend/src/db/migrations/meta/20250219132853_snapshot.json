@@ -1,5 +1,5 @@
 {
-  "id": "84ced67a-63f6-493a-9236-e71ebcf6e21f",
+  "id": "15414632-0731-40dd-83ac-212b29031087",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -327,6 +327,18 @@
           "type": "varchar(15)",
           "primaryKey": true,
           "notNull": true
+        },
+        "emergency_contact": {
+          "name": "emergency_contact",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "special_conditions": {
+          "name": "special_conditions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
