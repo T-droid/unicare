@@ -18,6 +18,7 @@ import logo from "../../assets/logo.svg";
 import { Avatar } from "@mui/material";
 import { setSidebarOpen as setSideBar } from "@/state/app";
 import { useDispatch, useSelector } from "react-redux";
+import { log } from "console";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -31,10 +32,11 @@ const Sidebar: React.FC = () => {
   // const currentUser = useSelector((state: any) => state.auth.user);
   const dispatch = useDispatch();
 
-  const currentUser = JSON.parse(localStorage.getItem("user") || '{}')
+  const currentUser = useSelector((state: any) => state.auth.user);
+  // console.log("Current user", currentUser, typeof currentUser);
 
   useEffect(() => {
-    // console.log("Current user", currentUser, typeof currentUser);
+    console.log("Current user  role", currentUser, typeof currentUser);
   }, [currentUser]);
 
   const menuItems = [

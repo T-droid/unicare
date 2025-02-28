@@ -31,7 +31,7 @@ const AdminSignIn: React.FC = () => {
       console.log(loginData);
 
       dispatch(setAlert({ message: "Login successful", type: "success" }));
-      dispatch(setCurrentUser(loginData.data));
+      dispatch(setCurrentUser(loginData.data[0]));
       dispatch(setToken(loginData.token));
       window.location.href = "/admin";
     } catch (error: any) {

@@ -3,6 +3,7 @@ import logo from "../assets/logo.svg";
 import { LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { setSidebarOpen } from "@/state/app";
+import { setLogout } from "@/state/auth";
 import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
@@ -27,7 +28,7 @@ const Header = () => {
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <button className="hidden lg:flex justify-center items-center gap-2 px-4 py-2 text-sm font-semibold text-black rounded-lg bg-red-500 hover:bg-gray-100 transition-all">
+            <button onClick={() => dispatch(setLogout())} className="cursor-pointer hidden lg:flex justify-center items-center gap-2 px-4 py-2 text-sm font-semibold text-black rounded-lg bg-red-500 hover:bg-gray-100 transition-all">
               <LogOut />
               Logout
             </button>
