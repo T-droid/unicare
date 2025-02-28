@@ -1,6 +1,8 @@
 import { Appointment } from "../types/appointment";
 import { db } from "../db";
-import { AppointmentsTable } from "../db/schema";
+import { AppointmentsTable, StudentTable, UserTable } from "../db/schema";
+import { and, eq } from "drizzle-orm";
+import { Request, Response } from "express";
 
 const appointments: Appointment[] = [];
 
@@ -17,4 +19,17 @@ export const bookAppointment = async (
       appointment_date: date,
     })
     .returning();
+};
+
+export const studentExists = async (regNo: string): Promise<boolean> => {
+  await db.select().from(StudentTable).where(eq(StudentTable.reg_no, regNo));
+  return studentExists.length === 0;
+};
+
+export const doctorExists = async (doctorId: string): Promise<boolean> => {
+  await db
+    .select()
+    .from(UserTable)
+    .where(and(eq(UserTable.id, doctorId), eq(UserTable.role, "doctor")));
+  return doctorExists.length === 0;
 };
