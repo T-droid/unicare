@@ -48,6 +48,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       data: user[0], // return one user since it return an Array
       token,
     });
+    console.log(res);
+    
     return;
   } catch (error) {
     console.error("Login error:", error);

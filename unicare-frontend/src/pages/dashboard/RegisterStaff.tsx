@@ -35,10 +35,13 @@ const StaffRegistration = () => {
   const [errors, setErrors] = useState<Partial<StaffFormData>>({});
 
   useEffect(() => {
+    console.log(`Cookie: ${document.cookie}`);
+    
     const fetchDepartments = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_SERVER_HEAD}/departments`
+          `${import.meta.env.VITE_SERVER_HEAD}/departments`,
+          { withCredentials: true }
         );
         if (response.status === 200) {
           const departments = response.data.departments;
@@ -211,7 +214,7 @@ const StaffRegistration = () => {
             >
               <option value="">Select Department</option>
               {departments.map((department) => (
-                <option key={department.id} value={department.id}>
+                <option key={department.id} value={department.name}>
                   {department.name}
                 </option>
               ))}
