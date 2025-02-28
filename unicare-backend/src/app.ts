@@ -13,7 +13,7 @@ const app = express();
 
 app.use(cors(
   {
-    origin: "*", // allow all origins
+    origin: "http://localhost:5173", // allow all origins
     credentials: true, // allow cookies to b sent
   }
 ));
