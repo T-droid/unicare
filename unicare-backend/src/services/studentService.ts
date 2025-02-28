@@ -16,3 +16,28 @@ export const addStudent = async (payload: any) => {
   // Insert new student if no duplicate found
   return await db.insert(StudentTable).values(payload).returning();
 };
+
+export const getStudents = async (
+  filters: Record<string, any>,
+  offset?: number,
+  limit?: number,
+) => {
+  let query = db.select().from(StudentTable);
+  if (filters.reg_no) {
+    query.where(ilike(StudentTable.reg_no, `%${filters.reg_no}%`));
+  }
+  if (filters.name) {
+    query.where(ilike(StudentTable.name, `%${filters.name}%`));
+  }
+
+  if (limit && offset) {
+    query.limit(limit).offset(offset);
+  }
+  const studentsList = await query;
+  const total = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(StudentTable)
+    .then((res) => res[0]?.count || 0);
+
+  return { students: studentsList, total };
+};
