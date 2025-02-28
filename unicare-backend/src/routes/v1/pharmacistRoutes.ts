@@ -20,7 +20,7 @@ const pharmacistRouter = express.Router();
 
 /**
  * @swagger
- * /pharmacist/add:
+ * /v1/drug/add:
  *   post:
  *     summary: Add a new drug
  *     tags: [Pharmacist]
@@ -50,11 +50,11 @@ const pharmacistRouter = express.Router();
  *       401:
  *         description: Unauthorized
  */
-pharmacistRouter.post("/add", validateRequest(drugSchema), createDrug);
+pharmacistRouter.post("/v1/drug/add", validateRequest(drugSchema), createDrug);
 
 /**
  * @swagger
- * /pharmacist/list:
+ * /v1/drugs:
  *   get:
  *     summary: Get all available drugs
  *     tags: [Pharmacist]
@@ -67,10 +67,10 @@ pharmacistRouter.post("/add", validateRequest(drugSchema), createDrug);
  *         description: Unauthorized
  */
 
-pharmacistRouter.get("/list", listDrugs);
+pharmacistRouter.get("/v1/drugs", listDrugs);
 /**
  * @swagger
- * /pharmacist/administer:
+ * /v1/drug/administer:
  *   post:
  *     summary: Administer a drug (reduce stock)
  *     tags: [Pharmacist]
@@ -103,7 +103,7 @@ pharmacistRouter.get("/list", listDrugs);
  */
 
 pharmacistRouter.post(
-  "/administer",
+  "/v1/drug/administer",
   validateRequest(administerDrugSchema),
   handleAdministerDrug,
 );

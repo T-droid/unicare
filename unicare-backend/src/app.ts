@@ -6,6 +6,7 @@ import cors from "cors";
 import { errorHandler } from "./middleware/error";
 import receptionistRouter from "./routes/v1/receptionistRoutes";
 import appointmentRouter from "./routes/v1/appointmentRoutes";
+import pharmacistRouter from "./routes/v1/pharmacistRoutes";
 // Create Express server
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/v1", appRouter);
 app.use("/api/v1/receptionist", receptionistRouter);
 app.use("/api/v1/appointments", appointmentRouter);
+app.use("/api/v1/pharmacist", pharmacistRouter);
 
 /**
  * route to test server
