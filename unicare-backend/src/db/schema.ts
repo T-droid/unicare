@@ -111,7 +111,8 @@ export const PatientsTableRelations = relations(
 // Appointments Table
 export const AppointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  patient_id: uuid('patient_id')
+  reg_no: varchar("reg_no", { length: 15 }).notNull(),
+  patient_id: uuid("patient_id")
     .references(() => PatientsTable.id, { onDelete: "cascade" })
     .notNull(),
   doctor_id: uuid("doctor_id")
@@ -139,7 +140,7 @@ export const AppointmentsTableRelations = relations(
 // student medical records table
 export const PatientMedicalRecords = pgTable("medical_records", {
   id: uuid("id").defaultRandom().primaryKey(),
-  patient_id: uuid('patient_id')
+  patient_id: uuid("patient_id")
     .notNull()
     .references(() => PatientsTable.id, {
       onDelete: "cascade",
@@ -187,9 +188,8 @@ export const RoomsTableRelations = relations(RoomsTable, ({ many }) => ({
 export const InpatientTable = pgTable(
   "inpatients",
   {
-    patient_id: uuid('patient_id').references(
-      () => PatientsTable.id,
-    ),
+    patient_id: uuid("patient_id").references(() => PatientsTable.id),
+    reg_no: varchar("reg_no", { length: 15 }),
     room_id: uuid("room_id").references(() => RoomsTable.id),
     admission_date: timestamp("admission_date").defaultNow(),
     discharge_date: timestamp("discharge_date"),

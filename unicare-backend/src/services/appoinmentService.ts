@@ -15,6 +15,7 @@ export const bookAppointment = async (
     .insert(AppointmentsTable)
     .values({
       reg_no: regNo,
+      patient_id: regNo, // Assuming regNo is used as patient_id
       doctor_id: doctorId,
       appointment_date: date,
     })
