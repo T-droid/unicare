@@ -43,7 +43,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ id }, JWT_SECRET, { expiresIn: "1h" });
 
     res.status(200).json({
-      data: user,
+      data: user[0], // return one user since it return an Array
       token,
     });
     return;
