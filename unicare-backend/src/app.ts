@@ -2,6 +2,7 @@ import express from "express";
 import { Request, Response } from "express";
 import logger from "morgan"; // for displaying http logs
 import appRouter from "./routes/v1";
+import cookieParser from "cookie-parser"; // for storing creds in cookies
 import cors from "cors";
 import { errorHandler } from "./middleware/error";
 import receptionistRouter from "./routes/v1/receptionistRoutes";
@@ -9,7 +10,13 @@ import appointmentRouter from "./routes/v1/appointmentRoutes";
 // Create Express server
 const app = express();
 
-app.use(cors());
+app.use(cors(
+  {
+    origin: "*", // allow all origins
+    credentials: true, // allow cookies to b sent
+  }
+));
+app.use(cookieParser());
 
 app.use(logger("dev"));
 app.set("port", process.env.PORT || 3000);
