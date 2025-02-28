@@ -31,10 +31,6 @@ const AdminRegistration = () => {
       newErrors.name = "Full name is required";
     }
 
-    if (!formData.role) {
-      newErrors.role = "Role is required";
-    }
-
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -52,6 +48,8 @@ const AdminRegistration = () => {
     }
 
     setErrors(newErrors);
+    console.log(errors, newErrors);
+    
     return Object.keys(newErrors).length === 0;
   };
 

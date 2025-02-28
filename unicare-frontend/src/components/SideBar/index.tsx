@@ -31,15 +31,10 @@ const Sidebar: React.FC = () => {
   // const currentUser = useSelector((state: any) => state.auth.user);
   const dispatch = useDispatch();
 
-  const currentUser = {
-    name: "Dr Zahra",
-    department: "Cardiology",
-    avatar: "https://randomuser.me/api/port",
-    role: "doctor",
-  };
+  const currentUser = JSON.parse(localStorage.getItem("user") || '{}')
 
   useEffect(() => {
-    console.log("Current user", currentUser, typeof currentUser);
+    // console.log("Current user", currentUser, typeof currentUser);
   }, [currentUser]);
 
   const menuItems = [

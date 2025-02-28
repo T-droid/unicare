@@ -17,6 +17,7 @@ export const userRoleEnum = pgEnum("user_role", [
   "nurse",
   "receptionist",
   "lab_technician",
+  "admin"
 ]);
 export const appontmentStatus = pgEnum("status", [
   "pending",
