@@ -3,6 +3,7 @@ import userRouter from "./userRoutes";
 import docsRouter from "./docs";
 import departmentRouter from "./departmentRoutes";
 import studentRouter from "./studentRoutes";
+import pharmacistRouter from "./pharmacistRoutes";
 const appRouter = Router();
 
 const appRoutes = [
@@ -22,6 +23,10 @@ const appRoutes = [
     path: "/students",
     router: studentRouter,
   },
+  {
+    path: "/drug",
+    router: pharmacistRouter,
+  }
   // add other routes hapa chini
 ];
 
