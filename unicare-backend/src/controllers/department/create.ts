@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { DepartmentsTable } from "../../db/schema";
-import { db } from "../../db";
 import { saveDepartment } from "../../services/departmentService";
 
 export const createDepartment = async (

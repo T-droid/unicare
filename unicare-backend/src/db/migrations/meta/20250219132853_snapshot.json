@@ -1,6 +1,6 @@
 {
-  "id": "ffd73354-42a4-4d22-a3a2-639bbdd53107",
-  "prevId": "a236c653-ed66-4c35-822b-7ab257ea95f8",
+  "id": "15414632-0731-40dd-83ac-212b29031087",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -17,7 +17,7 @@
         },
         "reg_no": {
           "name": "reg_no",
-          "type": "uuid",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
@@ -133,7 +133,7 @@
       "columns": {
         "reg_no": {
           "name": "reg_no",
-          "type": "uuid",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": false
         },
@@ -145,14 +145,14 @@
         },
         "admission_date": {
           "name": "admission_date",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
         "discharge_date": {
           "name": "discharge_date",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         }
@@ -235,7 +235,7 @@
         },
         "reg_no": {
           "name": "reg_no",
-          "type": "uuid",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
@@ -325,8 +325,20 @@
         "reg_no": {
           "name": "reg_no",
           "type": "varchar(15)",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
+        },
+        "emergency_contact": {
+          "name": "emergency_contact",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "special_conditions": {
+          "name": "special_conditions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

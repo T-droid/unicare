@@ -8,6 +8,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  text,
 } from "drizzle-orm/pg-core";
 
 // role ENUM
@@ -66,7 +67,9 @@ export const UserTableRelations = relations(UserTable, ({ one, many }) => ({
 export const StudentTable = pgTable("students", {
   name: varchar("name", { length: 200 }).notNull(),
   phone_number: varchar("phone_number", { length: 15 }).unique().notNull(),
-  reg_no: varchar("reg_no", { length: 15 }).unique().notNull(),
+  reg_no: varchar("reg_no", { length: 15 }).unique().notNull().primaryKey(),
+  emergency_contact: varchar("emergency_contact", { length: 15 }), // Optional emergency contact
+  special_conditions: text("special_conditions"),
 });
 
 // Students  Relations
@@ -79,7 +82,7 @@ export const StudentTableRelations = relations(StudentTable, ({ many }) => ({
 // Appointments Table
 export const AppointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  reg_no: uuid("reg_no")
+  reg_no: varchar("reg_no", { length: 15 })
     .references(() => StudentTable.reg_no, { onDelete: "cascade" })
     .notNull(),
   doctor_id: uuid("doctor_id")
@@ -107,7 +110,7 @@ export const AppointmentsTableRelations = relations(
 // student medical records table
 export const StudentMedicalRecords = pgTable("medical_records", {
   id: uuid("id").defaultRandom().primaryKey(),
-  reg_no: uuid("reg_no")
+  reg_no: varchar("reg_no", { length: 15 })
     .notNull()
     .references(() => StudentTable.reg_no, {
       onDelete: "cascade",
@@ -155,7 +158,9 @@ export const RoomsTableRelations = relations(RoomsTable, ({ many }) => ({
 export const InpatientTable = pgTable(
   "inpatients",
   {
-    reg_no: uuid("reg_no").references(() => StudentTable.reg_no),
+    reg_no: varchar("reg_no", { length: 15 }).references(
+      () => StudentTable.reg_no,
+    ),
     room_id: uuid("room_id").references(() => RoomsTable.id),
     admission_date: timestamp("admission_date").defaultNow(),
     discharge_date: timestamp("discharge_date"),
