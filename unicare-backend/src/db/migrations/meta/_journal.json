@@ -15,6 +15,13 @@
       "when": 1740733589801,
       "tag": "20250228090629_orange_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740734764751,
+      "tag": "20250228092604_wandering_typhoid_mary",
+      "breakpoints": true
     }
   ]
 }

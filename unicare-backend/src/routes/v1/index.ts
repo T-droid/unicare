@@ -26,7 +26,7 @@ const appRoutes = [
   {
     path: "/drug",
     router: pharmacistRouter,
-  }
+  },
   // add other routes hapa chini
 ];
 
