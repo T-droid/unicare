@@ -72,48 +72,30 @@ export const UserTableRelations = relations(UserTable, ({ one, many }) => ({
 
 // Students Table
 export const StudentTable = pgTable("students", {
+  id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
   phone_number: varchar("phone_number", { length: 15 }).unique().notNull(),
-  reg_no: varchar("reg_no", { length: 15 }).unique().notNull().primaryKey(),
+  reg_no: varchar("reg_no", { length: 15 }).unique().notNull(),
   emergency_contact: varchar("emergency_contact", { length: 15 }), // Optional emergency contact
   special_conditions: text("special_conditions"),
-});
-
-// Students  Relations
-export const StudentTableRelations = relations(StudentTable, ({ many }) => ({
-  patients: many(PatientsTable),
-}));
-
-// Patients Table
-export const PatientsTable = pgTable("patients", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  reg_no: varchar("reg_no", { length: 15 })
-    .references(() => StudentTable.reg_no, { onDelete: "cascade" })
-    .notNull(),
   patient_type: patientTypeEnum("patient_type").notNull(),
   admission_date: timestamp("admission_date").defaultNow(),
   discharge_date: timestamp("discharge_date"),
 });
 
-// Patients Relations
-export const PatientsTableRelations = relations(
-  PatientsTable,
-  ({ one, many }) => ({
-    student: one(StudentTable, {
-      fields: [PatientsTable.reg_no],
-      references: [StudentTable.reg_no],
-    }),
-    appointments: many(AppointmentsTable),
-    medical_records: many(PatientMedicalRecords),
-  }),
-);
+// Students Relations
+export const StudentTableRelations = relations(StudentTable, ({ many, one }) => ({
+  appointments: many(AppointmentsTable),
+  medical_records: many(PatientMedicalRecords),
+  inpatients: many(InpatientTable),
+}));
+
 
 // Appointments Table
 export const AppointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  patient_id: uuid('patient_id')
-    .references(() => PatientsTable.id, { onDelete: "cascade" })
-    .notNull(),
+  reg_no: varchar("reg_no", { length: 15 })
+    .references(() => StudentTable.reg_no, { onDelete: "cascade" })
   doctor_id: uuid("doctor_id")
     .references(() => UserTable.id, { onDelete: "cascade" })
     .notNull(),
@@ -125,10 +107,9 @@ export const AppointmentsTable = pgTable("appointments", {
 export const AppointmentsTableRelations = relations(
   AppointmentsTable,
   ({ one }) => ({
-    patient: one(PatientsTable, {
-      fields: [AppointmentsTable.patient_id],
-      references: [PatientsTable.id],
-    }),
+    student: one(StudentTable, {
+      fields: [AppointmentsTable.reg_no],
+      references: [StudentTable.reg_no],
     doctor: one(UserTable, {
       fields: [AppointmentsTable.doctor_id],
       references: [UserTable.id],
@@ -141,7 +122,7 @@ export const PatientMedicalRecords = pgTable("medical_records", {
   id: uuid("id").defaultRandom().primaryKey(),
   patient_id: uuid('patient_id')
     .notNull()
-    .references(() => PatientsTable.id, {
+    .references(() => StudentTable.reg_no, {
       onDelete: "cascade",
       onUpdate: "cascade",
     }),
@@ -156,9 +137,9 @@ export const PatientMedicalRecords = pgTable("medical_records", {
 export const PatientMedicalRecordsRelations = relations(
   PatientMedicalRecords,
   ({ one }) => ({
-    patient: one(PatientsTable, {
-      fields: [PatientMedicalRecords.id],
-      references: [PatientsTable.id],
+    student: one(StudentTable, {
+      fields: [PatientMedicalRecords.reg_no],
+      references: [StudentTable.reg_no],
     }),
     prescribing_doctor: one(UserTable, {
       fields: [PatientMedicalRecords.prescribed_by_id],
@@ -187,8 +168,8 @@ export const RoomsTableRelations = relations(RoomsTable, ({ many }) => ({
 export const InpatientTable = pgTable(
   "inpatients",
   {
-    patient_id: uuid('patient_id').references(
-      () => PatientsTable.id,
+    reg_no: varchar("reg_no", { length: 15 }).references(
+      () => StudentTable.reg_no,
     ),
     room_id: uuid("room_id").references(() => RoomsTable.id),
     admission_date: timestamp("admission_date").defaultNow(),
@@ -207,9 +188,9 @@ export const InpatientTableRelations = relations(InpatientTable, ({ one }) => ({
     fields: [InpatientTable.room_id],
     references: [RoomsTable.id],
   }),
-  patient: one(PatientsTable, {
-    fields: [InpatientTable.patient_id],
-    references: [PatientsTable.id],
+  student: one(StudentTable, {
+    fields: [InpatientTable.reg_no],
+    references: [StudentTable.reg_no],
   }),
 }));
 
