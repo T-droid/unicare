@@ -1,3 +1,4 @@
+import { create } from "domain";
 import { relations } from "drizzle-orm";
 import {
   date,
@@ -35,6 +36,8 @@ export const patientTypeEnum = pgEnum("patient_type", [
 export const DepartmentsTable = pgTable("departments", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Departments Relations
@@ -59,6 +62,8 @@ export const UserTable = pgTable("users", {
   role: userRoleEnum("role").notNull(),
   email: varchar("email", { length: 70 }).notNull(),
   password: varchar("password", { length: 255 }).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Users Relations
@@ -76,11 +81,10 @@ export const StudentTable = pgTable("students", {
   name: varchar("name", { length: 200 }).notNull(),
   phone_number: varchar("phone_number", { length: 15 }).unique().notNull(),
   reg_no: varchar("reg_no", { length: 15 }).unique().notNull(),
-  emergency_contact: varchar("emergency_contact", { length: 15 }), // Optional emergency contact
+  emergency_contact: varchar("emergency_contact", { length: 15 }),
   special_conditions: text("special_conditions"),
-  patient_type: patientTypeEnum("patient_type").notNull(),
-  admission_date: timestamp("admission_date").defaultNow(),
-  discharge_date: timestamp("discharge_date"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Students Relations
@@ -95,12 +99,14 @@ export const StudentTableRelations = relations(StudentTable, ({ many, one }) => 
 export const AppointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
   reg_no: varchar("reg_no", { length: 15 })
-    .references(() => StudentTable.reg_no, { onDelete: "cascade" })
+    .references(() => StudentTable.reg_no, { onDelete: "cascade" }),
   doctor_id: uuid("doctor_id")
     .references(() => UserTable.id, { onDelete: "cascade" })
     .notNull(),
   appointment_date: timestamp("appointment_date").notNull(),
   status: appontmentStatus("status").default("pending"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Appointments Relations
@@ -110,6 +116,7 @@ export const AppointmentsTableRelations = relations(
     student: one(StudentTable, {
       fields: [AppointmentsTable.reg_no],
       references: [StudentTable.reg_no],
+    }),
     doctor: one(UserTable, {
       fields: [AppointmentsTable.doctor_id],
       references: [UserTable.id],
@@ -120,7 +127,7 @@ export const AppointmentsTableRelations = relations(
 // student medical records table
 export const PatientMedicalRecords = pgTable("medical_records", {
   id: uuid("id").defaultRandom().primaryKey(),
-  patient_id: uuid('patient_id')
+  reg_no: varchar('reg_no')
     .notNull()
     .references(() => StudentTable.reg_no, {
       onDelete: "cascade",
@@ -131,6 +138,9 @@ export const PatientMedicalRecords = pgTable("medical_records", {
   lab_results: varchar("lab_results", { length: 400 }),
   tested_by_id: uuid("tested_by_id").references(() => UserTable.id),
   doctor_recommendation: varchar("doctor_recommendation", { length: 400 }),
+  patient_type: patientTypeEnum("patient_type").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // medical records relations
@@ -152,14 +162,17 @@ export const PatientMedicalRecordsRelations = relations(
   }),
 );
 
-// rooms tabel
+// rooms table
 export const RoomsTable = pgTable("rooms", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }).notNull(),
   available_beds: integer("available_beds").default(0),
+  total_beds: integer("total_beds").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
-// inpatients table relations
+// rooms table relations
 export const RoomsTableRelations = relations(RoomsTable, ({ many }) => ({
   inpatients: many(InpatientTable),
 }));
@@ -174,10 +187,12 @@ export const InpatientTable = pgTable(
     room_id: uuid("room_id").references(() => RoomsTable.id),
     admission_date: timestamp("admission_date").defaultNow(),
     discharge_date: timestamp("discharge_date"),
+    created_at: timestamp("created_at").defaultNow(),
+    updated_at: timestamp("updated_at").defaultNow(),
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.patient_id, table.room_id] }),
+      pk: primaryKey({ columns: [table.reg_no, table.room_id] }),
     };
   },
 );
@@ -199,4 +214,6 @@ export const DrugsTable = pgTable("drugs", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }).notNull(),
   quantity: integer("quantity").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
