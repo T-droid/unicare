@@ -1,3 +1,4 @@
+import { create } from "domain";
 import { relations } from "drizzle-orm";
 import {
   date,
@@ -35,6 +36,8 @@ export const patientTypeEnum = pgEnum("patient_type", [
 export const DepartmentsTable = pgTable("departments", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Departments Relations
@@ -59,6 +62,8 @@ export const UserTable = pgTable("users", {
   role: userRoleEnum("role").notNull(),
   email: varchar("email", { length: 70 }).notNull(),
   password: varchar("password", { length: 255 }).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Users Relations
@@ -72,62 +77,45 @@ export const UserTableRelations = relations(UserTable, ({ one, many }) => ({
 
 // Students Table
 export const StudentTable = pgTable("students", {
+  id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
   phone_number: varchar("phone_number", { length: 15 }).unique().notNull(),
-  reg_no: varchar("reg_no", { length: 15 }).unique().notNull().primaryKey(),
-  emergency_contact: varchar("emergency_contact", { length: 15 }), // Optional emergency contact
+  reg_no: varchar("reg_no", { length: 15 }).unique().notNull(),
+  emergency_contact: varchar("emergency_contact", { length: 15 }),
   special_conditions: text("special_conditions"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
-// Students  Relations
-export const StudentTableRelations = relations(StudentTable, ({ many }) => ({
-  patients: many(PatientsTable),
+// Students Relations
+export const StudentTableRelations = relations(StudentTable, ({ many, one }) => ({
+  appointments: many(AppointmentsTable),
+  medical_records: many(PatientMedicalRecords),
+  inpatients: many(InpatientTable),
 }));
 
-// Patients Table
-export const PatientsTable = pgTable("patients", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  reg_no: varchar("reg_no", { length: 15 })
-    .references(() => StudentTable.reg_no, { onDelete: "cascade" })
-    .notNull(),
-  patient_type: patientTypeEnum("patient_type").notNull(),
-  admission_date: timestamp("admission_date").defaultNow(),
-  discharge_date: timestamp("discharge_date"),
-});
-
-// Patients Relations
-export const PatientsTableRelations = relations(
-  PatientsTable,
-  ({ one, many }) => ({
-    student: one(StudentTable, {
-      fields: [PatientsTable.reg_no],
-      references: [StudentTable.reg_no],
-    }),
-    appointments: many(AppointmentsTable),
-    medical_records: many(PatientMedicalRecords),
-  }),
-);
 
 // Appointments Table
 export const AppointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  patient_id: uuid("patient_id")
-    .references(() => PatientsTable.id, { onDelete: "cascade" })
-    .notNull(),
+  reg_no: varchar("reg_no", { length: 15 })
+    .references(() => StudentTable.reg_no, { onDelete: "cascade" }),
   doctor_id: uuid("doctor_id")
     .references(() => UserTable.id, { onDelete: "cascade" })
     .notNull(),
   appointment_date: timestamp("appointment_date").notNull(),
   status: appontmentStatus("status").default("pending"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Appointments Relations
 export const AppointmentsTableRelations = relations(
   AppointmentsTable,
   ({ one }) => ({
-    patient: one(PatientsTable, {
-      fields: [AppointmentsTable.patient_id],
-      references: [PatientsTable.id],
+    student: one(StudentTable, {
+      fields: [AppointmentsTable.reg_no],
+      references: [StudentTable.reg_no],
     }),
     doctor: one(UserTable, {
       fields: [AppointmentsTable.doctor_id],
@@ -139,9 +127,9 @@ export const AppointmentsTableRelations = relations(
 // student medical records table
 export const PatientMedicalRecords = pgTable("medical_records", {
   id: uuid("id").defaultRandom().primaryKey(),
-  patient_id: uuid("patient_id")
+  reg_no: varchar('reg_no')
     .notNull()
-    .references(() => PatientsTable.id, {
+    .references(() => StudentTable.reg_no, {
       onDelete: "cascade",
       onUpdate: "cascade",
     }),
@@ -150,15 +138,18 @@ export const PatientMedicalRecords = pgTable("medical_records", {
   lab_results: varchar("lab_results", { length: 400 }),
   tested_by_id: uuid("tested_by_id").references(() => UserTable.id),
   doctor_recommendation: varchar("doctor_recommendation", { length: 400 }),
+  patient_type: patientTypeEnum("patient_type").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // medical records relations
 export const PatientMedicalRecordsRelations = relations(
   PatientMedicalRecords,
   ({ one }) => ({
-    patient: one(PatientsTable, {
-      fields: [PatientMedicalRecords.id],
-      references: [PatientsTable.id],
+    student: one(StudentTable, {
+      fields: [PatientMedicalRecords.reg_no],
+      references: [StudentTable.reg_no],
     }),
     prescribing_doctor: one(UserTable, {
       fields: [PatientMedicalRecords.prescribed_by_id],
@@ -171,14 +162,17 @@ export const PatientMedicalRecordsRelations = relations(
   }),
 );
 
-// rooms tabel
+// rooms table
 export const RoomsTable = pgTable("rooms", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }).notNull(),
   available_beds: integer("available_beds").default(0),
+  total_beds: integer("total_beds").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
-// inpatients table relations
+// rooms table relations
 export const RoomsTableRelations = relations(RoomsTable, ({ many }) => ({
   inpatients: many(InpatientTable),
 }));
@@ -187,14 +181,18 @@ export const RoomsTableRelations = relations(RoomsTable, ({ many }) => ({
 export const InpatientTable = pgTable(
   "inpatients",
   {
-    patient_id: uuid("patient_id").references(() => PatientsTable.id),
+    reg_no: varchar("reg_no", { length: 15 }).references(
+      () => StudentTable.reg_no,
+    ),
     room_id: uuid("room_id").references(() => RoomsTable.id),
     admission_date: timestamp("admission_date").defaultNow(),
     discharge_date: timestamp("discharge_date"),
+    created_at: timestamp("created_at").defaultNow(),
+    updated_at: timestamp("updated_at").defaultNow(),
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.patient_id, table.room_id] }),
+      pk: primaryKey({ columns: [table.reg_no, table.room_id] }),
     };
   },
 );
@@ -205,9 +203,9 @@ export const InpatientTableRelations = relations(InpatientTable, ({ one }) => ({
     fields: [InpatientTable.room_id],
     references: [RoomsTable.id],
   }),
-  patient: one(PatientsTable, {
-    fields: [InpatientTable.patient_id],
-    references: [PatientsTable.id],
+  student: one(StudentTable, {
+    fields: [InpatientTable.reg_no],
+    references: [StudentTable.reg_no],
   }),
 }));
 
@@ -216,4 +214,6 @@ export const DrugsTable = pgTable("drugs", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 50 }).notNull(),
   quantity: integer("quantity").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
