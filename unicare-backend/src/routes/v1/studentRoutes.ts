@@ -56,3 +56,63 @@ export default studentRouter;
  *       500:
  *         description: Internal server error
  */
+
+/**
+ * @swagger
+ * /v1/students:
+ *   get:
+ *     summary: Get list of students
+ *     tags: [Students]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for filtering students
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       reg_no:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       phone_number:
+ *                         type: string
+ *                       emergency_contact:
+ *                         type: string
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     pages:
+ *                       type: integer
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
