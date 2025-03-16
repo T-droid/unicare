@@ -16,7 +16,7 @@ export const registerUser = async (
       res.status(400).json({ message: "User with the email already exists" });
       return;
     }
-console.log(department);
+    console.log(department);
 
     let payload = {
       department_id: department[0].id,
@@ -27,7 +27,7 @@ console.log(department);
       email: otherData.email,
       role: otherData.role,
     };
-  
+
     const savedObject = await saveUser(payload);
 
     const jwtData = {

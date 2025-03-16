@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -24,8 +24,7 @@ export const authenticateUser = async (
     }
 
     if (!token) {
-      
-      res.status(401).json({ message: 'Access denied. No token provided.' });
+      res.status(401).json({ message: "Access denied. No token provided." });
       return;
     }
 
@@ -35,7 +34,7 @@ export const authenticateUser = async (
 
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token.' });
+    res.status(401).json({ message: "Invalid token." });
     return;
   }
 };

@@ -28,6 +28,8 @@ const DoctorLabReports = lazy(() => import("./pages/doctor/LabReports"));
 const AdminSignIn = lazy(() => import("./pages/auth/AdminLogin"));
 const AdminRegistration = lazy(() => import("./pages/auth/AdminRegistration"));
 
+const PharmacyDashboard = lazy(() => import("./pages/pharmacy"));
+
 // Lazy-loaded Other Pages
 const ReceptionistPage = lazy(() => import("./pages/receptionist"));
 
@@ -169,11 +171,18 @@ function App() {
             />
           </Route>
 
+          <Route path="/pharmacy" element={
+            <>
+            <PageTitle title="Unicare | Pharmacy" />
+            <PharmacyDashboard />
+            </>
+          } />
+
           {/* 404 Not Found */}
           <Route
             path="*"
             element={
-              <h1 className="text-center text-2xl">404 - Page Not Found</h1>
+              <AdminSignIn />
             }
           />
         </Routes>

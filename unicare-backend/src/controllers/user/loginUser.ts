@@ -45,7 +45,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "none",
-      secure: false,
+      secure: true,
     });
 
     res.status(200).json({
@@ -53,7 +53,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       token,
     });
     console.log(res);
-    
+
     return;
   } catch (error) {
     console.error("Login error:", error);
