@@ -2,6 +2,7 @@ import express from "express";
 import { Request, Response } from "express";
 import logger from "morgan"; // for displaying http logs
 import appRouter from "./routes/v1";
+import cookieParser from "cookie-parser"; // for storing creds in cookies
 import cors from "cors";
 import { errorHandler } from "./middleware/error";
 import receptionistRouter from "./routes/v1/receptionistRoutes";
@@ -10,7 +11,16 @@ import pharmacistRouter from "./routes/v1/pharmacistRoutes";
 // Create Express server
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      callback(null, origin || "*"); // Allow all origins dynamically
+    },
+    credentials: true, // Allow cookies
+  })
+);
+
+app.use(cookieParser());
 
 app.use(logger("dev"));
 app.set("port", process.env.PORT || 3000);
