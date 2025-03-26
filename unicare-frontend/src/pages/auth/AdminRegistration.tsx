@@ -1,5 +1,6 @@
 import { setAlert } from "@/state/app";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -9,6 +10,8 @@ interface AdminFormData {
   email: string;
   password: string;
   role: string;
+  work_id: string;
+  admin_secret_key: string
 }
 
 const AdminRegistration = () => {
@@ -20,9 +23,12 @@ const AdminRegistration = () => {
     email: "",
     password: "",
     role: "admin",
+    work_id: "",
+    admin_secret_key: "",
   });
 
   const [errors, setErrors] = useState<Partial<AdminFormData>>({});
+  const [secretKeyVisible, setSecretKeyVisible] = useState<boolean>(false);
 
   const validateForm = () => {
     const newErrors: Partial<AdminFormData> = {};
@@ -45,6 +51,13 @@ const AdminRegistration = () => {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
+    }
+    if (!formData.work_id) {
+      newErrors.work_id = "Work ID is required";
+    }
+
+    if (!formData.admin_secret_key) {
+      newErrors.admin_secret_key = "Admin secret key is required";
     }
 
     setErrors(newErrors);
@@ -180,6 +193,25 @@ const AdminRegistration = () => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
+                Work ID
+              </label>
+              <input
+                type="text"
+                name="work_id"
+                value={formData.work_id}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.work_id ? "border-red-500" : "border-gray-200"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                placeholder="Enter work ID"
+              />
+              {errors.work_id && (
+                <p className="text-red-500 text-sm mt-1">{errors.work_id}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
                 Password
               </label>
               <input
@@ -195,8 +227,41 @@ const AdminRegistration = () => {
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
               )}
+          </div>
+
+          <div className="space-y-2 relative">
+              <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
+                Admin Secret Key
+              </label>
+              <div className="relative">
+                <input
+                  type={secretKeyVisible ? "text" : "password"}
+                  name="admin_secret_key"
+                  value={formData.admin_secret_key}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg border ${
+                    errors.admin_secret_key ? "border-red-500" : "border-gray-200"
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                  placeholder="Enter admin secret key"
+                />
+                <button
+                  type="button"
+                  onClick={() => setSecretKeyVisible(!secretKeyVisible)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  {secretKeyVisible ? (
+                    <EyeOff className="w-5 h-5 text-gray-500" />
+                  ) : (
+                    <Eye className="w-5 h-5 text-gray-500" />
+                  )}
+                </button>
+              </div>
+              {errors.admin_secret_key && (
+                <p className="text-red-500 text-sm mt-1">{errors.admin_secret_key}</p>
+              )}
             </div>
           </div>
+          
 
           <div className="flex items-center justify-end space-x-4">
             <button
@@ -208,6 +273,8 @@ const AdminRegistration = () => {
                   email: "",
                   password: "",
                   role: "",
+                  work_id: "",
+                  admin_secret_key: "",
                 });
                 setErrors({});
               }}
