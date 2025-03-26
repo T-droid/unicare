@@ -170,14 +170,12 @@ function App() {
               }
             />
           </Route>
-
           <Route path="/pharmacy" element={
             <>
             <PageTitle title="Unicare | Pharmacy" />
             <PharmacyDashboard />
             </>
           } />
-
 
             {/* Labtech Route */}
             <Route element={<AdminLayout />}>
