@@ -9,7 +9,7 @@ export const registerSchema = Joi.object({
   work_id: Joi.string().required(),
   department_id: Joi.string().required(),
   role: Joi.string()
-    .valid("doctor", "nurse", "receptionist", "lab_technician","admin")
+    .valid("doctor", "nurse", "receptionist", "lab_technician", "admin")
     .required(),
 });
 

@@ -39,14 +39,11 @@ export const saveUser = async (payload: User) => {
 };
 
 export const createStaff = async (payload: Staff) => {
-  return await db
-    .insert(StaffTable)
-    .values(payload)
-    .returning({
-      department_id: StaffTable.department_id,
-    });
-}
+  return await db.insert(StaffTable).values(payload).returning({
+    department_id: StaffTable.department_id,
+  });
+};
 
 export const deleteUserById = async (userId: string): Promise<void> => {
   await db.delete(UserTable).where(eq(UserTable.id, userId));
-}
+};
