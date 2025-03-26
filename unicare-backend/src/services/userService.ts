@@ -30,7 +30,7 @@ export const saveUser = async (payload: any) => {
       id: UserTable.id,
       name: UserTable.name,
       phone_number: UserTable.phone_number,
-      work_id: UserTable.phone_number,
+      work_id: UserTable.work_id,
       role: UserTable.role,
       email: UserTable.email,
     });
