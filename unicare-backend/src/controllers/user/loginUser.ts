@@ -6,7 +6,7 @@ import { UserTable } from "../../db/schema";
 import { eq } from "drizzle-orm";
 
 // Define JWT secret
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET || "my_secret_key";
 
 // Explicitly type as Express request handler
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
