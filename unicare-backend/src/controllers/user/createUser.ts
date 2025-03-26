@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import { findDepartmentByName } from "../../services/departmentService";
-import { findUserByEmail, saveUser } from "../../services/userService";
-import { generateToken, hashPassword } from "../../util/password";
+import { createStaff, deleteUserById, findUserByEmail, saveUser } from "../../services/userService";
+import { generateToken } from "../../util/password";
+import { User } from "../../types/userTypes";
 
 export const registerUser = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    let { department, ...otherData } = req.body;
-    department = await findDepartmentByName(department);
+    let { ...otherData } = req.body;
 
     const userExists = await findUserByEmail(otherData.email);
     if (userExists.length > 0) {
@@ -17,8 +17,14 @@ export const registerUser = async (
       return;
     }
 
-    let payload = {
-      department_id: department[0].id,
+    if (otherData.role === "admin") {
+      if (!otherData.secretKey && otherData.secretKey !== 'IamAdmin') {
+        res.status(400).json({ message: "Invalid secret key" });
+        return;
+      }
+    }
+
+    let payload: User = {
       name: otherData.name,
       phone_number: otherData.phone_number,
       work_id: otherData.work_id,
@@ -34,6 +40,18 @@ export const registerUser = async (
       email: savedObject[0].email,
     };
 
+    if (jwtData.role !== 'admin') {
+      // populate staff table
+      const newStaff = await createStaff({ id: savedObject[0].id, department_id: otherData.department_id });
+      if (newStaff.length === 0) {
+        await deleteUserById(savedObject[0].id);
+        res.status(500).json({
+          message: "Error occurred",
+        });
+        return;
+      }
+    }
+  
     const token = generateToken(jwtData);
 
     res.status(200).json({
