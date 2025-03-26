@@ -3,6 +3,7 @@ import { Router } from "express";
 import validateRequest from "../../middleware/validateRequest";
 import { createDeptSchema } from "../../validation/departmentValidation";
 import { listDepartments } from "../../controllers/department/list";
+import { authenticateUser } from "../../middleware/auth";
 const departmentRouter = Router();
 
 departmentRouter.post(
@@ -11,7 +12,7 @@ departmentRouter.post(
   createDepartment,
 );
 
-departmentRouter.get("/", listDepartments);
+departmentRouter.get("/", authenticateUser, listDepartments);
 export default departmentRouter;
 
 /**

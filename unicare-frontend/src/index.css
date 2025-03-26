@@ -111,6 +111,7 @@
   }
   button {
     outline: none;
+    cursor: pointer;
   }
   /* Scrollbar Styling */
   ::-webkit-scrollbar {

@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App.tsx";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./state/auth.ts";
+import { authReducer } from "./state/auth.ts";
 import {appReducer} from "./state/app.ts";
 import routingReducer from "./state/routing.ts";
 

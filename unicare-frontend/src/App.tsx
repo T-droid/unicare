@@ -7,9 +7,9 @@ import { Suspense, lazy } from "react";
 import AdminLayout from "./layout/AdminLayout";
 import PageTitle from "./pageTitle";
 import MessageModal from "./components/alerts/MessageModal";
-import { Loader } from "lucide-react";
 import { CircularProgress } from "@mui/material";
 import ScheduleManager from "./pages/doctor/ScheduleManager";
+import LabTechnicianDashboard from "./pages/labtech/LabTechnicianDashboard";
 
 // Lazy-loaded Admin Pages
 const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
@@ -27,6 +27,8 @@ const DoctorLabReports = lazy(() => import("./pages/doctor/LabReports"));
 // Lazy-loaded Authentication Pages
 const AdminSignIn = lazy(() => import("./pages/auth/AdminLogin"));
 const AdminRegistration = lazy(() => import("./pages/auth/AdminRegistration"));
+
+const PharmacyDashboard = lazy(() => import("./pages/pharmacy"));
 
 // Lazy-loaded Other Pages
 const ReceptionistPage = lazy(() => import("./pages/receptionist"));
@@ -168,12 +170,31 @@ function App() {
               }
             />
           </Route>
+          <Route path="/pharmacy" element={
+            <>
+            <PageTitle title="Unicare | Pharmacy" />
+            <PharmacyDashboard />
+            </>
+          } />
+
+            {/* Labtech Route */}
+            <Route element={<AdminLayout />}>
+            <Route
+              path="/labtech"
+              element={
+                <>
+                  <PageTitle title="LabTech Dashboard" />
+                  <LabTechnicianDashboard />
+                </>
+              }
+            />
+          </Route>
 
           {/* 404 Not Found */}
           <Route
             path="*"
             element={
-              <h1 className="text-center text-2xl">404 - Page Not Found</h1>
+              <AdminSignIn />
             }
           />
         </Routes>

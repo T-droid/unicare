@@ -1,6 +1,6 @@
 import { setAlert } from "@/state/app";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 interface StaffFormData {
@@ -16,6 +16,12 @@ interface StaffFormData {
 const StaffRegistration = () => {
   const dispatch = useDispatch();
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [departments, setDepartments] = useState<
+    Array<{
+      id: string;
+      name: string;
+    }>
+  >([]);
   const [formData, setFormData] = useState<StaffFormData>({
     name: "",
     phone_number: "",
@@ -27,6 +33,26 @@ const StaffRegistration = () => {
   });
 
   const [errors, setErrors] = useState<Partial<StaffFormData>>({});
+
+  useEffect(() => {
+    console.log(`Cookie: ${document.cookie}`);
+    
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_SERVER_HEAD}/departments`,
+          { withCredentials: true }
+        );
+        if (response.status === 200) {
+          const departments = response.data.departments;
+          setDepartments(departments);
+        }
+      } catch (error) {
+        console.error("Error loading departments:", error);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
   const validateForm = () => {
     const newErrors: Partial<StaffFormData> = {};
@@ -178,16 +204,21 @@ const StaffRegistration = () => {
             <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
               Department
             </label>
-            <input
-              type="text"
+            <select
               name="department"
               value={formData.department}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
-                errors.department ? "border-red-500" : ""
+              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
+                errors.department ? "border-red-500" : "border-gray-200"
               } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-              placeholder="Enter department"
-            />
+            >
+              <option value="">Select Department</option>
+              {departments.map((department) => (
+                <option key={department.id} value={department.name}>
+                  {department.name}
+                </option>
+              ))}
+            </select>
             {errors.department && (
               <p className="text-red-500 text-sm mt-1">{errors.department}</p>
             )}
