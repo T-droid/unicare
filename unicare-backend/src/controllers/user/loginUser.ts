@@ -45,13 +45,15 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "none",
-      secure: false,
+      secure: true,
     });
 
     res.status(200).json({
       data: user[0], // return one user since it return an Array
       token,
     });
+    console.log(res);
+
     return;
   } catch (error) {
     console.error("Login error:", error);

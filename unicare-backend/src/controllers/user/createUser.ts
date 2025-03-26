@@ -16,6 +16,7 @@ export const registerUser = async (
       res.status(400).json({ message: "User with the email already exists" });
       return;
     }
+    console.log(department);
 
     if (otherData.role === "admin") {
       if (!otherData.secretKey && otherData.secretKey !== 'IamAdmin') {
@@ -32,6 +33,7 @@ export const registerUser = async (
       email: otherData.email,
       role: otherData.role,
     };
+
     const savedObject = await saveUser(payload);
 
     const jwtData = {

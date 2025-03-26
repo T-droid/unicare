@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { getDepartments } from "../../services/departmentService";
+import { AuthRequest } from "../../middleware/auth";
 
 export const listDepartments = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
 ): Promise<void> => {
   try {
