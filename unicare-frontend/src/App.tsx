@@ -7,9 +7,9 @@ import { Suspense, lazy } from "react";
 import AdminLayout from "./layout/AdminLayout";
 import PageTitle from "./pageTitle";
 import MessageModal from "./components/alerts/MessageModal";
-import { Loader } from "lucide-react";
 import { CircularProgress } from "@mui/material";
 import ScheduleManager from "./pages/doctor/ScheduleManager";
+import LabTechnicianDashboard from "./pages/labtech/LabTechnicianDashboard";
 
 // Lazy-loaded Admin Pages
 const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
@@ -164,6 +164,20 @@ function App() {
                 <>
                   <PageTitle title="Receptionist Dashboard" />
                   <ReceptionistPage />
+                </>
+              }
+            />
+          </Route>
+
+
+            {/* Labtech Route */}
+            <Route element={<AdminLayout />}>
+            <Route
+              path="/labtech"
+              element={
+                <>
+                  <PageTitle title="LabTech Dashboard" />
+                  <LabTechnicianDashboard />
                 </>
               }
             />
