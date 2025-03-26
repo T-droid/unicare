@@ -88,18 +88,22 @@ export const StudentTable = pgTable("students", {
 });
 
 // Students Relations
-export const StudentTableRelations = relations(StudentTable, ({ many, one }) => ({
-  appointments: many(AppointmentsTable),
-  medical_records: many(PatientMedicalRecords),
-  inpatients: many(InpatientTable),
-}));
-
+export const StudentTableRelations = relations(
+  StudentTable,
+  ({ many, one }) => ({
+    appointments: many(AppointmentsTable),
+    medical_records: many(PatientMedicalRecords),
+    inpatients: many(InpatientTable),
+  }),
+);
 
 // Appointments Table
 export const AppointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  reg_no: varchar("reg_no", { length: 15 })
-    .references(() => StudentTable.reg_no, { onDelete: "cascade" }),
+  reg_no: varchar("reg_no", { length: 15 }).references(
+    () => StudentTable.reg_no,
+    { onDelete: "cascade" },
+  ),
   doctor_id: uuid("doctor_id")
     .references(() => UserTable.id, { onDelete: "cascade" })
     .notNull(),
@@ -127,7 +131,7 @@ export const AppointmentsTableRelations = relations(
 // student medical records table
 export const PatientMedicalRecords = pgTable("medical_records", {
   id: uuid("id").defaultRandom().primaryKey(),
-  reg_no: varchar('reg_no')
+  reg_no: varchar("reg_no")
     .notNull()
     .references(() => StudentTable.reg_no, {
       onDelete: "cascade",

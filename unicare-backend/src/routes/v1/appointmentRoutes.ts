@@ -12,7 +12,7 @@ const appointmentRouter = express.Router();
 
 /**
  * @swagger
- * /appointments:
+ * /v1/appointments:
  *   post:
  *     summary: Create a new appointment
  *     tags: [Appointments]

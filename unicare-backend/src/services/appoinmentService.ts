@@ -2,7 +2,7 @@ import { Appointment } from "../types/appointment";
 import { db } from "../db";
 import { AppointmentsTable, StudentTable, UserTable } from "../db/schema";
 import { and, eq } from "drizzle-orm";
-import { Request, Response } from "express";
+
 
 const appointments: Appointment[] = [];
 
@@ -11,12 +11,17 @@ export const bookAppointment = async (
   doctorId: string,
   date: string | any,
 ) => {
+
+  const appointmentDate = new Date(date);
+  if (isNaN(appointmentDate.getTime())) {
+    throw new Error("Invalid date format");
+  }
   return await db
     .insert(AppointmentsTable)
     .values({
       reg_no: regNo,
       doctor_id: doctorId,
-      appointment_date: date,
+      appointment_date: appointmentDate,
     })
     .returning();
 };

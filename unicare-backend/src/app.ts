@@ -17,7 +17,7 @@ app.use(
       callback(null, origin || "*"); // Allow all origins dynamically
     },
     credentials: true, // Allow cookies
-  })
+  }),
 );
 
 app.use(cookieParser());
