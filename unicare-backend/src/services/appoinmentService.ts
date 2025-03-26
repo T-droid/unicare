@@ -3,7 +3,6 @@ import { db } from "../db";
 import { AppointmentsTable, StudentTable, UserTable } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 
-
 const appointments: Appointment[] = [];
 
 export const bookAppointment = async (
@@ -11,7 +10,6 @@ export const bookAppointment = async (
   doctorId: string,
   date: string | any,
 ) => {
-
   const appointmentDate = new Date(date);
   if (isNaN(appointmentDate.getTime())) {
     throw new Error("Invalid date format");

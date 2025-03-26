@@ -12,7 +12,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = () => {
-  const loggedIn = true;
+  const loggedIn = localStorage.getItem("token");
   if (!loggedIn) {
     window.location.href = "/auth/login";
   }

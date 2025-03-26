@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, UseDispatch } from "react-redux";
 import { Card, CardHeader, CardContent } from "../../components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { setAlert } from "@/state/app";
 import axios from "axios";
 import { setCurrentUser, setToken } from "@/state/auth";
@@ -13,6 +13,7 @@ const AdminSignIn: React.FC = () => {
     password: "",
   });
   const [error] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -21,7 +22,8 @@ const AdminSignIn: React.FC = () => {
       setSubmitting(true);
       const loginResponse = await axios.post(
         `${import.meta.env.VITE_SERVER_HEAD}/users/login`,
-        formData
+        formData,
+        { withCredentials: true }
       );
 
       if (loginResponse.status !== 200) {
@@ -75,12 +77,12 @@ const AdminSignIn: React.FC = () => {
                 required
               />
             </div>
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <input
-                type="password"
+                type={`${passwordVisible ? "text" : "password"}`}
                 name="password"
                 className="mt-1 block w-full rounded-md border border-gray-300 p-2"
                 value={formData.password}
@@ -89,6 +91,17 @@ const AdminSignIn: React.FC = () => {
                 }
                 required
               />
+              <button
+                onClick={() => setPasswordVisible(!passwordVisible)}
+                type="button"
+                className="float-right absolute right-2 top-1/2"
+              >
+                {passwordVisible ? (
+                  <EyeOff className="w-6 h-6 text-gray-500" />
+                ) : (
+                  <Eye className="w-6 h-6 text-gray-500" />
+                )}
+              </button>
             </div>
             {error && (
               <div className="flex items-center text-red-600 text-sm">
