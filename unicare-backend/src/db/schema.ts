@@ -65,7 +65,7 @@ export const UserTableRelations = relations(UserTable, ({ one }) => ({
     fields: [UserTable.id],
     references: [StaffTable.id],
   }),
-}));
+}))
 
 // Users Table
 export const StaffTable = pgTable("users", {

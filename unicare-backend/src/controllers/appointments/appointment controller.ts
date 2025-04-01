@@ -18,9 +18,11 @@ export const createAppointment = async (
 
     // Check if doctor exists
     if (!(await doctorExists(doctorId))) {
-      res.status(400).json({
-        error: "Doctor with this ID does not exist or is not a doctor",
-      });
+      res
+        .status(400)
+        .json({
+          error: "Doctor with this ID does not exist or is not a doctor",
+        });
       return;
     }
 
