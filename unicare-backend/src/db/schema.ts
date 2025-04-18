@@ -17,7 +17,7 @@ export const userRoleEnum = pgEnum("user_role", [
   "nurse",
   "receptionist",
   "lab_technician",
-  "admin"
+  "admin",
 ]);
 export const appontmentStatus = pgEnum("status", [
   "pending",
@@ -96,14 +96,17 @@ export const PatientsTable = pgTable("patients", {
 });
 
 // Patients Relations
-export const PatientsTableRelations = relations(PatientsTable, ({ one, many }) => ({
-  student: one(StudentTable, {
-    fields: [PatientsTable.reg_no],
-    references: [StudentTable.reg_no],
+export const PatientsTableRelations = relations(
+  PatientsTable,
+  ({ one, many }) => ({
+    student: one(StudentTable, {
+      fields: [PatientsTable.reg_no],
+      references: [StudentTable.reg_no],
+    }),
+    appointments: many(AppointmentsTable),
+    medical_records: many(PatientMedicalRecords),
   }),
-  appointments: many(AppointmentsTable),
-  medical_records: many(PatientMedicalRecords),
-}));
+);
 
 // Appointments Table
 export const AppointmentsTable = pgTable("appointments", {

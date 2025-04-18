@@ -26,3 +26,12 @@ export const listDrugs = async (req: Request, res: Response) => {
     res.status(400).json({ error });
   }
 };
+export const handleAdministerDrug = async (req: Request, res: Response) => {
+  try {
+    const { id, amount } = req.body;
+    const updatedDrug = await administerDrug(id, amount);
+    res.status(200).json(updatedDrug);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
