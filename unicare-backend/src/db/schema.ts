@@ -11,6 +11,7 @@ import {
   varchar,
   text,
 } from "drizzle-orm/pg-core";
+import app from "../app";
 
 // role ENUM
 export const userRoleEnum = pgEnum("user_role", [
@@ -48,7 +49,7 @@ export const DepartmentsTableRelations = relations(
   }),
 );
 
-export const UserTable = pgTable("admin", {
+export const UserTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
   phone_number: varchar("phone_number", { length: 15 }).notNull().unique(),
@@ -65,11 +66,12 @@ export const UserTableRelations = relations(UserTable, ({ one }) => ({
     fields: [UserTable.id],
     references: [StaffTable.id],
   }),
-}))
+}));
 
 // Users Table
 export const StaffTable = pgTable("users", {
   id: uuid("id")
+    .primaryKey()
     .notNull()
     .references(() => UserTable.id, { onDelete: "cascade" }),
   department_id: uuid("department_id")
@@ -85,6 +87,7 @@ export const StaffTableRelations = relations(StaffTable, ({ one, many }) => ({
     fields: [StaffTable.department_id],
     references: [DepartmentsTable.id],
   }),
+  appointments: many(AppointmentsTable),
   medical_records: many(PatientMedicalRecords),
 }));
 
