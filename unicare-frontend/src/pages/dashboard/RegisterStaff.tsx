@@ -1,5 +1,6 @@
 import { setAlert } from "@/state/app";
 import axios from "axios";
+import { Plus, PlusCircleIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -36,7 +37,7 @@ const StaffRegistration = () => {
 
   useEffect(() => {
     console.log(`Cookie: ${document.cookie}`);
-    
+
     const fetchDepartments = async () => {
       try {
         const response = await axios.get(
@@ -219,6 +220,23 @@ const StaffRegistration = () => {
                 </option>
               ))}
             </select>
+            <div className="px-2">
+              <form action="" className="flex items-center space-x-2 w-full">
+                <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2">
+                  <input className="w-full h-full outline-none" type="text" name="newDepartment" id="newDepartment" placeholder="Create new department" />
+                </div>
+                <button
+                  onClick={() => {
+                    console.log("Create Department");
+                  }}
+                  className="w-auto"
+                  type="button"
+                >
+                  <Plus className="w-6 h-6 text-primary/40" />
+                </button>
+              </form>
+            </div>
+
             {errors.department && (
               <p className="text-red-500 text-sm mt-1">{errors.department}</p>
             )}

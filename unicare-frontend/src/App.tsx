@@ -170,15 +170,18 @@ function App() {
               }
             />
           </Route>
-          <Route path="/pharmacy" element={
-            <>
-            <PageTitle title="Unicare | Pharmacy" />
-            <PharmacyDashboard />
-            </>
-          } />
+          <Route
+            path="/pharmacy"
+            element={
+              <>
+                <PageTitle title="Unicare | Pharmacy" />
+                <PharmacyDashboard />
+              </>
+            }
+          />
 
-            {/* Labtech Route */}
-            <Route element={<AdminLayout />}>
+          {/* Labtech Route */}
+          <Route element={<AdminLayout />}>
             <Route
               path="/labtech"
               element={
@@ -191,12 +194,7 @@ function App() {
           </Route>
 
           {/* 404 Not Found */}
-          <Route
-            path="*"
-            element={
-              <AdminSignIn />
-            }
-          />
+          <Route path="*" element={<AdminSignIn />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
