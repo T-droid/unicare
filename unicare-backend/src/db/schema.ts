@@ -44,32 +44,45 @@ export const DepartmentsTable = pgTable("departments", {
 export const DepartmentsTableRelations = relations(
   DepartmentsTable,
   ({ many }) => ({
-    users: many(UserTable),
+    users: many(StaffTable),
   }),
 );
 
-// Users Table
-export const UserTable = pgTable("users", {
+export const UserTable = pgTable("admin", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
   phone_number: varchar("phone_number", { length: 15 }).notNull().unique(),
+  email: varchar("email", { length: 70 }).unique().notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
+  role: userRoleEnum("role").notNull(),
   work_id: varchar("work_id", { length: 100 }).notNull().unique(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const UserTableRelations = relations(UserTable, ({ one }) => ({
+  staff: one(StaffTable, {
+    fields: [UserTable.id],
+    references: [StaffTable.id],
+  }),
+}))
+
+// Users Table
+export const StaffTable = pgTable("users", {
+  id: uuid("id")
+    .notNull()
+    .references(() => UserTable.id, { onDelete: "cascade" }),
   department_id: uuid("department_id")
     .notNull()
     .references(() => DepartmentsTable.id, {
       onDelete: "cascade",
     }),
-  role: userRoleEnum("role").notNull(),
-  email: varchar("email", { length: 70 }).notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Users Relations
-export const UserTableRelations = relations(UserTable, ({ one, many }) => ({
+export const StaffTableRelations = relations(StaffTable, ({ one, many }) => ({
   department: one(DepartmentsTable, {
-    fields: [UserTable.department_id],
+    fields: [StaffTable.department_id],
     references: [DepartmentsTable.id],
   }),
   medical_records: many(PatientMedicalRecords),
@@ -105,7 +118,7 @@ export const AppointmentsTable = pgTable("appointments", {
     { onDelete: "cascade" },
   ),
   doctor_id: uuid("doctor_id")
-    .references(() => UserTable.id, { onDelete: "cascade" })
+    .references(() => StaffTable.id, { onDelete: "cascade" })
     .notNull(),
   appointment_date: timestamp("appointment_date").notNull(),
   status: appontmentStatus("status").default("pending"),
@@ -121,9 +134,9 @@ export const AppointmentsTableRelations = relations(
       fields: [AppointmentsTable.reg_no],
       references: [StudentTable.reg_no],
     }),
-    doctor: one(UserTable, {
+    doctor: one(StaffTable, {
       fields: [AppointmentsTable.doctor_id],
-      references: [UserTable.id],
+      references: [StaffTable.id],
     }),
   }),
 );
@@ -138,9 +151,9 @@ export const PatientMedicalRecords = pgTable("medical_records", {
       onUpdate: "cascade",
     }),
   prescription: varchar("prescription", { length: 400 }),
-  prescribed_by_id: uuid("prescribed_by_id").references(() => UserTable.id),
+  prescribed_by_id: uuid("prescribed_by_id").references(() => StaffTable.id),
   lab_results: varchar("lab_results", { length: 400 }),
-  tested_by_id: uuid("tested_by_id").references(() => UserTable.id),
+  tested_by_id: uuid("tested_by_id").references(() => StaffTable.id),
   doctor_recommendation: varchar("doctor_recommendation", { length: 400 }),
   patient_type: patientTypeEnum("patient_type").notNull(),
   created_at: timestamp("created_at").defaultNow(),
@@ -155,13 +168,13 @@ export const PatientMedicalRecordsRelations = relations(
       fields: [PatientMedicalRecords.reg_no],
       references: [StudentTable.reg_no],
     }),
-    prescribing_doctor: one(UserTable, {
+    prescribing_doctor: one(StaffTable, {
       fields: [PatientMedicalRecords.prescribed_by_id],
-      references: [UserTable.id],
+      references: [StaffTable.id],
     }),
-    lab_technician: one(UserTable, {
+    lab_technician: one(StaffTable, {
       fields: [PatientMedicalRecords.tested_by_id],
-      references: [UserTable.id],
+      references: [StaffTable.id],
     }),
   }),
 );
