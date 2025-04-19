@@ -20,6 +20,21 @@ export const findStudentByRegNo = async (regNo: string) => {
     .where(eq(StudentTable.reg_no, regNo));
 };
 
+export const findAllUsers = async () => {
+  // return all users but omit password field from the response
+
+  return await db
+    .select({
+      id: UserTable.id,
+      name: UserTable.name,
+      phone_number: UserTable.phone_number,
+      work_id: UserTable.work_id,
+      role: UserTable.role,
+      email: UserTable.email,
+    })
+    .from(UserTable);
+};
+
 export const saveUser = async (payload: User) => {
   const hashedPassword = await hashPassword(payload.password);
   return await db
