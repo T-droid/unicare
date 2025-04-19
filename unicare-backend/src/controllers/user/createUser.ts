@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { findDepartmentByName } from "../../services/departmentService";
-import { createStaff, deleteUserById, findUserByEmail, saveUser } from "../../services/userService";
+import {
+  createStaff,
+  deleteUserById,
+  findUserByEmail,
+  saveUser,
+} from "../../services/userService";
 import { generateToken } from "../../util/password";
 import { User } from "../../types/userTypes";
 
@@ -16,10 +21,10 @@ export const registerUser = async (
       res.status(400).json({ message: "User with the email already exists" });
       return;
     }
-    console.log(department);
+    console.log("department");
 
     if (otherData.role === "admin") {
-      if (!otherData.secretKey && otherData.secretKey !== 'IamAdmin') {
+      if (!otherData.secretKey && otherData.secretKey !== "IamAdmin") {
         res.status(400).json({ message: "Invalid secret key" });
         return;
       }
@@ -42,9 +47,12 @@ export const registerUser = async (
       email: savedObject[0].email,
     };
 
-    if (jwtData.role !== 'admin') {
+    if (jwtData.role !== "admin") {
       // populate staff table
-      const newStaff = await createStaff({ id: savedObject[0].id, department_id: otherData.department_id });
+      const newStaff = await createStaff({
+        id: savedObject[0].id,
+        department_id: otherData.department_id,
+      });
       if (newStaff.length === 0) {
         await deleteUserById(savedObject[0].id);
         res.status(500).json({
@@ -53,7 +61,7 @@ export const registerUser = async (
         return;
       }
     }
-  
+
     const token = generateToken(jwtData);
 
     res.status(200).json({

@@ -9,6 +9,7 @@ import {
   Clock,
   Search,
 } from "lucide-react";
+import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -18,8 +19,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import StudentListing from "./students/StudentListing";
 
 const AdminDashboard = () => {
+  const [showStudentListing, setShowStudentListing] = useState<boolean>(false);
   // Sample data - replace with real data from your backend
   const recordsData = [
     { month: "Jan", records: 150 },
@@ -81,7 +84,7 @@ const AdminDashboard = () => {
               <div className="p-3 bg-blue-100 rounded-full">
                 <GraduationCap className="h-6 w-6 text-blue-600" />
               </div>
-              <div>
+              <div onClick={() => setShowStudentListing(!showStudentListing)}>
                 <p className="text-sm text-gray-500">Total Students</p>
                 <h3 className="text-2xl font-bold">2,543</h3>
                 <p className="text-xs text-green-600">+123 this semester</p>
@@ -136,68 +139,85 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      {/* Charts and Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Records Management Chart */}
-        <Card className="bg-slate-50 dark:bg-boxdark border-0">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
-              <span>Record Management Activity</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={recordsData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-gray-600" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="records" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+      {showStudentListing ? (
+        <StudentListing />
+      ) : (
+        // Charts and Activity
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Records Management Chart */}
+          <Card className="bg-slate-50 dark:bg-boxdark border-0">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+                <span>Record Management Activity</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={recordsData}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      className="stroke-gray-600"
+                    />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip
+                      cursor={{ fill: "transparent" }}
+                      contentStyle={{
+                        backgroundColor: "#fff",
+                        borderRadius: "8px",
+                      }}
+                      itemStyle={{ color: "#000" }}
+                      labelStyle={{ fontWeight: "bold" }}
+                      formatter={(value) => [`${value}`, "Records"]}
+                    />
+                    <Bar dataKey="records" fill="#3b82f6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Recent Activity */}
-        <Card className="bg-slate-50 dark:bg-boxdark border-0">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Activity className="h-5 w-5 text-blue-600" />
-              <span>Recent Record Activities</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-center space-x-4 p-3 bg-bodydark1 dark:bg-slate-700 rounded-lg"
-                >
+          {/* Recent Activity */}
+          <Card className="bg-slate-50 dark:bg-boxdark border-0">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Activity className="h-5 w-5 text-blue-600" />
+                <span>Recent Record Activities</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentActivities.map((activity) => (
                   <div
-                    className={`p-2 rounded-full dark:bg-boxdark 
+                    key={activity.id}
+                    className="flex items-center space-x-4 p-3 bg-bodydark1 dark:bg-slate-700 rounded-lg"
+                  >
+                    <div
+                      className={`p-2 rounded-full dark:bg-boxdark 
                     ${activity.type === "create" ? "text-green-500" : ""} 
                     ${activity.type === "update" ? "text-blue-500" : ""} 
                     ${activity.type === "medical" ? "text-purple-500" : ""}
                     ${activity.type === "discipline" ? "text-orange-500" : ""}`}
-                  >
-                    <Activity className="h-4 w-4 text-gray-60" />
+                    >
+                      <Activity className="h-4 w-4 text-gray-60" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {activity.action}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {activity.time}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {activity.action}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       {/* Quick Actions */}
       <Card className="bg-slate-50 dark:bg-boxdark border-0">
         <CardHeader>
