@@ -1,21 +1,16 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { db } from "../../db";
 import { UserTable } from "../../db/schema";
 import { eq } from "drizzle-orm";
+import { comparePassword, generateToken } from "../../util/password";
 
 // Define JWT secret
 const JWT_SECRET = process.env.JWT_SECRET || "my_secret_key";
 
 // Explicitly type as Express request handler
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
-  const { email, password }: { email: string; password: string } = req.body;
-
-  if (!email || !password) {
-    res.status(400).json({ error: "Email and password are required" });
-    return;
-  }
+  const { email, password } = req.body;
 
   try {
     // Fetch user from the database
@@ -30,17 +25,18 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Extract user details
-    const { id, email: userEmail, password: hashedPassword } = user[0];
+    const { id, email: userEmail, password: hashedPassword, role } = user[0];
 
     // Compare passwords
-    const isValidPassword = await bcrypt.compare(password, hashedPassword);
+    const isValidPassword = await comparePassword(password, hashedPassword);
     if (!isValidPassword) {
-      res.status(401).json({ error: "Invalid credentials" });
+      console.log(`User pwd: ${password}`);
+      res.status(401).json({ error: "Invalid password" });
       return;
     }
 
     // Generate JWT token
-    const token = jwt.sign({ id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = generateToken({ id, email: userEmail , role});
 
     res.cookie("token", token, {
       httpOnly: true,

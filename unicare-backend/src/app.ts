@@ -44,5 +44,9 @@ app.get("/api/v1", (req: Request, res: Response) => {
   res.status(200).json({ msg: "server is up.." });
 });
 
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).json({ msg: "server is up.." });
+});
+
 app.use(errorHandler);
 export default app;
