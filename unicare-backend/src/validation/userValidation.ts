@@ -7,13 +7,13 @@ export const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(5).required(),
   work_id: Joi.string().required(),
-  department_id: Joi.string().required(),
+  department: Joi.string().required(),
   role: Joi.string()
-    .valid("doctor", "nurse", "receptionist", "lab_technician", "admin")
+    .valid("doctor", "nurse", "receptionist", "lab_technician")
     .required(),
 });
 
 export const loginSchema = Joi.object({
   email: Joi.string().min(5).max(30).email().required(),
-  password: Joi.string().min(8).required(),
+  password: Joi.string().min(5).required(),
 });

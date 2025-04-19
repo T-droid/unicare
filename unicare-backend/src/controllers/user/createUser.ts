@@ -1,20 +1,21 @@
 import { Request, Response } from "express";
 import { findDepartmentByName } from "../../services/departmentService";
-import {
-  createStaff,
-  deleteUserById,
-  findUserByEmail,
-  saveUser,
-} from "../../services/userService";
-import { generateToken } from "../../util/password";
-import { User } from "../../types/userTypes";
+import { findUserByEmail, saveUser } from "../../services/userService";
+import { generateToken, hashPassword } from "../../util/password";
 
 export const registerUser = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    let { ...otherData } = req.body;
+    let { department, ...otherData } = req.body;
+    department = await findDepartmentByName(department);
+
+    if (department.length === 0) {
+      res.status(400).json({ message: "Department not found" });
+      return;
+    }
+    
 
     const userExists = await findUserByEmail(otherData.email);
     if (userExists.length > 0) {
@@ -30,7 +31,8 @@ export const registerUser = async (
       }
     }
 
-    let payload: User = {
+    let payload = {
+      department_id: department[0].id,
       name: otherData.name,
       phone_number: otherData.phone_number,
       work_id: otherData.work_id,
@@ -38,7 +40,6 @@ export const registerUser = async (
       email: otherData.email,
       role: otherData.role,
     };
-
     const savedObject = await saveUser(payload);
 
     const jwtData = {
