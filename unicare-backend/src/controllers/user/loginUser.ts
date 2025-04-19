@@ -36,7 +36,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate JWT token
-    const token = generateToken({ id, email: userEmail , role});
+    const token = generateToken({ id, email: userEmail, role });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -45,7 +45,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(200).json({
-      data: user[0], // return one user since it return an Array
+      data: user[0],
       token,
     });
     console.log(res);
