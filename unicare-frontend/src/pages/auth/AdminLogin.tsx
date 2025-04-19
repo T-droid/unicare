@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, UseDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Card, CardHeader, CardContent } from "../../components/ui/card";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { setAlert } from "@/state/app";
@@ -35,6 +35,8 @@ const AdminSignIn: React.FC = () => {
       dispatch(setAlert({ message: "Login successful", type: "success" }));
       dispatch(setCurrentUser(loginData.data));
       dispatch(setToken(loginData.token));
+      console.log(loginData);
+      
       window.location.href = "/admin";
     } catch (error: any) {
       dispatch(

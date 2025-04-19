@@ -192,9 +192,9 @@ const StaffRegistration = () => {
             >
               <option value="">Select Role</option>
               <option value="doctor">Doctor</option>
-              <option value="nurse">Nurse</option>
+              <option value="lab_tech">Lab Tech</option>
               <option value="receptionist">Receptionist</option>
-              <option value="admin">Admin</option>
+              <option value="pharmacist">Pharmacist</option>
             </select>
             {errors.role && (
               <p className="text-red-500 text-sm mt-1">{errors.role}</p>
@@ -223,7 +223,13 @@ const StaffRegistration = () => {
             <div className="px-2">
               <form action="" className="flex items-center space-x-2 w-full">
                 <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2">
-                  <input className="w-full h-full outline-none" type="text" name="newDepartment" id="newDepartment" placeholder="Create new department" />
+                  <input
+                    className="w-full h-full outline-none"
+                    type="text"
+                    name="newDepartment"
+                    id="newDepartment"
+                    placeholder="Create new department"
+                  />
                 </div>
                 <button
                   onClick={() => {

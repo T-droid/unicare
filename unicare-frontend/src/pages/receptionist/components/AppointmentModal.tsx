@@ -14,6 +14,8 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
   const [appointmentType, setAppointmentType] = useState('Regular');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   // Sample data - replace with API call
   const doctors: Doctor[] = [
@@ -27,23 +29,43 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
     return 'course' in subject && 'yearOfStudy' in subject;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const resetForm = () => {
+    setSelectedDoctor('');
+    setAppointmentDate('');
+    setAppointmentTime('');
+    setAppointmentType('Regular');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+  
     if (!selectedDoctor || !appointmentDate || !appointmentTime) {
+      setError("Please fill in all fields.");
+      setMessage('');
       return;
     }
-
+  
     const subjectId = isStudent(subject) ? subject.studentId : subject.patientId;
-    
-    onSubmit({
-      studentId: subjectId,
-      doctorId: selectedDoctor,
-      date: appointmentDate,
-      time: appointmentTime,
-      type: appointmentType,
-      patientName: subject.name
-    });
+  
+    try {    
+      onSubmit({
+        studentId: subjectId,
+        doctorId: selectedDoctor,
+        date: appointmentDate,
+        time: appointmentTime,
+        type: appointmentType,
+        patientName: subject.name
+      });
+  
+      setMessage(" Appointment scheduled successfully!");
+      setError('');
+      resetForm();
+    } catch (err) {
+      setError("⚠️ Could not schedule the appointment. Try again.");
+      setMessage('');
+    }
   };
+  
 
   return (
     <Card className="bg-slate-50 dark:bg-boxdark dark:border-gray-500">
@@ -59,13 +81,16 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {message && <p className="text-green-600 text-sm mb-2">{message}</p>}
+        {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium">Patient</label>
             <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
               <p className="font-medium">{subject.name}</p>
               <p className="text-sm text-gray-500">
-                ID: {isStudent(subject) ? subject.studentId : subject.studentId}
+                ID: {isStudent(subject) ? subject.studentId : subject.patientId}
                 {isStudent(subject) && (
                   <>
                     <br />
@@ -78,7 +103,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
             </div>
           </div>
 
-          <div className="space-y-2 bg-boxdark">
+          <div className="space-y-2">
             <label className="block text-sm font-medium">Appointment Type</label>
             <select
               value={appointmentType}

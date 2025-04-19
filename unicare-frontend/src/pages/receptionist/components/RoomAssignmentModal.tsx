@@ -3,9 +3,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DoorOpen, Search } from "lucide-react";
 import type { Patient, Room } from '../types';
-
 interface RoomAssignmentModalProps {
-  patient?: Patient; // patient optional
+  patient?: Patient;
   onClose: () => void;
   onAssign: (roomId: string) => void;
 }
@@ -17,15 +16,49 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
 }) => {
   const [selectedRoom, setSelectedRoom] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Sample data - use API call
-  const availableRooms: Room[] = [
-    { id: '1', number: '101', type: 'Ward', status: 'Available' },
-    { id: '2', number: '102', type: 'Private', status: 'Available' },
-    { id: '3', number: '201', type: 'Ward', status: 'Available' }
-  ];
+  const API_URL = `${import.meta.env.VITE_SERVER_HEAD}/rooms`;
 
-  const filteredRooms = availableRooms.filter(room =>
+  React.useEffect(() => {
+
+  const fetchRooms = async () => {
+  try {
+    setLoading(true);
+    const response = await fetch(API_URL);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch rooms. Status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      console.log("Rooms API response:", data);
+      
+      if (Array.isArray(data.data)) {
+        setRooms(data.data);
+      } else {
+        throw new Error("API did not return a valid rooms array");
+      }
+    } else {
+      throw new Error("Response is not in JSON format");
+    }
+  } catch (err: any) {
+    console.error("Fetch error:", err);
+    setError(err.message || 'Failed to load rooms');
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+    fetchRooms();
+  }, [API_URL]);
+
+  const filteredRooms = rooms.filter(room =>
     room.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
     room.type.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -36,6 +69,7 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
       onAssign(selectedRoom);
     }
   };
+
 
   return (
     <Card className="bg-slate-50 dark:bg-boxdark dark:border-gray-500">
