@@ -5,7 +5,6 @@ import appRouter from "./routes/v1";
 import cookieParser from "cookie-parser"; // for storing creds in cookies
 import cors from "cors";
 import { errorHandler } from "./middleware/error";
-import receptionistRouter from "./routes/v1/receptionistRoutes";
 import appointmentRouter from "./routes/v1/appointmentRoutes";
 import pharmacistRouter from "./routes/v1/pharmacistRoutes";
 // Create Express server
@@ -32,7 +31,6 @@ app.use(express.urlencoded({ extended: false }));
  * Primary app routes.
  */
 app.use("/api/v1", appRouter);
-app.use("/api/v1/receptionist", receptionistRouter);
 app.use("/api/v1/appointments", appointmentRouter);
 app.use("/api/v1/pharmacist", pharmacistRouter);
 

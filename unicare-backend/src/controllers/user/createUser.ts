@@ -15,7 +15,6 @@ export const registerUser = async (
       res.status(400).json({ message: "Department not found" });
       return;
     }
-    
 
     const userExists = await findUserByEmail(otherData.email);
     if (userExists.length > 0) {
