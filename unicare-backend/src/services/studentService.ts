@@ -41,3 +41,11 @@ export const getStudents = async (
 
   return { students: studentsList, total };
 };
+
+export const getStudentByregNo = async (reg_no: string) => {
+  return await db
+    .select()
+    .from(StudentTable)
+    .where(eq(StudentTable.reg_no, reg_no));
+};
+

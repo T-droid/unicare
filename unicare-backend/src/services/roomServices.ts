@@ -1,7 +1,6 @@
 import { RoomsTable, InpatientTable } from "../db/schema";
 import { db } from "../db";
 import { and, eq, sql } from "drizzle-orm";
-import { date } from "drizzle-orm/pg-core";
 
 export const getRoomById = async (roomId: string) => {
   return await db.select().from(RoomsTable).where(eq(RoomsTable.id, roomId));
