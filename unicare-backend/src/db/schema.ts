@@ -11,7 +11,6 @@ import {
   varchar,
   text,
 } from "drizzle-orm/pg-core";
-import app from "../app";
 
 // role ENUM
 export const userRoleEnum = pgEnum("user_role", [
@@ -20,6 +19,7 @@ export const userRoleEnum = pgEnum("user_role", [
   "receptionist",
   "lab_technician",
   "admin",
+  "pharmacist",
 ]);
 export const appontmentStatus = pgEnum("status", [
   "pending",
@@ -34,9 +34,9 @@ export const patientTypeEnum = pgEnum("patient_type", [
 ]);
 
 export const labTestEnum = pgEnum("test_result", [
-  "pending", 
-  "completed", 
-  "cancelled"
+  "pending",
+  "completed",
+  "cancelled",
 ]);
 
 // Departments Table
