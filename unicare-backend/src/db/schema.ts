@@ -34,9 +34,9 @@ export const patientTypeEnum = pgEnum("patient_type", [
 ]);
 
 export const labTestEnum = pgEnum("test_result", [
-  "pending", 
-  "completed", 
-  "cancelled"
+  "pending",
+  "completed",
+  "cancelled",
 ]);
 
 // Departments Table

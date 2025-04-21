@@ -32,9 +32,12 @@ const doctorRouter = express.Router();
  *       500:
  *         description: Server error
  */
-doctorRouter.get("/students/:regNo/medical-history", (req: Request, res: Response) => {
-  getMedicalHistoryController(req, res);
-});
+doctorRouter.get(
+  "/students/:regNo/medical-history",
+  (req: Request, res: Response) => {
+    getMedicalHistoryController(req, res);
+  },
+);
 
 /**
  * @swagger
@@ -70,9 +73,12 @@ doctorRouter.get("/students/:regNo/medical-history", (req: Request, res: Respons
  *       500:
  *         description: Server error
  */
-doctorRouter.post("/students/:regNo/prescriptions", (req: Request, res: Response) => {
-  createPrescriptionController(req, res);
-});
+doctorRouter.post(
+  "/students/:regNo/prescriptions",
+  (req: Request, res: Response) => {
+    createPrescriptionController(req, res);
+  },
+);
 
 /**
  * @swagger
@@ -114,9 +120,12 @@ doctorRouter.post("/students/:regNo/prescriptions", (req: Request, res: Response
  *       500:
  *         description: Server error
  */
-doctorRouter.post("/students/:regNo/lab-tests", (req: Request, res: Response) => {
-  requestLabTestController(req, res);
-});
+doctorRouter.post(
+  "/students/:regNo/lab-tests",
+  (req: Request, res: Response) => {
+    requestLabTestController(req, res);
+  },
+);
 
 /**
  * @swagger
@@ -179,9 +188,12 @@ doctorRouter.patch("/students/:regNo/status", (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-doctorRouter.get("/students/:regNo/lab-results", (req: Request, res: Response) => {
-  getLabResultsController(req, res);
-});
+doctorRouter.get(
+  "/students/:regNo/lab-results",
+  (req: Request, res: Response) => {
+    getLabResultsController(req, res);
+  },
+);
 
 /**
  * @swagger
@@ -217,8 +229,11 @@ doctorRouter.get("/students/:regNo/lab-results", (req: Request, res: Response) =
  *       500:
  *         description: Server error
  */
-doctorRouter.patch("/students/:regNo/treatment-status", (req: Request, res: Response) => {
-  updateTreatmentStatusController(req, res);
-});
+doctorRouter.patch(
+  "/students/:regNo/treatment-status",
+  (req: Request, res: Response) => {
+    updateTreatmentStatusController(req, res);
+  },
+);
 
 export default doctorRouter;
