@@ -48,4 +48,3 @@ export const getStudentByregNo = async (reg_no: string) => {
     .from(StudentTable)
     .where(eq(StudentTable.reg_no, reg_no));
 };
-

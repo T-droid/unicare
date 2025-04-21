@@ -6,17 +6,64 @@ import {
   updatePatientTypeController,
   getLabResultsController,
   updateTreatmentStatusController,
+  getAllDoctorsController,
 } from "../../controllers/doctor/doctorController";
+import { authenticateUser } from "../../middleware/auth";
 
 const doctorRouter = express.Router();
 
 /**
  * @swagger
- * /students/{regNo}/medical-history:
+ * /v1/doctor:
+ *   get:
+ *     summary: Get all doctors' details
+ *     tags:
+ *       - Doctor
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all doctors fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: Unique identifier for the doctor
+ *                   name:
+ *                     type: string
+ *                     description: Name of the doctor
+ *                   phone_number:
+ *                     type: string
+ *                     description: Phone number of the doctor
+ *                   email:
+ *                     type: string
+ *                     description: Email address of the doctor
+ *                   work_id:
+ *                     type: string
+ *                     description: Work ID of the doctor
+ *       403:
+ *         description: Unauthorized access (only receptionists can access this route)
+ *       500:
+ *         description: Server error
+ */
+doctorRouter.get("", authenticateUser, (req: Request, res: Response) => {
+  getAllDoctorsController(req, res);
+});
+
+/**
+ * @swagger
+ * /v1/doctor/students/{regNo}/medical-history:
  *   get:
  *     summary: Get a student's complete medical history
  *     tags:
  *       - Doctor
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: regNo
@@ -32,17 +79,23 @@ const doctorRouter = express.Router();
  *       500:
  *         description: Server error
  */
-doctorRouter.get("/students/:regNo/medical-history", (req: Request, res: Response) => {
-  getMedicalHistoryController(req, res);
-});
+doctorRouter.get(
+  "/students/:regNo/medical-history",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    getMedicalHistoryController(req, res);
+  },
+);
 
 /**
  * @swagger
- * /students/{regNo}/prescriptions:
+ * /v1/doctor/students/{regNo}/prescriptions:
  *   post:
  *     summary: Write a new prescription for a student
  *     tags:
  *       - Doctor
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: regNo
@@ -70,17 +123,23 @@ doctorRouter.get("/students/:regNo/medical-history", (req: Request, res: Respons
  *       500:
  *         description: Server error
  */
-doctorRouter.post("/students/:regNo/prescriptions", (req: Request, res: Response) => {
-  createPrescriptionController(req, res);
-});
+doctorRouter.post(
+  "/students/:regNo/prescriptions",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    createPrescriptionController(req, res);
+  },
+);
 
 /**
  * @swagger
- * /students/{regNo}/lab-tests:
+ * /v1/doctor/students/{regNo}/lab-tests:
  *   post:
  *     summary: Request a lab test for the student
  *     tags:
  *       - Doctor
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: regNo
@@ -114,17 +173,23 @@ doctorRouter.post("/students/:regNo/prescriptions", (req: Request, res: Response
  *       500:
  *         description: Server error
  */
-doctorRouter.post("/students/:regNo/lab-tests", (req: Request, res: Response) => {
-  requestLabTestController(req, res);
-});
+doctorRouter.post(
+  "/students/:regNo/lab-tests",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    requestLabTestController(req, res);
+  },
+);
 
 /**
  * @swagger
- * /students/{regNo}/status:
+ * /v1/doctor/students/{regNo}/status:
  *   patch:
  *     summary: Mark the patient as either inpatient or outpatient
  *     tags:
  *       - Doctor
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: regNo
@@ -153,17 +218,19 @@ doctorRouter.post("/students/:regNo/lab-tests", (req: Request, res: Response) =>
  *       500:
  *         description: Server error
  */
-doctorRouter.patch("/students/:regNo/status", (req: Request, res: Response) => {
+doctorRouter.patch("/students/:regNo/status", authenticateUser, (req: Request, res: Response) => {
   updatePatientTypeController(req, res);
 });
 
 /**
  * @swagger
- * /students/{regNo}/lab-results:
+ * /v1/doctor/students/{regNo}/lab-results:
  *   get:
  *     summary: View lab results of the student
  *     tags:
  *       - Doctor
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: regNo
@@ -179,17 +246,23 @@ doctorRouter.patch("/students/:regNo/status", (req: Request, res: Response) => {
  *       500:
  *         description: Server error
  */
-doctorRouter.get("/students/:regNo/lab-results", (req: Request, res: Response) => {
-  getLabResultsController(req, res);
-});
+doctorRouter.get(
+  "/students/:regNo/lab-results",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    getLabResultsController(req, res);
+  },
+);
 
 /**
  * @swagger
- * /students/{regNo}/treatment-status:
+ * /v1/doctor/students/{regNo}/treatment-status:
  *   patch:
  *     summary: View and update the patient's status during treatment
  *     tags:
  *       - Doctor
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: regNo
@@ -217,8 +290,12 @@ doctorRouter.get("/students/:regNo/lab-results", (req: Request, res: Response) =
  *       500:
  *         description: Server error
  */
-doctorRouter.patch("/students/:regNo/treatment-status", (req: Request, res: Response) => {
-  updateTreatmentStatusController(req, res);
-});
+doctorRouter.patch(
+  "/students/:regNo/treatment-status",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    updateTreatmentStatusController(req, res);
+  },
+);
 
 export default doctorRouter;
