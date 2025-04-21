@@ -57,7 +57,7 @@ export const validateRequestStudentLabTest = Joi.object({
 // Schema for validating createStudentPrescription inputs
 export const validateCreateStudentPrescription = Joi.object({
   regNo: regNoValidation,
-  prescription: prescriptionValidation,
+  prescriptionDetails: prescriptionValidation,
 });
 
 // Schema for validating updatePatientType inputs

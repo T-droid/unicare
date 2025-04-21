@@ -6,6 +6,27 @@ import {
   labTestRequestTable,
 } from "../db/schema";
 
+
+export async function getAllDoctors() {
+  try {
+    const doctors = await db
+      .select({
+        id: UserTable.id,
+        name: UserTable.name,
+        phone_number: UserTable.phone_number,
+        email: UserTable.email,
+        work_id: UserTable.work_id,
+      })
+      .from(UserTable)
+      .where(eq(UserTable.role, "doctor"))
+      .orderBy(desc(UserTable.created_at));
+
+    return doctors;
+  } catch (error) {
+    console.error("Error fetching doctors:", error);
+    throw new Error("Failed to fetch doctors");
+  }
+}
 export async function getStudentMedicalHistory(regNo: string) {
   try {
     // Fetch medical history and associated lab tests for the student
@@ -21,7 +42,7 @@ export async function getStudentMedicalHistory(regNo: string) {
       .where(eq(PatientMedicalRecords.reg_no, regNo))
       .orderBy(desc(PatientMedicalRecords.created_at));
 
-    const labTests = db
+    const labTests = await db
       .select({
         id: labTestRequestTable.id,
         test_name: labTestRequestTable.test_name,
@@ -33,7 +54,7 @@ export async function getStudentMedicalHistory(regNo: string) {
       })
       .from(labTestRequestTable)
       .where(
-        eq(labTestRequestTable.medical_history_id, PatientMedicalRecords.id),
+        eq(labTestRequestTable.medical_history_id, medicalHistory[0].id),
       )
       .orderBy(desc(labTestRequestTable.requested_at));
 
@@ -103,9 +124,8 @@ export async function requestStudentLabTest(
   } catch (error) {
     console.error("Error requesting lab test:", error);
     throw new Error("Failed to request lab test");
-  }
+ }
 }
-
 export async function updatePatientType(
   patientType: "outpatient" | "inpatient",
   regNo: string,
@@ -120,5 +140,28 @@ export async function updatePatientType(
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function getStudentLabTests(regNo: string) {
+  try {
+    const labTests = await db
+      .select({
+        id: labTestRequestTable.id,
+        test_name: labTestRequestTable.test_name,
+        test_description: labTestRequestTable.test_description,
+        test_status: labTestRequestTable.test_status,
+        test_result: labTestRequestTable.test_result,
+        requested_at: labTestRequestTable.requested_at,
+        completed_at: labTestRequestTable.completed_at,
+      })
+      .from(labTestRequestTable)
+      .where(eq(labTestRequestTable.reg_no, regNo))
+      .orderBy(desc(labTestRequestTable.requested_at));
+
+    return labTests;
+  } catch (error) {
+    console.error("Error fetching student lab tests:", error);
+    throw new Error("Failed to fetch student lab tests");
   }
 }
