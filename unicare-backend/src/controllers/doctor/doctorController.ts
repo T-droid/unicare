@@ -14,7 +14,6 @@ import {
   validateRequestStudentLabTest,
 } from "../../validation/doctorValidation";
 
-
 // get all doctors details
 export const getAllDoctorsController = async (
   req: Request & { user?: { role: string } },
@@ -45,6 +44,7 @@ export const getMedicalHistoryController = async (
   if (!role && role !== "doctor") {
     return res.status(403).json({ message: "Unauthorized access" });
   }
+
   try {
     const student = await getStudentByregNo(regNo);
     if (student.length === 0) {
@@ -62,6 +62,7 @@ export const getMedicalHistoryController = async (
       ...record,
       student_name: student[0].name,
     }));
+
     return res.status(200).json({
       message: "Medical history fetched successfully",
       data: formattedMedicalHistory,
@@ -79,6 +80,7 @@ export const createPrescriptionController = async (
 ) => {
   const { regNo } = req.params;
   const { prescriptionDetails } = req.body;
+
   const { role } = req.user || {};
   if (!role && role !== "doctor") {
     return res.status(403).json({ message: "Unauthorized access" });
@@ -117,11 +119,12 @@ export const createPrescriptionController = async (
   }
 };
 
-// Request a lab test for the student
+
 export const requestLabTestController = async (
   req: Request & { user?: { role: string, id: string | null } },
   res: Response
 ) => {
+
   const { regNo } = req.params;
   const { testName, testDescription } = req.body;
   const { role, id } = req.user || {};
@@ -155,10 +158,11 @@ export const requestLabTestController = async (
     if (result.length === 0) {
       return res.status(400).json({ message: "Failed to request lab test" });
     }
-    return res.status(201).json({
+   return res.status(201).json({
       message: "Lab test requested successfully",
       data: { result, studentName: student[0].name },
     });
+
   } catch (error) {
     return res
       .status(500)
@@ -197,10 +201,12 @@ export const updatePatientTypeController = async (
     if (result.length === 0) {
       return res.status(400).json({ message: "Failed to update patient type" });
     }
+
     return res.status(200).json({
       message: "Patient type updated successfully",
       data: { result, studentName: student[0].name },
     });
+
   } catch (error) {
     return res
       .status(500)
@@ -209,6 +215,7 @@ export const updatePatientTypeController = async (
 };
 
 // View lab results of the student
+
 export const getLabResultsController = async (
   req: Request & { user?: { role: string } },
   res: Response
@@ -236,6 +243,7 @@ export const getLabResultsController = async (
   }
 }
   
+
 
 // View and update the patient's status during treatment
 export const updateTreatmentStatusController = async (

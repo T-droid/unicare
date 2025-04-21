@@ -5,7 +5,7 @@ export interface AuthRequest extends Request {
   user?: any;
 }
 
-export const authenticateUser = async (
+const authenticateUser = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction,
@@ -38,3 +38,5 @@ export const authenticateUser = async (
     return;
   }
 };
+
+export default authenticateUser;

@@ -7,6 +7,10 @@ import {
   reassignRoom,
   updateDischargePatient,
 } from "../../services/roomServices";
+import { bookAppointment as bookAppointmentService } from "../../services/appoinmentService";
+import { db } from "../../db";
+import { UserTable } from "../../db/schema";
+import { eq } from "drizzle-orm";
 
 export const getStudent = async (req: Request, res: Response) => {
   const { regNo } = req.params;
@@ -99,3 +103,35 @@ export const dischargePatient = async (req: Request, res: Response) => {
     return res.status(500).json({ message: `Server error due to ${err}` });
   }
 };
+
+export const bookDoctorAppointment = async (req: Request, res: Response): Promise<void> => {
+  const { regNo, doctorId, date } = req.body;
+  
+
+  
+  // try {
+  //   // Validate receptionist role
+  //   const user = await db
+  //     .select()
+  //     .from(UserTable)
+  //     .where(eq(UserTable.id, userId))
+  //     .limit(1);
+
+  //   if (user.length === 0 || user[0].role !== "receptionist") {
+  //     res.status(403).json({ message: "Unauthorized" });
+  //     return;
+  //   }
+
+    // Book the appointment
+    try{
+      const appointment = await bookAppointmentService(regNo, doctorId, date);
+
+      res.status(201).json({
+        message: "Appointment booked successfully",
+        appointment,
+      });
+    } catch (error) {
+      console.error("Error booking appointment:", error);
+      res.status(500).json({ message: "Failed to book appointment" });
+    }
+  }

@@ -124,9 +124,8 @@ export async function requestStudentLabTest(
   } catch (error) {
     console.error("Error requesting lab test:", error);
     throw new Error("Failed to request lab test");
-  }
+ }
 }
-
 export async function updatePatientType(
   patientType: "outpatient" | "inpatient",
   regNo: string,
