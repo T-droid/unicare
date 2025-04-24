@@ -5,6 +5,6 @@ export const drugSchema = Joi.object({
   quantity: Joi.number().integer().min(1).required(),
 });
 export const administerDrugSchema = Joi.object({
-  id: Joi.string().uuid().required(),
+  name: Joi.string().required(),
   amount: Joi.number().integer().min(1).required(),
 });

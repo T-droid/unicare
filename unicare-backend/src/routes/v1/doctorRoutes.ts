@@ -5,8 +5,8 @@ import {
   requestLabTestController,
   updatePatientTypeController,
   getLabResultsController,
-  updateTreatmentStatusController,
   getAllDoctorsController,
+  getDoctorsAppointmentsController,
 } from "../../controllers/doctor/doctorController";
 import authenticateUser from "../../middleware/auth";
 
@@ -260,46 +260,42 @@ doctorRouter.get(
 
 /**
  * @swagger
- * /v1/doctor/students/{regNo}/treatment-status:
- *   patch:
- *     summary: View and update the patient's status during treatment
+ * /v1/doctor/appointments:
+ *   get:
+ *     summary: Get all appointments for the doctor
  *     tags:
  *       - Doctor
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: regNo
- *         required: true
- *         schema:
- *           type: string
- *         description: Student registration number
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               treatmentStatus:
- *                 type: string
- *                 description: Updated treatment status
  *     responses:
  *       200:
- *         description: Treatment status updated successfully
- *       400:
- *         description: Validation error or failed to update treatment status
- *       404:
- *         description: Student not found
- *       500:
- *         description: Server error
+ *         description: List of all appointments fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   appointmentId:
+ *                     type: string
+ *                     description: Unique identifier for the appointment
+ *                   studentName:
+ *                     type: string
+ *                     description: Name of the student
+ *                   appointmentDate:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Date and time of the appointment
+ *       403:
+ *         description: Unauthorized access (only doctors can access this route)
  */
-doctorRouter.patch(
-  "/students/:regNo/treatment-status",
+
+doctorRouter.get(
+  "/appointments",
   authenticateUser,
   (req: Request, res: Response) => {
-    updateTreatmentStatusController(req, res);
+    getDoctorsAppointmentsController(req, res);
   },
 );
-
 export default doctorRouter;

@@ -4,7 +4,10 @@ import {
   UserTable,
   PatientMedicalRecords,
   labTestRequestTable,
+  AppointmentsTable,
+  StudentTable,
 } from "../db/schema";
+import { d } from "drizzle-kit/index-BAUrj6Ib";
 
 export async function getAllDoctors() {
   try {
@@ -15,6 +18,7 @@ export async function getAllDoctors() {
         phone_number: UserTable.phone_number,
         email: UserTable.email,
         work_id: UserTable.work_id,
+        // fetch department they belong to too
       })
       .from(UserTable)
       .where(eq(UserTable.role, "doctor"))
@@ -160,5 +164,34 @@ export async function getStudentLabTests(regNo: string) {
   } catch (error) {
     console.error("Error fetching student lab tests:", error);
     throw new Error("Failed to fetch student lab tests");
+  }
+}
+
+export async function getDoctorsAppointments(id: string) {
+  try {
+    const appointments = await db
+      .select({
+        appointment_id: AppointmentsTable.id,
+        appointment_date: AppointmentsTable.appointment_date,
+        created_at: AppointmentsTable.created_at,
+        student: {
+          reg_no: StudentTable.reg_no,
+          name: StudentTable.name,
+          emergency_contact: StudentTable.emergency_contact || "",
+          phone_number: StudentTable.phone_number,
+        },
+      })
+      .from(AppointmentsTable)
+      .innerJoin(
+        StudentTable,
+        eq(StudentTable.reg_no, AppointmentsTable.reg_no),
+      )
+      .where(eq(AppointmentsTable.doctor_id, id))
+      .orderBy(desc(AppointmentsTable.created_at));
+
+    return appointments;
+  } catch (error) {
+    console.error("Error fetching doctors appointments:", error);
+    throw new Error("Failed to fetch doctors appointments");
   }
 }
