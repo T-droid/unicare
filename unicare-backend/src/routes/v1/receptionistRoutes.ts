@@ -7,7 +7,11 @@ import {
   getStudent,
 } from "../../controllers/receptionist/receptionistController";
 import validateRequest from "../../middleware/validateRequest";
-import { receptionistAppointmentSchema, receptionistSchema } from "../../validation/receptionist";
+import {
+  receptionistAppointmentSchema,
+  receptionistSchema,
+} from "../../validation/receptionist";
+import authenticateUser from "../../middleware/auth";
 
 const receptionistRouter = express.Router();
 
@@ -24,6 +28,8 @@ const receptionistRouter = express.Router();
  *   get:
  *     summary: Get student details by registration number
  *     tags: [Receptionist]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: regNo
@@ -46,6 +52,8 @@ const receptionistRouter = express.Router();
  *   get:
  *     summary: Get all rooms
  *     tags: [Receptionist]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of rooms retrieved successfully
@@ -59,6 +67,8 @@ const receptionistRouter = express.Router();
  *   post:
  *     summary: Assign a room to a patient
  *     tags: [Receptionist]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -82,6 +92,8 @@ const receptionistRouter = express.Router();
  *   patch:
  *     summary: Update room details for a patient
  *     tags: [Receptionist]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -103,6 +115,8 @@ const receptionistRouter = express.Router();
  *   delete:
  *     summary: Discharge a patient and reassign their room
  *     tags: [Receptionist]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -192,6 +206,7 @@ const receptionistRouter = express.Router();
 receptionistRouter
   .get(
     "/student/:regNo",
+    authenticateUser,
     validateRequest(receptionistSchema),
     (req: Request, res: Response) => {
       getStudent(req, res);
@@ -199,6 +214,7 @@ receptionistRouter
   )
   .get(
     "/rooms",
+    authenticateUser,
     validateRequest(receptionistSchema),
     (req: Request, res: Response) => {
       getRooms(req, res);
@@ -206,6 +222,7 @@ receptionistRouter
   )
   .post(
     "/room",
+    authenticateUser,
     validateRequest(receptionistSchema),
     (req: Request, res: Response) => {
       assignPatientRoom(req, res);
@@ -213,13 +230,15 @@ receptionistRouter
   )
   .post(
     "/appointment",
+    authenticateUser,
     validateRequest(receptionistAppointmentSchema),
-    ( req: Request, res: Response) => {
+    (req: Request, res: Response) => {
       bookDoctorAppointment(req, res);
-    }
+    },
   )
   .patch(
     "/room",
+    authenticateUser,
     validateRequest(receptionistSchema),
     (req: Request, res: Response) => {
       res.send("receptionist updates student room details");
@@ -227,6 +246,7 @@ receptionistRouter
   )
   .delete(
     "/room",
+    authenticateUser,
     validateRequest(receptionistSchema),
     (req: Request, res: Response) => {
       dischargePatient(req, res);

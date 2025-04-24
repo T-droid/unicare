@@ -3,19 +3,21 @@ import { Schema } from "joi";
 
 const validateRequest = (schema: Schema) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const { error } = schema.validate(req.body);
-    const valid = error == null;
-
-    if (valid) {
+    const { error } = schema.validate(req.body, { abortEarly: false });
+    if (!error) {
       next();
     } else {
-      const { details, message } = error;
-      const messages = details.map((i) => i.message).join(",");
+      const errors = error.details.map((detail) => ({
+        message: detail.message,
+        path: detail.path,
+      }));
 
-      console.log("error", messages);
-      res.status(400).json({ error: messages, msg: message });
-      return;
+      res.status(400).json({
+        message: "Validation failed",
+        errors,
+      });
     }
   };
 };
+
 export default validateRequest;
