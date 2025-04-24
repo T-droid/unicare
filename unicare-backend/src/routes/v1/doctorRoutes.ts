@@ -218,9 +218,13 @@ doctorRouter.post(
  *       500:
  *         description: Server error
  */
-doctorRouter.patch("/students/:regNo/status", authenticateUser, (req: Request, res: Response) => {
-  updatePatientTypeController(req, res);
-});
+doctorRouter.patch(
+  "/students/:regNo/status",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    updatePatientTypeController(req, res);
+  },
+);
 
 /**
  * @swagger
