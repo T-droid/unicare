@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CalendarDays,
   Clock,
@@ -11,13 +11,19 @@ import {
   Beaker,
   CheckCircle,
   Repeat,
+  Loader,
+  Loader2,
 } from "lucide-react";
 import { QueuedPatient } from "@/types/patient";
 import { Avatar } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { setAlert } from "@/state/app";
 
 const DoctorDashboard = () => {
   const [activeTab, setActiveTab] = useState("queue");
-
+  const currentDoctor = useSelector((state: any) => state.auth.user);
+  const dispatch = useDispatch();
   // Today's date
   const today = new Date();
   const dateOptions: Intl.DateTimeFormatOptions = {
@@ -27,6 +33,15 @@ const DoctorDashboard = () => {
     day: "numeric",
   };
   const formattedDate = today.toLocaleDateString("en-US", dateOptions);
+  const greetingText = () => {
+    const hour = today.getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  }
+  const greeting = `${greetingText()}, ${currentDoctor.name}`;
+  const [loadingAppointments, setLoadingAppointments] = useState<boolean>();
+  const [upcomingAppointments, setAppointments] = useState<any[]>([]);
 
   // Sample data for queue
   const queuedPatients: Array<QueuedPatient> = [
@@ -63,29 +78,71 @@ const DoctorDashboard = () => {
   ];
 
   // Sample data for appointments
-  const upcomingAppointments = [
-    {
-      id: 1,
-      patient: "David Williams",
-      time: "1:15 PM",
-      type: "Consultation",
-      status: "Confirmed",
-    },
-    {
-      id: 2,
-      patient: "Lisa Garcia",
-      time: "2:30 PM",
-      type: "Follow-up",
-      status: "Confirmed",
-    },
-    {
-      id: 3,
-      patient: "James Wilson",
-      time: "3:45 PM",
-      type: "Post-op check",
-      status: "Pending",
-    },
-  ];
+  // const upcomingAppointments =
+  //   [
+  //     {
+  //       appointment_id: "5d4d0639-7935-4a5f-9444-2ef4062329b7",
+  //       appointment_date: "2025-04-24T00:00:00.000Z",
+  //       created_at: "2025-04-24T15:15:54.772Z",
+  //       student: {
+  //         reg_no: "CS2020/002",
+  //         name: "Brian Otieno",
+  //         emergency_contact: "0700000002",
+  //         phone_number: "0723456789"
+  //       }
+  //     },
+  //     {
+  //       appointment_id: "1bd6094f-6f14-4394-bcab-b575c53ced34",
+  //       appointment_date: "2025-04-25T00:00:00.000Z",
+  //       created_at: "2025-04-21T10:03:35.714Z",
+  //       student: {
+  //         reg_no: "CS2020/008",
+  //         name: "Henry Mwaura",
+  //         emergency_contact: "0700000008",
+  //         phone_number: "0789012345"
+  //       }
+  //     },
+  //     {
+  //       appointment_id: "8e059880-a07f-4a7b-b1c7-7ec6cbadaa06",
+  //       appointment_date: "2024-03-15T00:00:00.000Z",
+  //       created_at: "2025-04-20T16:11:57.864Z",
+  //       student: {
+  //         reg_no: "CS2020/012",
+  //         name: "Liam Kipkemboi",
+  //         emergency_contact: "0700000012",
+  //         phone_number: "0703344556"
+  //       }
+  //     }
+  //   ]
+  const fetchAppointments = async () => {
+    try {
+      setLoadingAppointments(true);
+      const response = await axios.get(`${import.meta.env.VITE_SERVER_HEAD}/doctor/appointments`,
+        { withCredentials: true }
+      );
+
+      if (response.status !== 200) {
+        throw new Error(response.data.message || "Failed to fetch appointments");
+      }
+      const appointments = response.data.data;
+      console.log(appointments)
+      setAppointments(appointments);
+    } catch (error: any) {
+      console.error(error);
+      dispatch(
+        setAlert({
+          message: error.response?.message || error?.message || "Failed to fetch appointments",
+          type: "error",
+        })
+      )
+    } finally {
+      setLoadingAppointments(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [])
 
   // Sample lab requests
   const labRequests = [
@@ -140,8 +197,8 @@ const DoctorDashboard = () => {
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Doctor Dashboard</h1>
+      <div className="mb-6 p-4">
+        <h1 className="text-2xl font-bold">{greeting}</h1>
         <p className="text-gray-500 dark:text-gray-400">{formattedDate}</p>
       </div>
 
@@ -272,12 +329,21 @@ const DoctorDashboard = () => {
                 Today's Appointments
               </h2>
               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                {upcomingAppointments.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment.id}
-                    appointment={appointment}
-                  />
-                ))}
+                {loadingAppointments ? (
+                  <Loader className="animate-spin" />
+                )
+                  : !upcomingAppointments || upcomingAppointments.length === 0
+                    ? (
+                      <div>
+                        No appointments booked
+                      </div>
+                    )
+                    : upcomingAppointments.map((appointment) => (
+                      <AppointmentCard
+                        key={appointment.appointment_id}
+                        appointment={appointment}
+                      />
+                    ))}
               </div>
             </div>
           )}
@@ -339,8 +405,8 @@ const StatCard = ({ icon, title, value, trend }: StatCardProps) => {
   const trendClass = isPositive
     ? "text-green-500"
     : trend === "0"
-    ? "text-gray-500"
-    : "text-red-500";
+      ? "text-gray-500"
+      : "text-red-500";
 
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -370,11 +436,10 @@ const TabButton = ({ active, onClick, icon, label }: TabButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center px-4 py-3 text-sm font-medium transition-colors duration-150 ${
-        active
-          ? "text-blue-500 border-b-2 border-blue-500"
-          : "text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-500"
-      }`}
+      className={`flex items-center px-4 py-3 text-sm font-medium transition-colors duration-150 ${active
+        ? "text-blue-500 border-b-2 border-blue-500"
+        : "text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-500"
+        }`}
     >
       {icon}
       <span className="ml-2">{label}</span>
@@ -402,11 +467,10 @@ const QueuedPatientCard = ({ patient }: { patient: QueuedPatient }) => {
       </div>
       <div className="flex items-center space-x-2 ml-14 sm:ml-0">
         <span
-          className={`px-2 py-1 text-xs rounded-full ${
-            patient.status === "Ready"
-              ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-              : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
-          }`}
+          className={`px-2 py-1 text-xs rounded-full ${patient.status === "Ready"
+            ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+            : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
+            }`}
         >
           {patient.status}
         </span>
@@ -443,29 +507,43 @@ interface AppointmentCardProps {
 
 // Appointment Card Component
 const AppointmentCard = ({ appointment }: AppointmentCardProps) => {
+  const formattedAppointemtDate = new Date(appointment.appointment_date).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }
+  );
+  const formattedAppointemtTime = new Date(appointment.appointment_date).toLocaleTimeString(
+    "en-US",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
   return (
     <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition duration-150">
       <div className="flex items-center">
         <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-500 rounded-full flex items-center justify-center mr-4">
-          {appointment.patient
+          {appointment.student.name
             .split(" ")
             .map((name) => name[0])
             .join("")}
         </div>
         <div>
-          <h4 className="font-medium">{appointment.patient}</h4>
+          <h4 className="font-medium">{appointment.student.name}</h4>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {appointment.time} - {appointment.type}
+            {new Date(formattedAppointemtDate) > 24 && formattedAppointemtDate} {formattedAppointemtTime} - {appointment.student.reg_no}
           </p>
         </div>
       </div>
       <div className="flex items-center">
         <span
-          className={`px-2 py-1 text-xs rounded-full mr-4 ${
-            appointment.status === "Confirmed"
-              ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-              : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
-          }`}
+          className={`px-2 py-1 text-xs rounded-full mr-4 ${appointment.status === "Confirmed"
+            ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+            : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
+            }`}
         >
           {appointment.status}
         </span>
@@ -508,11 +586,10 @@ const LabRequestCard = ({ labRequest }: LabRequestCardProps) => {
             {labRequest.test}
           </p>
           <span
-            className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${
-              labRequest.urgency === "Urgent"
-                ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
-                : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-            }`}
+            className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${labRequest.urgency === "Urgent"
+              ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
+              : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+              }`}
           >
             {labRequest.urgency}
           </span>
@@ -520,13 +597,12 @@ const LabRequestCard = ({ labRequest }: LabRequestCardProps) => {
       </div>
       <div className="flex items-center">
         <span
-          className={`px-2 py-1 text-xs rounded-full mr-4 ${
-            labRequest.status === "Results Ready"
-              ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-              : labRequest.status === "In Progress"
+          className={`px-2 py-1 text-xs rounded-full mr-4 ${labRequest.status === "Results Ready"
+            ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+            : labRequest.status === "In Progress"
               ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
               : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-          }`}
+            }`}
         >
           {labRequest.status}
         </span>
@@ -545,7 +621,7 @@ const LabRequestCard = ({ labRequest }: LabRequestCardProps) => {
 
 
 interface PrescriptionProps {
-	  id: number;
+  id: number;
   patient: string;
   medication: string;
   dosage: string;
@@ -576,13 +652,12 @@ const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       </div>
       <div className="flex items-center">
         <span
-          className={`px-2 py-1 text-xs rounded-full mr-4 ${
-            prescription.status === "Sent to Pharmacy"
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-              : prescription.status === "Pending Pickup"
+          className={`px-2 py-1 text-xs rounded-full mr-4 ${prescription.status === "Sent to Pharmacy"
+            ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+            : prescription.status === "Pending Pickup"
               ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
               : "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-          }`}
+            }`}
         >
           {prescription.status}
         </span>

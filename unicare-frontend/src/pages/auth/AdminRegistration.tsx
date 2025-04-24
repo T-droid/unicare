@@ -61,7 +61,6 @@ const AdminRegistration = () => {
     }
 
     setErrors(newErrors);
-    console.log(errors, newErrors);
     
     return Object.keys(newErrors).length === 0;
   };

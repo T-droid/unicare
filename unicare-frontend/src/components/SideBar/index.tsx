@@ -33,11 +33,6 @@ const Sidebar: React.FC = () => {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state: any) => state.auth.user);
-  // console.log("Current user", currentUser, typeof currentUser);
-
-  useEffect(() => {
-    console.log("Current user  role", currentUser, typeof currentUser);
-  }, [currentUser]);
 
   const menuItems = [
     {

@@ -30,8 +30,7 @@ const AdminSignIn: React.FC = () => {
         throw new Error(loginResponse.data.message || "Login failed");
       }
       const loginData = loginResponse.data;
-      console.log(loginData);
-
+      
       dispatch(setAlert({ message: "Login successful", type: "success" }));
       dispatch(setCurrentUser(loginData.data));
       dispatch(setToken(loginData.token));

@@ -1,6 +1,6 @@
 import { setAlert } from "@/state/app";
 import axios from "axios";
-import { Plus, PlusCircleIcon } from "lucide-react";
+import { Eye, EyeOff, Loader, Plus, PlusCircleIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -34,10 +34,43 @@ const StaffRegistration = () => {
   });
 
   const [errors, setErrors] = useState<Partial<StaffFormData>>({});
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const [newDepartment, setNewDepartment] = useState<string>("");
+  const handleCreateDepartment = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_HEAD}/departments/create`,
+        { name: newDepartment },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        setDepartments((prev) => [
+          ...prev,
+          { id: response.data.id, name: newDepartment },
+        ]);
+        setNewDepartment("");
+        dispatch(
+          setAlert({
+            message: "Department created successfully",
+            type: "success",
+          })
+        );
+      } else {
+        throw new Error("Failed to create department");
+      }
+    }
+    catch (error: any) {
+      dispatch(
+        setAlert({
+          message: error.response.data.error || error.message,
+          type: `${error.response.status === 404 ? "warning" : "error"}`,
+        })
+      );
+    }
+  }
 
   useEffect(() => {
-    console.log(`Cookie: ${document.cookie}`);
-
     const fetchDepartments = async () => {
       try {
         const response = await axios.get(
@@ -168,9 +201,8 @@ const StaffRegistration = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
-                errors.name ? "border-red-500" : ""
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${errors.name ? "border-red-500" : ""
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter full name"
             />
             {errors.name && (
@@ -186,9 +218,8 @@ const StaffRegistration = () => {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
-                errors.role ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${errors.role ? "border-red-500" : "border-gray-200"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             >
               <option value="">Select Role</option>
               <option value="doctor">Doctor</option>
@@ -205,37 +236,45 @@ const StaffRegistration = () => {
             <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
               Department
             </label>
-            <select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
-                errors.department ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-            >
-              <option value="">Select Department</option>
-              {departments.map((department) => (
-                <option key={department.id} value={department.name}>
-                  {department.name}
-                </option>
-              ))}
-            </select>
-            <div className="px-2">
-              <form action="" className="flex items-center space-x-2 w-full">
-                <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2">
-                  <input className="w-full h-full outline-none" type="text" name="newDepartment" id="newDepartment" placeholder="Create new department" />
-                </div>
-                <button
-                  onClick={() => {
-                    console.log("Create Department");
-                  }}
-                  className="w-auto"
-                  type="button"
+            {!departments || departments.length === 0 ? (
+              <h6>Loading departments...</h6>
+            ) : (
+              <div>
+                <select
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${errors.department ? "border-red-500" : "border-gray-200"
+                    } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                 >
-                  <Plus className="w-6 h-6 text-primary/40" />
-                </button>
-              </form>
-            </div>
+                  <option value="">Select Department</option>
+                  {departments.map((department) => (
+                    <option key={department.id} value={department.name}>
+                      {department.name}
+                    </option>
+                  ))}
+                </select>
+
+                <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2 mt-2">
+                  {/* <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2"> */}
+                  <input
+                    disabled={!newDepartment}
+                    onChange={(e) => setNewDepartment(e.target.value)}
+                    className="w-full h-full outline-none" type="text" name="newDepartment" id="newDepartment"
+                    placeholder="Create new department"
+
+                  />
+                  {/* </div> */}
+                  <button
+                    onClick={() => handleCreateDepartment()}
+                    className="w-auto h-3/4 bg-gray-400 rounded-full p-2absolute right-0 top-0"
+                    type="button"
+                  >
+                    <Plus className="w-6 h-6 text-white" />
+                  </button>
+                </div>
+              </div>
+            )}
 
             {errors.department && (
               <p className="text-red-500 text-sm mt-1">{errors.department}</p>
@@ -251,9 +290,8 @@ const StaffRegistration = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.email ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border ${errors.email ? "border-red-500" : "border-gray-200"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter email address"
             />
             {errors.email && (
@@ -270,9 +308,8 @@ const StaffRegistration = () => {
               name="phone_number"
               value={formData.phone_number}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.phone_number ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border ${errors.phone_number ? "border-red-500" : "border-gray-200"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter phone number"
             />
             {errors.phone_number && (
@@ -289,9 +326,8 @@ const StaffRegistration = () => {
               name="work_id"
               value={formData.work_id}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.work_id ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border ${errors.work_id ? "border-red-500" : "border-gray-200"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter username"
             />
             {errors.work_id && (
@@ -303,19 +339,32 @@ const StaffRegistration = () => {
             <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.password ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-              placeholder="Enter password"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${errors.password ? "border-red-500" : "border-gray-200"
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                placeholder="Enter password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-6 h-6" />
+                ) : (
+                  <Eye className="w-6 h-6" />
+                )}
+              </button>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
+            </div>
           </div>
         </div>
 

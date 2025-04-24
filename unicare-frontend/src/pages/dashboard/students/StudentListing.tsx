@@ -1,13 +1,11 @@
 const StudentListing: React.FC = () => {
   return (
-    <div id="student-listing" className="flex">
-      <div className="w-full max-w-2xl mx-auto p-4 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">Student Listing</h2>
-        {/* Add your student listing content here */}
-      </div>
-      <table>
-        <thead>
-          <tr>
+    <div className="w-full mx-auto p-4 bg-white shadow-md rounded-lg">
+      <h2 className="text-2xl font-bold mb-4">Student Listing</h2>
+      {/* Add your student listing content here */}
+      <table className="w-full">
+        <thead className="divide-y-2 divide-gray-400 bg-gray-200">
+          <tr className="*:px-4 *:py-2">
             <td>Full Name</td>
             <td>Student ID</td>
             <td>Course</td>
@@ -16,7 +14,7 @@ const StudentListing: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className="*:px-4 *:py-2">
             <td>John Doe</td>
             <td>123456</td>
             <td>Computer Science</td>

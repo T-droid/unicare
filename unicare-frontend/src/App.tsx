@@ -1,7 +1,8 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearMessage } from "./state/app";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 // Layouts & Components
 import AdminLayout from "./layout/AdminLayout";
@@ -10,6 +11,7 @@ import MessageModal from "./components/alerts/MessageModal";
 import { CircularProgress } from "@mui/material";
 import ScheduleManager from "./pages/doctor/ScheduleManager";
 import LabTechnicianDashboard from "./pages/labtech/LabTechnicianDashboard";
+import PageNotFound from "./pages/error/NotFound";
 
 // Lazy-loaded Admin Pages
 const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
@@ -42,7 +44,14 @@ const LoaderComponent = () => (
 
 function App() {
   const message = useSelector((state: any) => state.app.alert);
+  const currentUser = useSelector((state: any) => state.auth.user);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!currentUser || (currentUser && window.location.pathname != '/')) return;
+    const userRole = currentUser?.role;
+    window.location.href = `/${userRole}`;
+  }, [currentUser?.role]);
 
   return (
     <BrowserRouter>
@@ -59,6 +68,15 @@ function App() {
         <Routes>
           {/* Admin Routes (Wrapped in AdminLayout) */}
           <Route element={<AdminLayout />}>
+            <Route
+              path="/"
+              element={
+                <>
+                  <PageTitle title="Unicare" />
+                  <AdminDashboard />
+                </>
+              }
+            />
             <Route
               path="/admin"
               element={
@@ -194,7 +212,7 @@ function App() {
           </Route>
 
           {/* 404 Not Found */}
-          <Route path="*" element={<AdminSignIn />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

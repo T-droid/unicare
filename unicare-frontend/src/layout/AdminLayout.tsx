@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "./header";
 import { clearMessage } from "@/state/app";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,9 +13,16 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = () => {
   const loggedIn = localStorage.getItem("token");
+  const user = useSelector((state: any) => state.auth.user);
   if (!loggedIn) {
     window.location.href = "/auth/login";
   }
+  useEffect(() => {
+    const urlSuffix = window.location.pathname.split("/")[1];
+    if (user.role !== urlSuffix) {
+      window.location.href = `/${user.role}`;
+    }
+  }, [window.location.pathname]);
   return (
     <>
       {loggedIn && (

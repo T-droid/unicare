@@ -68,6 +68,9 @@ const AdminDashboard = () => {
         {/* Quick Search */}
         <div className="relative">
           <input
+            onChange={(e) => {
+              setShowStudentListing(true);
+            }}
             type="text"
             placeholder="Search student records..."
             className="pl-10 pr-4 py-2 border rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
