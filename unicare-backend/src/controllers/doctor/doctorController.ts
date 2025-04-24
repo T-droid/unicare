@@ -117,12 +117,10 @@ export const createPrescriptionController = async (
   }
 };
 
-
 export const requestLabTestController = async (
   req: Request & { user?: { role: string; id: string | null } },
   res: Response,
 ) => {
-
   const { regNo } = req.params;
   const { testName, testDescription } = req.body;
   const { role, id } = req.user || {};
@@ -156,11 +154,10 @@ export const requestLabTestController = async (
     if (result.length === 0) {
       return res.status(400).json({ message: "Failed to request lab test" });
     }
-   return res.status(201).json({
+    return res.status(201).json({
       message: "Lab test requested successfully",
       data: { result, studentName: student[0].name },
     });
-
   } catch (error) {
     return res
       .status(500)
@@ -204,7 +201,6 @@ export const updatePatientTypeController = async (
       message: "Patient type updated successfully",
       data: { result, studentName: student[0].name },
     });
-
   } catch (error) {
     return res
       .status(500)
@@ -240,7 +236,6 @@ export const getLabResultsController = async (
       .json({ message: "Server failed to fetch lab results", error });
   }
 };
-
 
 // View and update the patient's status during treatment
 export const updateTreatmentStatusController = async (

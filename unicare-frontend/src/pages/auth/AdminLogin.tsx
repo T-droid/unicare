@@ -36,9 +36,11 @@ const AdminSignIn: React.FC = () => {
       dispatch(setToken(loginData.token));
       window.location.href = "/admin";
     } catch (error: any) {
+      console.log(error);
+      
       dispatch(
         setAlert({
-          message: error.response.data.error || error.message,
+          message: error.response.data.error || error.message || "Login failed",
           type: `${error.response.status === 404 ? "warning" : "error"}`,
         })
       );

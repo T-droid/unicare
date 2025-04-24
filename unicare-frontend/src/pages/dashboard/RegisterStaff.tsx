@@ -35,8 +35,15 @@ const StaffRegistration = () => {
 
   const [errors, setErrors] = useState<Partial<StaffFormData>>({});
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const [message, setMessage] = useState<{
+    text: string;
+    type: string;
+  }>({
+    text: "",
+    type: "",
+  })
   const [newDepartment, setNewDepartment] = useState<string>("");
+
   const handleCreateDepartment = async () => {
     try {
       const response = await axios.post(
@@ -44,29 +51,27 @@ const StaffRegistration = () => {
         { name: newDepartment },
         { withCredentials: true }
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         setDepartments((prev) => [
           ...prev,
           { id: response.data.id, name: newDepartment },
         ]);
         setNewDepartment("");
-        dispatch(
-          setAlert({
-            message: "Department created successfully",
-            type: "success",
-          })
-        );
+        setFormData((prev) => ({
+          ...prev,
+          department: newDepartment,
+        }));
+        setMessage({
+          text: "Department created successfully",
+          type: "success",
+        })
       } else {
         throw new Error("Failed to create department");
       }
     }
     catch (error: any) {
-      dispatch(
-        setAlert({
-          message: error.response.data.error || error.message,
-          type: `${error.response.status === 404 ? "warning" : "error"}`,
-        })
-      );
+      console.log(error);
+      setMessage(error.response.error || error.message || "Error creating department");
     }
   }
 
@@ -258,11 +263,9 @@ const StaffRegistration = () => {
                 <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2 mt-2">
                   {/* <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2"> */}
                   <input
-                    disabled={!newDepartment}
                     onChange={(e) => setNewDepartment(e.target.value)}
                     className="w-full h-full outline-none" type="text" name="newDepartment" id="newDepartment"
                     placeholder="Create new department"
-
                   />
                   {/* </div> */}
                   <button
@@ -273,6 +276,12 @@ const StaffRegistration = () => {
                     <Plus className="w-6 h-6 text-white" />
                   </button>
                 </div>
+                {message.text && (
+                  <div className={`mt-1 text-sm ${message.type === "error" ? "text-red-500" : "text-green-500"}`}>
+                    {message.text}
+                  </div>
+                )}
+
               </div>
             )}
 

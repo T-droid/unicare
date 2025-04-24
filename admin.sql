@@ -11,12 +11,14 @@ INSERT INTO
 	)
 VALUES
 	(
-		gen_random_uuid(),
-		'Admin User',
-		'0712345678',
-		'ADM-001',
-		'c8a4eeda-5af9-445f-822c-2c94d74823a1',
-		'admin',
-		'admin@unicare.com',
-		'$2b$12$ORpm0bmYubnu2cXQN9.81u3XQPdFAVNj5VI9wSyloYq1TFFac66/q'
+		gen_random_uuid (),
+		'Dr Zahra',
+		'0737627827',
+		'DR-001',
+		'69003fc0-b6f8-40b6-875b-d64f51776186',
+		'doctor',
+		'dr.zahra@doctors.unicare.com',
+		'2b$10$4KrYy3WD/R3ogz/xiUdEuOMBTwCMhO6SYYD5IG5hVKptUo4CTOTUW'
 	);
+
+-- '$2b$12$ORpm0bmYubnu2cXQN9.81u3XQPdFAVNj5VI9wSyloYq1TFFac66/q'

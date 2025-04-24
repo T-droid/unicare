@@ -27,7 +27,7 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <button onClick={() => dispatch(setLogout())} className="cursor-pointer hidden lg:flex justify-center items-center gap-2 px-4 py-2 text-sm font-semibold text-black rounded-lg bg-red-500 hover:bg-gray-100 transition-all">
               <LogOut />
               Logout

@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { findDepartmentByName } from "../../services/departmentService";
-import { findUserByEmail, saveUser } from "../../services/userService";
+import {
+  createStaff,
+  deleteUserById,
+  findUserByEmail,
+  saveUser,
+} from "../../services/userService";
 import { generateToken, hashPassword } from "../../util/password";
 
 export const registerUser = async (
