@@ -45,7 +45,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(200).json({
-      data: user[0], // return one user since it return an Array
+      data: user[0],
       token,
     });
     console.log(res);
