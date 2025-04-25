@@ -11,7 +11,6 @@ import {
   varchar,
   text,
 } from "drizzle-orm/pg-core";
-import app from "../app";
 
 // role ENUM
 export const userRoleEnum = pgEnum("user_role", [
@@ -20,6 +19,7 @@ export const userRoleEnum = pgEnum("user_role", [
   "receptionist",
   "lab_technician",
   "admin",
+  "pharmacist",
 ]);
 export const appontmentStatus = pgEnum("status", [
   "pending",
@@ -31,6 +31,12 @@ export const appontmentStatus = pgEnum("status", [
 export const patientTypeEnum = pgEnum("patient_type", [
   "inpatient",
   "outpatient",
+]);
+
+export const labTestEnum = pgEnum("test_result", [
+  "pending",
+  "completed",
+  "cancelled",
 ]);
 
 // Departments Table
@@ -89,6 +95,7 @@ export const StaffTableRelations = relations(StaffTable, ({ one, many }) => ({
   }),
   appointments: many(AppointmentsTable),
   medical_records: many(PatientMedicalRecords),
+  lab_tests: many(labTestRequestTable),
 }));
 
 // Students Table
@@ -110,6 +117,7 @@ export const StudentTableRelations = relations(
     appointments: many(AppointmentsTable),
     medical_records: many(PatientMedicalRecords),
     inpatients: many(InpatientTable),
+    labtests: many(labTestRequestTable),
   }),
 );
 
@@ -155,10 +163,8 @@ export const PatientMedicalRecords = pgTable("medical_records", {
     }),
   prescription: varchar("prescription", { length: 400 }),
   prescribed_by_id: uuid("prescribed_by_id").references(() => StaffTable.id),
-  lab_results: varchar("lab_results", { length: 400 }),
-  tested_by_id: uuid("tested_by_id").references(() => StaffTable.id),
   doctor_recommendation: varchar("doctor_recommendation", { length: 400 }),
-  patient_type: patientTypeEnum("patient_type").notNull(),
+  patient_type: patientTypeEnum("patient_type").default("outpatient"),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
@@ -166,7 +172,7 @@ export const PatientMedicalRecords = pgTable("medical_records", {
 // medical records relations
 export const PatientMedicalRecordsRelations = relations(
   PatientMedicalRecords,
-  ({ one }) => ({
+  ({ many, one }) => ({
     student: one(StudentTable, {
       fields: [PatientMedicalRecords.reg_no],
       references: [StudentTable.reg_no],
@@ -175,9 +181,49 @@ export const PatientMedicalRecordsRelations = relations(
       fields: [PatientMedicalRecords.prescribed_by_id],
       references: [StaffTable.id],
     }),
-    lab_technician: one(StaffTable, {
-      fields: [PatientMedicalRecords.tested_by_id],
+    lab_test: many(labTestRequestTable),
+  }),
+);
+
+export const labTestRequestTable = pgTable("lab_test_requests", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  reg_no: varchar("reg_no", { length: 15 }).references(
+    () => StudentTable.reg_no,
+  ),
+  medical_history_id: uuid("medical_history_id").references(
+    () => PatientMedicalRecords.id,
+    { onDelete: "cascade" },
+  ),
+  test_name: varchar("test_name", { length: 100 }).notNull(),
+  test_description: varchar("test_description", { length: 200 }).notNull(),
+  test_status: labTestEnum("test_status").default("pending"),
+  test_result: varchar("test_result", { length: 200 }),
+  requested_by_id: uuid("requested_by_id").references(() => StaffTable.id),
+  tested_by_id: uuid("tested_by_id").references(() => StaffTable.id),
+  requested_at: timestamp("requested_at").defaultNow(),
+  completed_at: timestamp("completed_at"),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const labTestRequestTableRelations = relations(
+  labTestRequestTable,
+  ({ one }) => ({
+    student: one(StudentTable, {
+      fields: [labTestRequestTable.reg_no],
+      references: [StudentTable.reg_no],
+    }),
+    requested_by: one(StaffTable, {
+      fields: [labTestRequestTable.requested_by_id],
       references: [StaffTable.id],
+    }),
+    tested_by: one(StaffTable, {
+      fields: [labTestRequestTable.tested_by_id],
+      references: [StaffTable.id],
+    }),
+    medical_record: one(PatientMedicalRecords, {
+      fields: [labTestRequestTable.medical_history_id],
+      references: [PatientMedicalRecords.id],
     }),
   }),
 );
