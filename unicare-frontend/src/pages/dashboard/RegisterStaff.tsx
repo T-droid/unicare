@@ -42,7 +42,7 @@ const StaffRegistration = () => {
   }>({
     text: "",
     type: "",
-  })
+  });
   const [newDepartment, setNewDepartment] = useState<string>("");
 
   const handleCreateDepartment = async () => {
@@ -65,23 +65,24 @@ const StaffRegistration = () => {
         setMessage({
           text: "Department created successfully",
           type: "success",
-        })
+        });
       } else {
         throw new Error("Failed to create department");
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       console.log(error);
-      setMessage(error.response.error || error.message || "Error creating department");
+      setMessage(
+        error.response.error || error.message || "Error creating department"
+      );
     }
-  }
+  };
 
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axiosInstance.get(`/departments`,
-          { withCredentials: true }
-        );
+        const response = await axiosInstance.get(`/departments`, {
+          withCredentials: true,
+        });
         if (response.status === 200) {
           const departments = response.data.departments;
           setDepartments(departments);
@@ -206,8 +207,9 @@ const StaffRegistration = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${errors.name ? "border-red-500" : ""
-                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border dark:text-gray-100 ${
+                errors.name ? "border-red-500" : ""
+              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter full name"
             />
             {errors.name && (
@@ -223,14 +225,15 @@ const StaffRegistration = () => {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${errors.role ? "border-red-500" : "border-gray-200"
-                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
+                errors.role ? "border-red-500" : "border-gray-200"
+              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
             >
               <option value="">Select Role</option>
               <option value="doctor">Doctor</option>
-              <option value="nurse">Nurse</option>
+              <option value="lab_technician">Lab Tech</option>
               <option value="receptionist">Receptionist</option>
-              <option value="admin">Admin</option>
+              <option value="pharmacist">Pharmacist</option>
             </select>
             {errors.role && (
               <p className="text-red-500 text-sm mt-1">{errors.role}</p>
@@ -249,8 +252,9 @@ const StaffRegistration = () => {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${errors.department ? "border-red-500" : "border-gray-200"
-                    } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                  className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
+                    errors.department ? "border-red-500" : "border-gray-200"
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                 >
                   <option value="">Select Department</option>
                   {departments.map((department) => (
@@ -264,7 +268,10 @@ const StaffRegistration = () => {
                   {/* <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2"> */}
                   <input
                     onChange={(e) => setNewDepartment(e.target.value)}
-                    className="w-full h-full outline-none" type="text" name="newDepartment" id="newDepartment"
+                    className="w-full h-full outline-none"
+                    type="text"
+                    name="newDepartment"
+                    id="newDepartment"
                     placeholder="Create new department"
                   />
                   {/* </div> */}
@@ -277,11 +284,16 @@ const StaffRegistration = () => {
                   </button>
                 </div>
                 {message.text && (
-                  <div className={`mt-1 text-sm ${message.type === "error" ? "text-red-500" : "text-green-500"}`}>
+                  <div
+                    className={`mt-1 text-sm ${
+                      message.type === "error"
+                        ? "text-red-500"
+                        : "text-green-500"
+                    }`}
+                  >
                     {message.text}
                   </div>
                 )}
-
               </div>
             )}
 
@@ -299,8 +311,9 @@ const StaffRegistration = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${errors.email ? "border-red-500" : "border-gray-200"
-                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border ${
+                errors.email ? "border-red-500" : "border-gray-200"
+              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter email address"
             />
             {errors.email && (
@@ -317,8 +330,9 @@ const StaffRegistration = () => {
               name="phone_number"
               value={formData.phone_number}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${errors.phone_number ? "border-red-500" : "border-gray-200"
-                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border ${
+                errors.phone_number ? "border-red-500" : "border-gray-200"
+              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter phone number"
             />
             {errors.phone_number && (
@@ -335,8 +349,9 @@ const StaffRegistration = () => {
               name="work_id"
               value={formData.work_id}
               onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${errors.work_id ? "border-red-500" : "border-gray-200"
-                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+              className={`w-full px-4 py-2 rounded-lg border ${
+                errors.work_id ? "border-red-500" : "border-gray-200"
+              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
               placeholder="Enter username"
             />
             {errors.work_id && (
@@ -355,8 +370,9 @@ const StaffRegistration = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 rounded-lg border ${errors.password ? "border-red-500" : "border-gray-200"
-                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.password ? "border-red-500" : "border-gray-200"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                 placeholder="Enter password"
               />
               <button

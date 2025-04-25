@@ -188,6 +188,7 @@ function App() {
               }
             />
           </Route>
+
           <Route
             path="/pharmacy"
             element={
