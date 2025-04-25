@@ -7,6 +7,7 @@ import {
   getLabResultsController,
   getAllDoctorsController,
   getDoctorsAppointmentsController,
+  getDoctorsLabrequestsController,
 } from "../../controllers/doctor/doctorController";
 import authenticateUser from "../../middleware/auth";
 
@@ -296,6 +297,80 @@ doctorRouter.get(
   authenticateUser,
   (req: Request, res: Response) => {
     getDoctorsAppointmentsController(req, res);
+  },
+);
+
+/**
+ * @swagger
+ * /v1/doctor/lab-requests:
+ *   get:
+ *     summary: Get all lab requests for the logged-in doctor
+ *     tags:
+ *       - Doctor
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lab requests fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       requestId:
+ *                         type: string
+ *                         description: Unique identifier for the lab request
+ *                       testName:
+ *                         type: string
+ *                         description: Name of the lab test
+ *                       requestedDate:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Date and time when the lab test was requested
+ *                       status:
+ *                         type: string
+ *                         description: Status of the lab request
+ *       403:
+ *         description: Unauthorized access (only doctors can access this route)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *       404:
+ *         description: No lab requests found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               description: Error details
+ */
+doctorRouter.get(
+  "/lab-requests",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    getDoctorsLabrequestsController(req, res);
   },
 );
 export default doctorRouter;
