@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { useState } from 'react';
+import * as React from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DoorOpen, Search } from "lucide-react";
-import type { Patient, Room } from '../types';
+import type { Patient, Room } from "../types";
 interface RoomAssignmentModalProps {
   patient?: Patient;
   onClose: () => void;
@@ -12,55 +12,61 @@ interface RoomAssignmentModalProps {
 const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
   patient,
   onClose,
-  onAssign
+  onAssign,
 }) => {
-  const [selectedRoom, setSelectedRoom] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRoom, setSelectedRoom] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [, setLoading] = useState(false);
+  const [, setError] = useState("");
 
-  const API_URL = `${import.meta.env.VITE_SERVER_HEAD}/rooms`;
+  const API_URL = `${import.meta.env.VITE_SERVER_HEAD}/receptionist/rooms`;
 
   React.useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        const response = await fetch(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-  const fetchRooms = async () => {
-  try {
-    setLoading(true);
-    const response = await fetch(API_URL);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch rooms. Status: ${response.status}`);
-    }
+        if (!response.ok) {
+          throw new Error(`Failed to fetch rooms. Status: ${response.status}`);
+        }
 
-    const contentType = response.headers.get("Content-Type");
-    if (contentType && contentType.includes("application/json")) {
-      const data = await response.json();
-      console.log("Rooms API response:", data);
-      
-      if (Array.isArray(data.data)) {
-        setRooms(data.data);
-      } else {
-        throw new Error("API did not return a valid rooms array");
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          console.log("Rooms API response:", data);
+
+          if (Array.isArray(data.rooms)) {
+            console.log(`rooms are: ${data.rooms}`);
+            setRooms(data.rooms);
+          } else {
+            throw new Error("API did not return a valid rooms array");
+          }
+        } else {
+          throw new Error("Response is not in JSON format");
+        }
+      } catch (err: any) {
+        console.error("Fetch error:", err);
+        setError(err.message || "Failed to load rooms");
+      } finally {
+        setLoading(false);
       }
-    } else {
-      throw new Error("Response is not in JSON format");
-    }
-  } catch (err: any) {
-    console.error("Fetch error:", err);
-    setError(err.message || 'Failed to load rooms');
-  } finally {
-    setLoading(false);
-  }
-};
-
+    };
 
     fetchRooms();
   }, [API_URL]);
 
-  const filteredRooms = rooms.filter(room =>
-    room.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    room.type.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredRooms = rooms.filter(
+    (room) =>
+      room.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      room.id?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -70,13 +76,12 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
     }
   };
 
-
   return (
     <Card className="bg-slate-50 dark:bg-boxdark dark:border-gray-500">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Room Management</span>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -101,7 +106,7 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
               <label className="block text-sm font-medium">Patient</label>
               <div className="p-3 bg-gray-100 rounded-lg">
                 <p className="font-medium">{patient.name}</p>
-                <p className="text-sm text-gray-500">ID: {patient.studentId}</p>
+                <p className="text-sm text-gray-500">ID: {patient.reg_no}</p>
               </div>
             </div>
           )}
@@ -109,25 +114,31 @@ const RoomAssignmentModal: React.FC<RoomAssignmentModalProps> = ({
           <div className="space-y-2">
             <label className="block text-sm font-medium">Available Rooms</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredRooms.map(room => (
+              {filteredRooms.map((room) => (
                 <div
                   key={room.id}
                   onClick={() => setSelectedRoom(room.id)}
                   className={`p-4 rounded-lg cursor-pointer border-2 transition-colors ${
                     selectedRoom === room.id
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900'
-                      : 'border-transparent bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-900 hover:bg-gray-200'
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900"
+                      : "border-transparent bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-900 hover:bg-gray-200"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium">Room {room.number}</p>
-                      <p className="text-sm text-gray-500">{room.type}</p>
-                      <p className="text-xs text-gray-400">{room.status}</p>
+                      <p className="font-medium">{room.name}</p>
+                      <p className="text-sm text-gray-500">
+                        Available Beds: {room.available_beds}/{room.total_beds}
+                      </p>
+                      {/* <p className="text-xs text-gray-400">{room.status}</p> */}
                     </div>
-                    <DoorOpen className={`h-5 w-5 ${
-                      selectedRoom === room.id ? 'text-blue-500' : 'text-gray-400'
-                    }`} />
+                    <DoorOpen
+                      className={`h-5 w-5 ${
+                        selectedRoom === room.id
+                          ? "text-blue-500"
+                          : "text-gray-400"
+                      }`}
+                    />
                   </div>
                 </div>
               ))}

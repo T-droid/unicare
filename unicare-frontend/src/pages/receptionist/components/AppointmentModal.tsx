@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { useState } from 'react';
+import * as React from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Student, Doctor, Patient } from '../types';
+import type { Student, Doctor, Patient } from "../types";
 
 interface AppointmentModalProps {
   subject: Student | Patient;
@@ -9,70 +9,114 @@ interface AppointmentModalProps {
   onSubmit: (appointmentData: any) => void;
 }
 
-const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, onSubmit }) => {
-  const [selectedDoctor, setSelectedDoctor] = useState('');
-  const [appointmentDate, setAppointmentDate] = useState('');
-  const [appointmentTime, setAppointmentTime] = useState('');
-  const [appointmentType, setAppointmentType] = useState('Regular');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+const AppointmentModal: React.FC<AppointmentModalProps> = ({
+  subject,
+  onClose,
+  onSubmit,
+}) => {
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
+  const [appointmentType, setAppointmentType] = useState("Regular");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sample data - replace with API call
-  const doctors: Doctor[] = [
-    { id: '1', name: 'Dr. Sarah Wilson', specialty: 'General Practice', availability: true, department: 'Family Medicine' },
-    { id: '2', name: 'Dr. Michael Chen', specialty: 'Internal Medicine', availability: true, department: 'Internal Medicine' },
-    { id: '3', name: 'Dr. Lisa Anderson', specialty: 'Emergency Medicine', availability: false, department: 'Emergency' }
-  ];
+  //  environment variable for API URL
+  const API_URL = `${import.meta.env.VITE_SERVER_HEAD}/doctor`;
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true);
+
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(API_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch doctors");
+        }
+
+        const data = await response.json();
+        console.log("API response:", data);
+
+        // Handle the data based on your API response structure
+        if (Array.isArray(data.data)) {
+          setDoctors(data.data);
+        } else if (Array.isArray(data)) {
+          setDoctors(data);
+        } else {
+          throw new Error("API did not return a valid doctors array");
+        }
+
+        setError("");
+      } catch (err: any) {
+        console.error("Error fetching doctors:", err);
+        setError(err.message || "Failed to load doctors. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, [API_URL]);
 
   // Helper function to determine if subject is a Student
   const isStudent = (subject: Student | Patient): subject is Student => {
-    return 'course' in subject && 'yearOfStudy' in subject;
+    return "course" in subject && "yearOfStudy" in subject;
   };
 
   const resetForm = () => {
-    setSelectedDoctor('');
-    setAppointmentDate('');
-    setAppointmentTime('');
-    setAppointmentType('Regular');
+    setSelectedDoctor("");
+    setAppointmentDate("");
+    setAppointmentTime("");
+    setAppointmentType("Regular");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!selectedDoctor || !appointmentDate || !appointmentTime) {
       setError("Please fill in all fields.");
-      setMessage('');
+      setMessage("");
       return;
     }
-  
-    const subjectId = isStudent(subject) ? subject.studentId : subject.patientId;
-  
-    try {    
+
+    try {
+      for (const key in subject) {
+        console.log(`${key} as attr: ${subject[key as keyof typeof subject]}`);
+      }
+
       onSubmit({
-        studentId: subjectId,
+        regNo: subject.reg_no,
         doctorId: selectedDoctor,
         date: appointmentDate,
-        time: appointmentTime,
         type: appointmentType,
-        patientName: subject.name
+        patientName: subject.name,
       });
-  
-      setMessage(" Appointment scheduled successfully!");
-      setError('');
+
+      setMessage("Appointment scheduled successfully!");
+      setError("");
       resetForm();
     } catch (err) {
       setError("⚠️ Could not schedule the appointment. Try again.");
-      setMessage('');
+      setMessage("");
     }
   };
-  
 
   return (
     <Card className="bg-slate-50 dark:bg-boxdark dark:border-gray-500">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Schedule Appointment</span>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -90,7 +134,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
             <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
               <p className="font-medium">{subject.name}</p>
               <p className="text-sm text-gray-500">
-                ID: {isStudent(subject) ? subject.studentId : subject.patientId}
+                ID: {subject.reg_no}
                 {isStudent(subject) && (
                   <>
                     <br />
@@ -104,7 +148,9 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium">Appointment Type</label>
+            <label className="block text-sm font-medium">
+              Appointment Type
+            </label>
             <select
               value={appointmentType}
               onChange={(e) => setAppointmentType(e.target.value)}
@@ -124,11 +170,14 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
               onChange={(e) => setSelectedDoctor(e.target.value)}
               className="w-full p-2 border rounded-lg dark:bg-boxdark dark:text-gray-300"
               required
+              disabled={loading}
             >
-              <option value="">Select a doctor...</option>
-              {doctors.map(doctor => (
-                <option key={doctor.id} value={doctor.id} disabled={!doctor.availability}>
-                  {doctor.name} - {doctor.specialty} {doctor.availability ? '' : '(Not available)'}
+              <option value="">
+                {loading ? "Loading doctors..." : "Select a doctor..."}
+              </option>
+              {doctors.map((doctor) => (
+                <option key={doctor.id} value={doctor.id}>
+                  {doctor.name}
                 </option>
               ))}
             </select>
@@ -168,6 +217,7 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({ subject, onClose, o
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              disabled={loading}
             >
               Schedule Appointment
             </button>

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, CheckCircle, User, BookOpen, Calendar } from "lucide-react";
-import type { Student } from '../types';
+import type { Student } from "../types";
 
 interface StudentSearchProps {
   onSelect: (student: Student) => void;
@@ -9,7 +9,7 @@ interface StudentSearchProps {
 }
 
 const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,31 +22,31 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
         setLoading(true);
         const response = await fetch(API_URL);
         if (!response.ok) {
-          throw new Error('Failed to fetch students');
+          throw new Error("Failed to fetch students");
         }
         const data = await response.json();
         console.log("API response:", data);
-  
+
         if (Array.isArray(data.data)) {
-          setStudents(data.data); 
+          setStudents(data.data);
         } else {
           throw new Error("API did not return a valid students array");
         }
       } catch (err: any) {
         console.error("Fetch error:", err);
-        setError(err.message || 'Something went wrong');
+        setError(err.message || "Something went wrong");
       } finally {
         setLoading(false);
       }
     };
-  
-    fetchStudents();
-  }, [API_URL]); 
-  
 
-  const filteredStudents = students.filter(student =>
-    student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    student.studentId.toLowerCase().includes(searchQuery.toLowerCase())
+    fetchStudents();
+  }, [API_URL]);
+
+  const filteredStudents = students.filter(
+    (student) =>
+      student.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.studentId?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -77,7 +77,9 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
       </CardHeader>
       <CardContent className="p-0 max-h-[400px] overflow-y-auto">
         {loading && (
-          <div className="p-8 text-center text-gray-500">Loading students...</div>
+          <div className="p-8 text-center text-gray-500">
+            Loading students...
+          </div>
         )}
         {error && (
           <div className="p-8 text-center text-red-500">Error: {error}</div>
@@ -93,7 +95,9 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-medium text-gray-900 dark:text-gray-400">{student.name}</h4>
+                      <h4 className="font-medium text-gray-900 dark:text-gray-400">
+                        {student.name}
+                      </h4>
                       <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
                         {student.studentId}
                       </span>

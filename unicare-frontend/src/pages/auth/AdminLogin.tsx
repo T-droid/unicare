@@ -35,9 +35,28 @@ const AdminSignIn: React.FC = () => {
       dispatch(setAlert({ message: "Login successful", type: "success" }));
       dispatch(setCurrentUser(loginData.data));
       dispatch(setToken(loginData.token));
-      console.log(loginData);
-      
-      window.location.href = "/admin";
+
+      // Role-based redirection
+      const userRole = loginData.data.role;
+      let redirectPath = "/admin"; // Default redirection path
+
+      // Redirect based on role
+      switch (userRole) {
+        case "doctor":
+          redirectPath = "/doctor";
+          break;
+        case "lab_technician":
+          redirectPath = "/labtech";
+          break;
+        case "receptionist":
+          redirectPath = "/reception";
+          break;
+        case "pharmacist":
+          redirectPath = "/pharmacy";
+          break;
+      }
+
+      window.location.href = redirectPath;
     } catch (error: any) {
       dispatch(
         setAlert({
@@ -55,10 +74,10 @@ const AdminSignIn: React.FC = () => {
       <Card className="w-full max-w-md">
         <CardHeader>
           <h1 className="text-2xl font-bold text-center text-gray-800">
-            UniCare Admin Portal
+            UniCare Portal
           </h1>
           <p className="text-center text-gray-600">
-            Sign in to manage staff and system
+            Sign in to manage dashboard
           </p>
         </CardHeader>
         <CardContent>

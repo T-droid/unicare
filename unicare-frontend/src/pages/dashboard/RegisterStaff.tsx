@@ -192,7 +192,7 @@ const StaffRegistration = () => {
             >
               <option value="">Select Role</option>
               <option value="doctor">Doctor</option>
-              <option value="lab_tech">Lab Tech</option>
+              <option value="lab_technician">Lab Tech</option>
               <option value="receptionist">Receptionist</option>
               <option value="pharmacist">Pharmacist</option>
             </select>
