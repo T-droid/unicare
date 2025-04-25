@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   createStudentPrescription,
   getAllDoctors,
+  getDoctorsAppointments,
   getStudentLabTests,
   getStudentMedicalHistory,
   requestStudentLabTest,
@@ -117,12 +118,10 @@ export const createPrescriptionController = async (
   }
 };
 
-
 export const requestLabTestController = async (
   req: Request & { user?: { role: string; id: string | null } },
   res: Response,
 ) => {
-
   const { regNo } = req.params;
   const { testName, testDescription } = req.body;
   const { role, id } = req.user || {};
@@ -156,11 +155,10 @@ export const requestLabTestController = async (
     if (result.length === 0) {
       return res.status(400).json({ message: "Failed to request lab test" });
     }
-   return res.status(201).json({
+    return res.status(201).json({
       message: "Lab test requested successfully",
       data: { result, studentName: student[0].name },
     });
-
   } catch (error) {
     return res
       .status(500)
@@ -204,7 +202,6 @@ export const updatePatientTypeController = async (
       message: "Patient type updated successfully",
       data: { result, studentName: student[0].name },
     });
-
   } catch (error) {
     return res
       .status(500)
@@ -241,17 +238,27 @@ export const getLabResultsController = async (
   }
 };
 
-
-// View and update the patient's status during treatment
-export const updateTreatmentStatusController = async (
-  req: Request,
+export const getDoctorsAppointmentsController = async (
+  req: Request & { user?: { role: string; id: string | null } },
   res: Response,
 ) => {
-  const { studentId } = req.params;
-  const { treatmentStatus } = req.body;
-  // Logic to update treatment status
-  // ...existing code...
-  res
-    .status(200)
-    .json({ message: "Treatment status updated successfully", data: {} });
+  const { role, id } = req.user || {};
+  if (!role && role !== "doctor") {
+    return res.status(403).json({ message: "Unauthorized access" });
+  }
+
+  try {
+    const appointments = await getDoctorsAppointments(id as string);
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found" });
+    }
+    return res.status(200).json({
+      message: "Appointments fetched successfully",
+      data: appointments,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server failed to fetch appointments", error });
+  }
 };
