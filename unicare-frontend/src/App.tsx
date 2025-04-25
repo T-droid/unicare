@@ -179,7 +179,7 @@ function App() {
           {/* Receptionist Route */}
           <Route element={<AdminLayout />}>
             <Route
-              path="/reception"
+              path="/receptionist"
               element={
                 <>
                   <PageTitle title="Receptionist Dashboard" />

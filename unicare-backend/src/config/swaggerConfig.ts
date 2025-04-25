@@ -7,8 +7,8 @@ const swaggerOption = {
     },
     servers: [
       {
-        // url: `http://localhost:${process.env.PORT || 3000}/api`,
-        url: `https://phrj0117-3001.inc1.devtunnels.ms/api`,
+        url: `http://localhost:${process.env.PORT || 3000}/api`,
+        // url: `https://phrj0117-3001.inc1.devtunnels.ms/api`,
       },
     ],
     components: {

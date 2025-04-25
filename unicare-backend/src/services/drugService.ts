@@ -51,7 +51,7 @@ export const administerDrug = async (name: string, amount: number) => {
       .limit(1);
     if (!drugExists) throw new Error("Drug not found");
 
-    if (drugExists[0].quantity !== 0 && drugExists[0].quantity < amount){
+    if (drugExists[0].quantity !== 0 && drugExists[0].quantity < amount) {
       // If the quantity is less than the amount to be administered give the available quantity
       amount = drugExists[0].quantity;
     } else if (drugExists[0].quantity === 0) {

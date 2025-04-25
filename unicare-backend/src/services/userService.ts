@@ -37,6 +37,8 @@ export const findAllUsers = async () => {
 
 export const saveUser = async (payload: User) => {
   const hashedPassword = await hashPassword(payload.password);
+  console.log("payload", payload);
+
   return await db
     .insert(UserTable)
     .values({
@@ -45,6 +47,7 @@ export const saveUser = async (payload: User) => {
     })
     .returning({
       id: UserTable.id,
+      department_id: StaffTable.department_id,
       name: UserTable.name,
       phone_number: UserTable.phone_number,
       work_id: UserTable.work_id,

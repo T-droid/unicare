@@ -8,6 +8,7 @@ import {
   StudentTable,
 } from "../db/schema";
 import { d } from "drizzle-kit/index-BAUrj6Ib";
+import { stat } from "fs";
 
 export async function getAllDoctors() {
   try {
@@ -173,6 +174,7 @@ export async function getDoctorsAppointments(id: string) {
       .select({
         appointment_id: AppointmentsTable.id,
         appointment_date: AppointmentsTable.appointment_date,
+        status: AppointmentsTable.status,
         created_at: AppointmentsTable.created_at,
         student: {
           reg_no: StudentTable.reg_no,

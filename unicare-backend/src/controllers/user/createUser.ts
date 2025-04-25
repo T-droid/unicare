@@ -34,7 +34,6 @@ export const registerUser = async (
         return;
       }
     }
-
     let payload = {
       department_id: department[0].id,
       name: otherData.name,
@@ -52,11 +51,13 @@ export const registerUser = async (
       email: savedObject[0].email,
     };
 
+    console.log("Saved Object: ", savedObject);
+
     if (jwtData.role !== "admin") {
       // populate staff table
       const newStaff = await createStaff({
         id: savedObject[0].id,
-        department_id: otherData.department_id,
+        department_id: department[0].id,
       });
       if (newStaff.length === 0) {
         await deleteUserById(savedObject[0].id);

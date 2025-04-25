@@ -13,15 +13,29 @@ import {
   Repeat,
   Loader,
   Loader2,
+  FileText,
+  FileX,
 } from "lucide-react";
 import { QueuedPatient } from "@/types/patient";
 import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setAlert } from "@/state/app";
+import { useSearchParams } from "react-router-dom";
+import NewLabRequestModal from "./modals/LabTestModal";
+import LabTestModal from "./modals/LabTestModal";
+import axiosInstance from "@/middleware/axiosInstance";
 
 const DoctorDashboard = () => {
-  const [activeTab, setActiveTab] = useState("queue");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTabExec] = useState(searchParams.get('tab') || "queue");
+  const [labRequests, setLabRequests] = useState<any[]>([]);
+
+  const [showLabRequestModal, setShowLabRequestModal] = useState<boolean>(false);
+  const setActiveTab = (tab: string) => {
+    setActiveTabExec(tab);
+    setSearchParams({ tab });
+  }
   const currentDoctor = useSelector((state: any) => state.auth.user);
   const dispatch = useDispatch();
   // Today's date
@@ -117,7 +131,7 @@ const DoctorDashboard = () => {
   const fetchAppointments = async () => {
     try {
       setLoadingAppointments(true);
-      const response = await axios.get(`${import.meta.env.VITE_SERVER_HEAD}/doctor/appointments`,
+      const response = await axiosInstance.get(`/doctor/appointments`,
         { withCredentials: true }
       );
 
@@ -131,7 +145,7 @@ const DoctorDashboard = () => {
       console.error(error);
       dispatch(
         setAlert({
-          message: error.response?.message || error?.message || "Failed to fetch appointments",
+          message: error.response.data.message || error?.message || "Failed to fetch appointments",
           type: "error",
         })
       )
@@ -140,34 +154,83 @@ const DoctorDashboard = () => {
     }
   }
 
+  const handleSubmitLabRequest = async (labRequest: any) => {
+    console.log(labRequest);
+
+    try {
+      const response = await axiosInstance.post(`/doctor/students/${encodeURIComponent(labRequest.selectedPatient)}/lab-tests`, labRequest, {
+        withCredentials: true,
+      });
+      if (response.status === 201) {
+        dispatch(
+          setAlert({
+            message: "Lab request submitted successfully",
+            type: "success",
+          })
+        );
+        setShowLabRequestModal(false);
+      } else {
+        throw new Error("Failed to submit lab request");
+      }
+    } catch (error: any) {
+      console.error("Error submitting lab request:", error);
+      dispatch(
+        setAlert({
+          message: error.response.data.message || error?.message || "Failed to submit lab request",
+          type: "error",
+        })
+      );
+    }
+  }
+
+  const fetchLabRequests = async () => {
+    try {
+      const response = await axiosInstance.get(`/doctor/lab-requests`, {
+        withCredentials: true,
+      });
+      if (response.status !== 200) {
+        throw new Error(response.data.message || "Failed to fetch lab requests");
+      }
+      const labRequests = response.data.data;
+      setLabRequests(labRequests);
+    } catch (error: any) {
+      console.log(error);
+      dispatch(setAlert({
+        message: error.response.data.message || error?.message || "Failed to fetch lab requests",
+        type: "error",
+      }))
+    }
+  }
+
   useEffect(() => {
     fetchAppointments();
+    fetchLabRequests();
   }, [])
 
   // Sample lab requests
-  const labRequests = [
-    {
-      id: 1,
-      patient: "Robert Brown",
-      test: "Complete Blood Count",
-      urgency: "Routine",
-      status: "Ordered",
-    },
-    {
-      id: 2,
-      patient: "Sarah Johnson",
-      test: "Urinalysis",
-      urgency: "Urgent",
-      status: "Results Ready",
-    },
-    {
-      id: 3,
-      patient: "Michael Smith",
-      test: "Lipid Panel",
-      urgency: "Routine",
-      status: "In Progress",
-    },
-  ];
+  // const labRequests = [
+  //   {
+  //     id: 1,
+  //     patient: "Robert Brown",
+  //     test: "Complete Blood Count",
+  //     urgency: "Routine",
+  //     status: "Ordered",
+  //   },
+  //   {
+  //     id: 2,
+  //     patient: "Sarah Johnson",
+  //     test: "Urinalysis",
+  //     urgency: "Urgent",
+  //     status: "Results Ready",
+  //   },
+  //   {
+  //     id: 3,
+  //     patient: "Michael Smith",
+  //     test: "Lipid Panel",
+  //     urgency: "Routine",
+  //     status: "In Progress",
+  //   },
+  // ];
 
   // Sample prescriptions
   const prescriptions = [
@@ -289,18 +352,26 @@ const DoctorDashboard = () => {
               </button>
             )}
 
-            {activeTab === "appointments" && (
-              <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition duration-150">
-                <Plus size={18} />
-                <span>New Appointment</span>
-              </button>
-            )}
+
 
             {activeTab === "lab" && (
-              <button className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition duration-150">
+              <button onClick={() => setShowLabRequestModal(true)} className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition duration-150">
                 <Plus size={18} />
                 <span>Order New Test</span>
               </button>
+            )}
+
+            {showLabRequestModal && (
+              <LabTestModal
+                doctorId={currentDoctor.id}
+                isOpen={showLabRequestModal}
+                onClose={() => setShowLabRequestModal(false)}
+                onSubmit={(labRequest) => {
+                  handleSubmitLabRequest(labRequest);
+                }}
+                patients={upcomingAppointments}
+                selectedPatient={null}
+              />
             )}
 
             {activeTab === "prescriptions" && (
@@ -334,8 +405,11 @@ const DoctorDashboard = () => {
                 )
                   : !upcomingAppointments || upcomingAppointments.length === 0
                     ? (
-                      <div>
-                        No appointments booked
+                      <div className="flex flex-col items-center justify-center h-64">
+                        <FileX className="w-16 h-16 text-gray-400 mb-4" />
+                        <p className="text-center text-gray-500 dark:text-gray-400">
+                          No upcoming appointments for today.
+                        </p>
                       </div>
                     )
                     : upcomingAppointments.map((appointment) => (
@@ -352,7 +426,15 @@ const DoctorDashboard = () => {
             <div>
               <h2 className="text-xl font-semibold mb-4">Lab Requests</h2>
               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                {labRequests.map((labRequest) => (
+                {labRequests.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64">
+                    <FileX className="w-16 h-16 text-gray-400 mb-4" />
+                    <p className="text-center text-gray-500 dark:text-gray-400">
+                      No lab requests available.
+                    </p>
+                  </div>
+                )
+                : labRequests.map((labRequest) => (
                   <LabRequestCard key={labRequest.id} labRequest={labRequest} />
                 ))}
               </div>

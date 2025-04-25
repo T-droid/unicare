@@ -1,3 +1,4 @@
+import axiosInstance from "@/middleware/axiosInstance";
 import { setAlert } from "@/state/app";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
@@ -88,8 +89,8 @@ const AdminRegistration = () => {
     if (validateForm()) {
       setSubmitting(true);
       try {
-        const registrationResponse = await axios.post(
-          `${import.meta.env.VITE_SERVER_HEAD}/users/register`,
+        const registrationResponse = await axiosInstance.post(
+          `/users/register`,
           formData
         );
         if (registrationResponse.status !== 200) {
