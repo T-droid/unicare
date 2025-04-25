@@ -1,44 +1,47 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { Search } from "lucide-react";
-import type { Student, Patient } from './types';
+import type { Student, Patient } from "./types";
 
-import StudentSearch from './components/StudentSearch';
-import AppointmentModal from './components/AppointmentModal';
-import RoomAssignmentModal from './components/RoomAssignmentModal';
-import PatientTable from './components/PatientTable';
-import QuickActions from './components/QuickActions';
+import StudentSearch from "./components/StudentSearch";
+import AppointmentModal from "./components/AppointmentModal";
+import RoomAssignmentModal from "./components/RoomAssignmentModal";
+import PatientTable from "./components/PatientTable";
+import QuickActions from "./components/QuickActions";
+import axios from "axios";
 
 const ReceptionistPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showStudentSearch, setShowStudentSearch] = useState(false);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | undefined>(undefined); 
+  const [selectedPatient, setSelectedPatient] = useState<Patient | undefined>(
+    undefined
+  );
 
   // Sample data - API calls
   const currentPatients: Patient[] = [
     {
       id: "1",
       patientId: "STD001",
-      studentId: "S001",
+      reg_no: "S001",
       name: "John Smith",
       status: "Waiting",
       assignedTo: "Dr. Sarah Wilson",
       type: "Outpatient",
-      course: "Computer Science"
+      course: "Computer Science",
     },
     {
       id: "2",
       patientId: "STD002",
-      studentId: "S002",
+      reg_no: "S002",
       name: "Emily Brown",
       status: "In Treatment",
       assignedTo: "Dr. Michael Chen",
       type: "Inpatient",
       room: "205",
-      course: "Biology"
-    }
+      course: "Biology",
+    },
   ];
 
   const handleStudentSelect = (student: Student) => {
@@ -47,11 +50,32 @@ const ReceptionistPage = () => {
     setShowAppointmentModal(true);
   };
 
-  const handleAppointmentSubmit = (appointmentData: any) => {
-    console.log('Appointment created:', appointmentData);
+  const handleAppointmentSubmit = async (appointmentData: any) => {
+    console.log("Appointment created:", appointmentData);
+    try {
+      const data = {
+        regNo: appointmentData.regNo,
+        doctorId: appointmentData.doctorId,
+        date: appointmentData.date,
+        time: appointmentData.time,
+      };
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_HEAD}/receptionist/appointment`,
+        data,
+        { withCredentials: true }
+      );
+      if (response.status !== 201) {
+        throw new Error(response.data.message || "Appointment creation failed");
+      }
+      const appointmentResponse = response.data;
+      console.log(appointmentResponse);
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+    }
     setShowAppointmentModal(false);
     setSelectedStudent(null);
-    setSelectedPatient(undefined); 
+    setSelectedPatient(undefined);
   };
 
   const handleScheduleAppointment = () => {
@@ -64,17 +88,17 @@ const ReceptionistPage = () => {
   };
 
   const handleManageRooms = () => {
-    setSelectedPatient(undefined); 
+    setSelectedPatient(undefined);
     setShowRoomModal(true);
   };
 
   const handleRoomAssign = (roomId: string) => {
-    console.log('Room assigned:', roomId, 'to patient:', selectedPatient?.id);
+    console.log("Room assigned:", roomId, "to patient:", selectedPatient?.id);
     setShowRoomModal(false);
   };
 
   const handlePatientDischarge = (patient: Patient) => {
-    console.log('Discharge patient:', patient.id);
+    console.log("Discharge patient:", patient.id);
     // Add discharge logic here
   };
 
@@ -82,7 +106,9 @@ const ReceptionistPage = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-boxdark-2">
       <div className="space-y-6 p-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-400">UniCare Reception</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-400">
+            UniCare Reception
+          </h2>
           <div className="relative">
             <input
               type="text"
@@ -130,7 +156,7 @@ const ReceptionistPage = () => {
                 onClose={() => {
                   setShowAppointmentModal(false);
                   setSelectedStudent(null);
-                  setSelectedPatient(undefined); 
+                  setSelectedPatient(undefined);
                 }}
                 onSubmit={handleAppointmentSubmit}
               />
@@ -145,7 +171,7 @@ const ReceptionistPage = () => {
                 patient={selectedPatient}
                 onClose={() => {
                   setShowRoomModal(false);
-                  setSelectedPatient(undefined); 
+                  setSelectedPatient(undefined);
                 }}
                 onAssign={handleRoomAssign}
               />

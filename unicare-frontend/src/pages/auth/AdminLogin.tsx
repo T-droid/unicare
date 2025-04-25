@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, UseDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Card, CardHeader, CardContent } from "../../components/ui/card";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { setAlert } from "@/state/app";
@@ -55,10 +55,10 @@ const AdminSignIn: React.FC = () => {
       <Card className="w-full max-w-md">
         <CardHeader>
           <h1 className="text-2xl font-bold text-center text-gray-800">
-            UniCare Admin Portal
+            UniCare Portal
           </h1>
           <p className="text-center text-gray-600">
-            Sign in to manage staff and system
+            Sign in to manage dashboard
           </p>
         </CardHeader>
         <CardContent>
