@@ -29,6 +29,8 @@ export const listStudents = async (
     return;
   } catch (error) {
     if (error instanceof Error) {
+      console.log(error);
+
       res.status(400).json({ error: error });
       return;
     }

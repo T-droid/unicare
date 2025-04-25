@@ -15,7 +15,6 @@ export const registerUser = async (
       res.status(400).json({ message: "Department not found" });
       return;
     }
-    
 
     const userExists = await findUserByEmail(otherData.email);
     if (userExists.length > 0) {
@@ -48,20 +47,20 @@ export const registerUser = async (
       email: savedObject[0].email,
     };
 
-    if (jwtData.role !== "admin") {
-      // populate staff table
-      const newStaff = await createStaff({
-        id: savedObject[0].id,
-        department_id: otherData.department_id,
-      });
-      if (newStaff.length === 0) {
-        await deleteUserById(savedObject[0].id);
-        res.status(500).json({
-          message: "Error occurred",
-        });
-        return;
-      }
-    }
+    // if (jwtData.role !== "admin") {
+    //   // populate staff table
+    //   const newStaff = await createStaff({
+    //     id: savedObject[0].id,
+    //     department_id: otherData.department_id,
+    //   });
+    //   if (newStaff.length === 0) {
+    //     await deleteUserById(savedObject[0].id);
+    //     res.status(500).json({
+    //       message: "Error occurred",
+    //     });
+    //     return;
+    //   }
+    // }
 
     const token = generateToken(jwtData);
 
