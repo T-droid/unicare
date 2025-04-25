@@ -5,6 +5,7 @@ import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { setAlert } from "@/state/app";
 import axios from "axios";
 import { setCurrentUser, setToken } from "@/state/auth";
+import axiosInstance from "@/middleware/axiosInstance";
 
 const AdminSignIn: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,8 +21,8 @@ const AdminSignIn: React.FC = () => {
     e.preventDefault();
     try {
       setSubmitting(true);
-      const loginResponse = await axios.post(
-        `${import.meta.env.VITE_SERVER_HEAD}/users/login`,
+      const loginResponse = await axiosInstance.post(
+        `/users/login`,
         formData,
         { withCredentials: true }
       );
@@ -30,7 +31,6 @@ const AdminSignIn: React.FC = () => {
         throw new Error(loginResponse.data.message || "Login failed");
       }
       const loginData = loginResponse.data;
-      console.log(loginData);
 
       dispatch(setAlert({ message: "Login successful", type: "success" }));
       dispatch(setCurrentUser(loginData.data));
@@ -58,9 +58,11 @@ const AdminSignIn: React.FC = () => {
 
       window.location.href = redirectPath;
     } catch (error: any) {
+      console.log(error);
+
       dispatch(
         setAlert({
-          message: error.response.data.error || error.message,
+          message: error.response.data.error || error.message || "Login failed",
           type: `${error.response.status === 404 ? "warning" : "error"}`,
         })
       );

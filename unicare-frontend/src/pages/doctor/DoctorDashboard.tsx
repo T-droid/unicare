@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CalendarDays,
   Clock,
@@ -11,21 +11,32 @@ import {
   Beaker,
   CheckCircle,
   Repeat,
+  Loader,
+  Loader2,
+  FileText,
+  FileX,
 } from "lucide-react";
 import { Avatar } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { setAlert } from "@/state/app";
+import { useSearchParams } from "react-router-dom";
+import NewLabRequestModal from "./modals/LabTestModal";
+import LabTestModal from "./modals/LabTestModal";
+import axiosInstance from "@/middleware/axiosInstance";
 
 const DoctorDashboard = () => {
-  const [activeTab, setActiveTab] = useState("queue");
-  const [queuedPatients, setQueuedPatients] = useState([]);
-  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
-  const [labRequests, setLabRequests] = useState([]);
-  const [labResults, setLabResults] = useState([]);
-  const [prescriptions, setPrescriptions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTabExec] = useState(searchParams.get('tab') || "queue");
+  const [labRequests, setLabRequests] = useState<any[]>([]);
 
-  const API_BASE_URL = `${import.meta.env.VITE_SERVER_HEAD}`;
-
+  const [showLabRequestModal, setShowLabRequestModal] = useState<boolean>(false);
+  const setActiveTab = (tab: string) => {
+    setActiveTabExec(tab);
+    setSearchParams({ tab });
+  }
+  const currentDoctor = useSelector((state: any) => state.auth.user);
+  const dispatch = useDispatch();
   // Today's date
   const today = new Date();
   const dateOptions = {
@@ -36,205 +47,180 @@ const DoctorDashboard = () => {
   };
   const formattedDate = today.toLocaleDateString("en-US", dateOptions);
 
-  // Fetch data based on active tab
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        if (activeTab === "queue" || activeTab === "appointments") {
-          const response = await fetch(`${API_BASE_URL}/doctor/students`);
-          if (!response.ok) throw new Error("Failed to fetch patients");
-          const data = await response.json();
+  // Sample data for queue
+  const queuedPatients: Array<QueuedPatient> = [
+    {
+      id: "1",
+      studentId: "1",
+      course: "Biology",
+      name: "Sarah Johnson",
+      time: "9:00 AM",
+      reason: "Fever and headache",
+      waited: "10 min",
+      status: "Ready",
+    },
+    {
+      id: "2",
+      studentId: "2",
+      course: "Chemistry",
+      name: "Michael Smith",
+      time: "9:15 AM",
+      reason: "Follow-up for hypertension",
+      waited: "5 min",
+      status: "Ready",
+    },
+    {
+      id: "3",
+      studentId: "3",
+      course: "Physics",
+      name: "Emily Wong",
+      time: "9:30 AM",
+      reason: "Annual check-up",
+      waited: "Just arrived",
+      status: "Waiting",
+    },
+  ];
 
-          // Filter and format for queue vs appointments
-          const queue = data.filter(
-            (patient) =>
-              patient.status === "waiting" || patient.status === "ready"
-          );
-          const appointments = data.filter(
-            (patient) => patient.status === "scheduled"
-          );
+  // Sample data for appointments
+  // const upcomingAppointments =
+  //   [
+  //     {
+  //       appointment_id: "5d4d0639-7935-4a5f-9444-2ef4062329b7",
+  //       appointment_date: "2025-04-24T00:00:00.000Z",
+  //       created_at: "2025-04-24T15:15:54.772Z",
+  //       student: {
+  //         reg_no: "CS2020/002",
+  //         name: "Brian Otieno",
+  //         emergency_contact: "0700000002",
+  //         phone_number: "0723456789"
+  //       }
+  //     },
+  //     {
+  //       appointment_id: "1bd6094f-6f14-4394-bcab-b575c53ced34",
+  //       appointment_date: "2025-04-25T00:00:00.000Z",
+  //       created_at: "2025-04-21T10:03:35.714Z",
+  //       student: {
+  //         reg_no: "CS2020/008",
+  //         name: "Henry Mwaura",
+  //         emergency_contact: "0700000008",
+  //         phone_number: "0789012345"
+  //       }
+  //     },
+  //     {
+  //       appointment_id: "8e059880-a07f-4a7b-b1c7-7ec6cbadaa06",
+  //       appointment_date: "2024-03-15T00:00:00.000Z",
+  //       created_at: "2025-04-20T16:11:57.864Z",
+  //       student: {
+  //         reg_no: "CS2020/012",
+  //         name: "Liam Kipkemboi",
+  //         emergency_contact: "0700000012",
+  //         phone_number: "0703344556"
+  //       }
+  //     }
+  //   ]
+  const fetchAppointments = async () => {
+    try {
+      setLoadingAppointments(true);
+      const response = await axiosInstance.get(`/doctor/appointments`,
+        { withCredentials: true }
+      );
 
-          setQueuedPatients(
-            queue.map((p) => ({
-              id: p.id,
-              studentId: p.studentId,
-              course: p.course || "N/A",
-              name: p.name,
-              time: p.appointmentTime || "Walk-in",
-              reason: p.visitReason,
-              waited: calculateWaitTime(p.checkInTime),
-              status: p.status === "ready" ? "Ready" : "Waiting",
-            }))
-          );
-
-          setUpcomingAppointments(
-            appointments.map((p) => ({
-              id: p.id,
-              patient: p.name,
-              time: p.appointmentTime,
-              type: p.appointmentType || "Consultation",
-              status: "Confirmed",
-            }))
-          );
-        }
-
-        if (activeTab === "lab") {
-          // Fetch lab test requests
-          const response = await fetch(
-            `${API_BASE_URL}/doctor/students/{regNo}/lab-tests`
-          );
-          if (!response.ok) throw new Error("Failed to fetch lab tests");
-          const data = await response.json();
-
-          setLabRequests(
-            data.map((test) => ({
-              id: test.id,
-              patient: test.patientName,
-              test: test.testName,
-              urgency: test.urgency || "Routine",
-              status: test.status,
-            }))
-          );
-        }
-
-        if (activeTab === "lab-results") {
-          // Fetch lab results
-          const response = await fetch(
-            `${API_BASE_URL}/doctor/students/{regNo}/lab-results`
-          );
-          if (!response.ok) throw new Error("Failed to fetch lab results");
-          const data = await response.json();
-          setLabResults(data);
-        }
-
-        if (activeTab === "prescriptions") {
-          // Fetch prescriptions
-          const response = await fetch(
-            `${API_BASE_URL}/doctor/students/{regNo}/prescriptions`
-          );
-          if (!response.ok) throw new Error("Failed to fetch prescriptions");
-          const data = await response.json();
-
-          setPrescriptions(
-            data.map((rx) => ({
-              id: rx.id,
-              patient: rx.patientName,
-              medication: rx.medicationName,
-              dosage: rx.dosage,
-              status: rx.status || "Sent to Pharmacy",
-            }))
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // If API fails, use backup sample data
-        useSampleData(activeTab);
-      } finally {
-        setIsLoading(false);
+      if (response.status !== 200) {
+        throw new Error(response.data.message || "Failed to fetch appointments");
       }
-    };
-
-    fetchData();
-  }, [activeTab, API_BASE_URL]);
-
-  // Calculate wait time from check-in timestamp
-  const calculateWaitTime = (checkInTime) => {
-    if (!checkInTime) return "Just arrived";
-
-    const waitTimeMs = new Date() - new Date(checkInTime);
-    const waitMins = Math.floor(waitTimeMs / 60000);
-
-    if (waitMins < 1) return "Just arrived";
-    return `${waitMins} min`;
-  };
-
-  // Fallback to sample data if API fails
-  const useSampleData = (tab) => {
-    if (tab === "queue" || tab === "appointments") {
-      setQueuedPatients([
-        // {
-        //   id: "1",
-        //   studentId: "1",
-        //   course: "Biology",
-        //   name: "Sarah Johnson",
-        //   time: "9:00 AM",
-        //   reason: "Fever and headache",
-        //   waited: "10 min",
-        //   status: "Ready",
-        // },
-        // {
-        //   id: "2",
-        //   studentId: "2",
-        //   course: "Chemistry",
-        //   name: "Michael Smith",
-        //   time: "9:15 AM",
-        //   reason: "Follow-up for hypertension",
-        //   waited: "5 min",
-        //   status: "Ready",
-        // },
-        {
-          id: "3",
-          studentId: "3",
-          course: "Physics",
-          name: "Emily Wong",
-          time: "9:30 AM",
-          reason: "Annual check-up",
-          waited: "Just arrived",
-          status: "Waiting",
-        },
-      ]);
-
-      setUpcomingAppointments([
-        {
-          id: 1,
-          patient: "David Williams",
-          time: "1:15 PM",
-          type: "Consultation",
-          status: "Confirmed",
-        },
-        {
-          id: 2,
-          patient: "Lisa Garcia",
-          time: "2:30 PM",
-          type: "Follow-up",
-          status: "Confirmed",
-        },
-        {
-          id: 3,
-          patient: "James Wilson",
-          time: "3:45 PM",
-          type: "Post-op check",
-          status: "Pending",
-        },
-      ]);
+      const appointments = response.data.data;
+      console.log(appointments)
+      setAppointments(appointments);
+    } catch (error: any) {
+      console.error(error);
+      dispatch(
+        setAlert({
+          message: error.response.data.message || error?.message || "Failed to fetch appointments",
+          type: "error",
+        })
+      )
+    } finally {
+      setLoadingAppointments(false);
     }
+  }
 
-    if (tab === "lab") {
-      setLabRequests([
-        {
-          id: 1,
-          patient: "Robert Brown",
-          test: "Complete Blood Count",
-          urgency: "Routine",
-          status: "Ordered",
-        },
-        {
-          id: 2,
-          patient: "Sarah Johnson",
-          test: "Urinalysis",
-          urgency: "Urgent",
-          status: "Results Ready",
-        },
-        {
-          id: 3,
-          patient: "Michael Smith",
-          test: "Lipid Panel",
-          urgency: "Routine",
-          status: "In Progress",
-        },
-      ]);
+  const handleSubmitLabRequest = async (labRequest: any) => {
+    console.log(labRequest);
+
+    try {
+      const response = await axiosInstance.post(`/doctor/students/${encodeURIComponent(labRequest.selectedPatient)}/lab-tests`, labRequest, {
+        withCredentials: true,
+      });
+      if (response.status === 201) {
+        dispatch(
+          setAlert({
+            message: "Lab request submitted successfully",
+            type: "success",
+          })
+        );
+        setShowLabRequestModal(false);
+      } else {
+        throw new Error("Failed to submit lab request");
+      }
+    } catch (error: any) {
+      console.error("Error submitting lab request:", error);
+      dispatch(
+        setAlert({
+          message: error.response.data.message || error?.message || "Failed to submit lab request",
+          type: "error",
+        })
+      );
     }
+  }
+
+  const fetchLabRequests = async () => {
+    try {
+      const response = await axiosInstance.get(`/doctor/lab-requests`, {
+        withCredentials: true,
+      });
+      if (response.status !== 200) {
+        throw new Error(response.data.message || "Failed to fetch lab requests");
+      }
+      const labRequests = response.data.data;
+      setLabRequests(labRequests);
+    } catch (error: any) {
+      console.log(error);
+      dispatch(setAlert({
+        message: error.response.data.message || error?.message || "Failed to fetch lab requests",
+        type: "error",
+      }))
+    }
+  }
+
+  useEffect(() => {
+    fetchAppointments();
+    fetchLabRequests();
+  }, [])
+
+  // Sample lab requests
+  // const labRequests = [
+  //   {
+  //     id: 1,
+  //     patient: "Robert Brown",
+  //     test: "Complete Blood Count",
+  //     urgency: "Routine",
+  //     status: "Ordered",
+  //   },
+  //   {
+  //     id: 2,
+  //     patient: "Sarah Johnson",
+  //     test: "Urinalysis",
+  //     urgency: "Urgent",
+  //     status: "Results Ready",
+  //   },
+  //   {
+  //     id: 3,
+  //     patient: "Michael Smith",
+  //     test: "Lipid Panel",
+  //     urgency: "Routine",
+  //     status: "In Progress",
+  //   },
+  // ];
 
     if (tab === "prescriptions") {
       setPrescriptions([
@@ -328,8 +314,8 @@ const DoctorDashboard = () => {
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Doctor Dashboard</h1>
+      <div className="mb-6 p-4">
+        <h1 className="text-2xl font-bold">{greeting}</h1>
         <p className="text-gray-500 dark:text-gray-400">{formattedDate}</p>
       </div>
 
@@ -432,18 +418,26 @@ const DoctorDashboard = () => {
               </button>
             )}
 
-            {activeTab === "appointments" && (
-              <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition duration-150">
-                <Plus size={18} />
-                <span>New Appointment</span>
-              </button>
-            )}
+
 
             {activeTab === "lab" && (
-              <button className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition duration-150">
+              <button onClick={() => setShowLabRequestModal(true)} className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition duration-150">
                 <Plus size={18} />
                 <span>Order New Test</span>
               </button>
+            )}
+
+            {showLabRequestModal && (
+              <LabTestModal
+                doctorId={currentDoctor.id}
+                isOpen={showLabRequestModal}
+                onClose={() => setShowLabRequestModal(false)}
+                onSubmit={(labRequest) => {
+                  handleSubmitLabRequest(labRequest);
+                }}
+                patients={upcomingAppointments}
+                selectedPatient={null}
+              />
             )}
 
             {activeTab === "prescriptions" && (
@@ -485,49 +479,52 @@ const DoctorDashboard = () => {
                 </div>
               )}
 
-              {activeTab === "appointments" && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">
-                    Today's Appointments
-                  </h2>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    {getFilteredData(upcomingAppointments).length > 0 ? (
-                      getFilteredData(upcomingAppointments).map(
-                        (appointment) => (
-                          <AppointmentCard
-                            key={appointment.id}
-                            appointment={appointment}
-                          />
-                        )
-                      )
-                    ) : (
-                      <p className="text-center py-8 text-gray-500">
-                        No appointments scheduled
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
+          {activeTab === "appointments" && (
+            <div>
+              <h2 className="text-xl font-semibold mb-4">
+                Today's Appointments
+              </h2>
+              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                {loadingAppointments ? (
+                  <Loader className="animate-spin" />
+                )
+                  : !upcomingAppointments || upcomingAppointments.length === 0
+                    ? (
+                      <div className="flex flex-col items-center justify-center h-64">
+                        <FileX className="w-16 h-16 text-gray-400 mb-4" />
+                        <p className="text-center text-gray-500 dark:text-gray-400">
+                          No upcoming appointments for today.
+                        </p>
+                      </div>
+                    )
+                    : upcomingAppointments.map((appointment) => (
+                      <AppointmentCard
+                        key={appointment.appointment_id}
+                        appointment={appointment}
+                      />
+                    ))}
+              </div>
+            </div>
+          )}
 
-              {activeTab === "lab" && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Lab Requests</h2>
-                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    {getFilteredData(labRequests).length > 0 ? (
-                      getFilteredData(labRequests).map((labRequest) => (
-                        <LabRequestCard
-                          key={labRequest.id}
-                          labRequest={labRequest}
-                        />
-                      ))
-                    ) : (
-                      <p className="text-center py-8 text-gray-500">
-                        No lab requests found
-                      </p>
-                    )}
+          {activeTab === "lab" && (
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Lab Requests</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                {labRequests.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64">
+                    <FileX className="w-16 h-16 text-gray-400 mb-4" />
+                    <p className="text-center text-gray-500 dark:text-gray-400">
+                      No lab requests available.
+                    </p>
                   </div>
-                </div>
-              )}
+                )
+                : labRequests.map((labRequest) => (
+                  <LabRequestCard key={labRequest.id} labRequest={labRequest} />
+                ))}
+              </div>
+            </div>
+          )}
 
               {activeTab === "prescriptions" && (
                 <div>
@@ -585,8 +582,8 @@ const StatCard = ({ icon, title, value, trend }: StatCardProps) => {
   const trendClass = isPositive
     ? "text-green-500"
     : trend === "0"
-    ? "text-gray-500"
-    : "text-red-500";
+      ? "text-gray-500"
+      : "text-red-500";
 
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -616,11 +613,10 @@ const TabButton = ({ active, onClick, icon, label }: TabButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center px-4 py-3 text-sm font-medium transition-colors duration-150 ${
-        active
-          ? "text-blue-500 border-b-2 border-blue-500"
-          : "text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-500"
-      }`}
+      className={`flex items-center px-4 py-3 text-sm font-medium transition-colors duration-150 ${active
+        ? "text-blue-500 border-b-2 border-blue-500"
+        : "text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-500"
+        }`}
     >
       {icon}
       <span className="ml-2">{label}</span>
@@ -656,11 +652,10 @@ const QueuedPatientCard = ({
       </div>
       <div className="flex items-center space-x-2 ml-14 sm:ml-0">
         <span
-          className={`px-2 py-1 text-xs rounded-full ${
-            patient.status === "Ready"
-              ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-              : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
-          }`}
+          className={`px-2 py-1 text-xs rounded-full ${patient.status === "Ready"
+            ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+            : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
+            }`}
         >
           {patient.status}
         </span>
@@ -686,30 +681,44 @@ const QueuedPatientCard = ({
 };
 
 // Appointment Card Component
-const AppointmentCard = ({ appointment }: { appointment: any }) => {
+const AppointmentCard = ({ appointment }: AppointmentCardProps) => {
+  const formattedAppointemtDate = new Date(appointment.appointment_date).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }
+  );
+  const formattedAppointemtTime = new Date(appointment.appointment_date).toLocaleTimeString(
+    "en-US",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
   return (
     <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition duration-150">
       <div className="flex items-center">
         <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-500 rounded-full flex items-center justify-center mr-4">
-          {appointment.patient
+          {appointment.student.name
             .split(" ")
             .map((name: string) => name[0])
             .join("")}
         </div>
         <div>
-          <h4 className="font-medium">{appointment.patient}</h4>
+          <h4 className="font-medium">{appointment.student.name}</h4>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {appointment.time} - {appointment.type}
+            {new Date(formattedAppointemtDate) > 24 && formattedAppointemtDate} {formattedAppointemtTime} - {appointment.student.reg_no}
           </p>
         </div>
       </div>
       <div className="flex items-center">
         <span
-          className={`px-2 py-1 text-xs rounded-full mr-4 ${
-            appointment.status === "Confirmed"
-              ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-              : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
-          }`}
+          className={`px-2 py-1 text-xs rounded-full mr-4 ${appointment.status === "Confirmed"
+            ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+            : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
+            }`}
         >
           {appointment.status}
         </span>
@@ -740,11 +749,10 @@ const LabRequestCard = ({ labRequest }: { labRequest: any }) => {
             {labRequest.test}
           </p>
           <span
-            className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${
-              labRequest.urgency === "Urgent"
-                ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
-                : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-            }`}
+            className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${labRequest.urgency === "Urgent"
+              ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
+              : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+              }`}
           >
             {labRequest.urgency}
           </span>
@@ -752,13 +760,12 @@ const LabRequestCard = ({ labRequest }: { labRequest: any }) => {
       </div>
       <div className="flex items-center">
         <span
-          className={`px-2 py-1 text-xs rounded-full mr-4 ${
-            labRequest.status === "Results Ready"
-              ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-              : labRequest.status === "In Progress"
+          className={`px-2 py-1 text-xs rounded-full mr-4 ${labRequest.status === "Results Ready"
+            ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+            : labRequest.status === "In Progress"
               ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
               : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-          }`}
+            }`}
         >
           {labRequest.status}
         </span>
@@ -774,6 +781,19 @@ const LabRequestCard = ({ labRequest }: { labRequest: any }) => {
     </div>
   );
 };
+
+
+interface PrescriptionProps {
+  id: number;
+  patient: string;
+  medication: string;
+  dosage: string;
+  status: string;
+}
+
+interface PrescriptionCardProps {
+  prescription: PrescriptionProps;
+}
 
 // Prescription Card Component
 const PrescriptionCard = ({ prescription }: { prescription: any }) => {
@@ -795,13 +815,12 @@ const PrescriptionCard = ({ prescription }: { prescription: any }) => {
       </div>
       <div className="flex items-center">
         <span
-          className={`px-2 py-1 text-xs rounded-full mr-4 ${
-            prescription.status === "Sent to Pharmacy"
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-              : prescription.status === "Pending Pickup"
+          className={`px-2 py-1 text-xs rounded-full mr-4 ${prescription.status === "Sent to Pharmacy"
+            ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+            : prescription.status === "Pending Pickup"
               ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
               : "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-          }`}
+            }`}
         >
           {prescription.status}
         </span>

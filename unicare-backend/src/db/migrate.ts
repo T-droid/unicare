@@ -4,6 +4,8 @@ import postgres from "postgres";
 import { dbConfig } from "../config/config";
 
 const connectionString = dbConfig.databaseUrl as string;
+console.log(dbConfig.databaseUrl);
+
 if (!connectionString) {
   throw new Error("DATABASE_URI not set");
 }
@@ -15,7 +17,7 @@ const main = async (): Promise<void> => {
   console.log("Migrating database...");
   await migrate(db, { migrationsFolder: "./src/db/migrations" });
   await migrationClient.end();
-  console.log("Datbase migrated successfully...");
+  console.log("Database migrated successfully...");
 };
 
 main().catch((err) => {

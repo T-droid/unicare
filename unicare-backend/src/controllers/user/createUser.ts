@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { findDepartmentByName } from "../../services/departmentService";
-import { findUserByEmail, saveUser } from "../../services/userService";
+import {
+  createStaff,
+  deleteUserById,
+  findUserByEmail,
+  saveUser,
+} from "../../services/userService";
 import { generateToken, hashPassword } from "../../util/password";
 
 export const registerUser = async (
@@ -21,7 +26,7 @@ export const registerUser = async (
       res.status(400).json({ message: "User with the email already exists" });
       return;
     }
-    console.log(department);
+    console.log("department");
 
     if (otherData.role === "admin") {
       if (!otherData.secretKey && otherData.secretKey !== "IamAdmin") {
@@ -29,7 +34,6 @@ export const registerUser = async (
         return;
       }
     }
-
     let payload = {
       department_id: department[0].id,
       name: otherData.name,
@@ -47,20 +51,22 @@ export const registerUser = async (
       email: savedObject[0].email,
     };
 
-    // if (jwtData.role !== "admin") {
-    //   // populate staff table
-    //   const newStaff = await createStaff({
-    //     id: savedObject[0].id,
-    //     department_id: otherData.department_id,
-    //   });
-    //   if (newStaff.length === 0) {
-    //     await deleteUserById(savedObject[0].id);
-    //     res.status(500).json({
-    //       message: "Error occurred",
-    //     });
-    //     return;
-    //   }
-    // }
+    console.log("Saved Object: ", savedObject);
+
+    if (jwtData.role !== "admin") {
+      // populate staff table
+      const newStaff = await createStaff({
+        id: savedObject[0].id,
+        department_id: department[0].id,
+      });
+      if (newStaff.length === 0) {
+        await deleteUserById(savedObject[0].id);
+        res.status(500).json({
+          message: "Error occurred",
+        });
+        return;
+      }
+    }
 
     const token = generateToken(jwtData);
 

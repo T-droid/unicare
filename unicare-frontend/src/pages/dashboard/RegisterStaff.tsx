@@ -1,6 +1,7 @@
+import axiosInstance from "@/middleware/axiosInstance";
 import { setAlert } from "@/state/app";
 import axios from "axios";
-import { Plus, PlusCircleIcon } from "lucide-react";
+import { Eye, EyeOff, Loader, Plus, PlusCircleIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -34,16 +35,54 @@ const StaffRegistration = () => {
   });
 
   const [errors, setErrors] = useState<Partial<StaffFormData>>({});
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [message, setMessage] = useState<{
+    text: string;
+    type: string;
+  }>({
+    text: "",
+    type: "",
+  });
+  const [newDepartment, setNewDepartment] = useState<string>("");
+
+  const handleCreateDepartment = async () => {
+    try {
+      const response = await axiosInstance.post(
+        `/departments/create`,
+        { name: newDepartment },
+        { withCredentials: true }
+      );
+      if (response.status === 201) {
+        setDepartments((prev) => [
+          ...prev,
+          { id: response.data.id, name: newDepartment },
+        ]);
+        setNewDepartment("");
+        setFormData((prev) => ({
+          ...prev,
+          department: newDepartment,
+        }));
+        setMessage({
+          text: "Department created successfully",
+          type: "success",
+        });
+      } else {
+        throw new Error("Failed to create department");
+      }
+    } catch (error: any) {
+      console.log(error);
+      setMessage(
+        error.response.error || error.message || "Error creating department"
+      );
+    }
+  };
 
   useEffect(() => {
-    console.log(`Cookie: ${document.cookie}`);
-
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_SERVER_HEAD}/departments`,
-          { withCredentials: true }
-        );
+        const response = await axiosInstance.get(`/departments`, {
+          withCredentials: true,
+        });
         if (response.status === 200) {
           const departments = response.data.departments;
           setDepartments(departments);
@@ -117,8 +156,8 @@ const StaffRegistration = () => {
     if (validateForm()) {
       setSubmitting(true);
       try {
-        const registrationResponse = await axios.post(
-          `${import.meta.env.VITE_SERVER_HEAD}/users/register`,
+        const registrationResponse = await axiosInstance.post(
+          `/users/register`,
           formData
         );
         if (registrationResponse.status !== 200) {
@@ -205,43 +244,58 @@ const StaffRegistration = () => {
             <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
               Department
             </label>
-            <select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
-                errors.department ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-            >
-              <option value="">Select Department</option>
-              {departments.map((department) => (
-                <option key={department.id} value={department.name}>
-                  {department.name}
-                </option>
-              ))}
-            </select>
-            <div className="px-2">
-              <form action="" className="flex items-center space-x-2 w-full">
-                <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2">
+            {!departments || departments.length === 0 ? (
+              <h6>Loading departments...</h6>
+            ) : (
+              <div>
+                <select
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 rounded-lg border dark:bg-boxdark ${
+                    errors.department ? "border-red-500" : "border-gray-200"
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                >
+                  <option value="">Select Department</option>
+                  {departments.map((department) => (
+                    <option key={department.id} value={department.name}>
+                      {department.name}
+                    </option>
+                  ))}
+                </select>
+
+                <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2 mt-2">
+                  {/* <div className="flex items-center space-x-2 w-full border border-gray-400 rounded-lg p-2"> */}
                   <input
+                    onChange={(e) => setNewDepartment(e.target.value)}
                     className="w-full h-full outline-none"
                     type="text"
                     name="newDepartment"
                     id="newDepartment"
                     placeholder="Create new department"
                   />
+                  {/* </div> */}
+                  <button
+                    onClick={() => handleCreateDepartment()}
+                    className="w-auto h-3/4 bg-gray-400 rounded-full p-2absolute right-0 top-0"
+                    type="button"
+                  >
+                    <Plus className="w-6 h-6 text-white" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    console.log("Create Department");
-                  }}
-                  className="w-auto"
-                  type="button"
-                >
-                  <Plus className="w-6 h-6 text-primary/40" />
-                </button>
-              </form>
-            </div>
+                {message.text && (
+                  <div
+                    className={`mt-1 text-sm ${
+                      message.type === "error"
+                        ? "text-red-500"
+                        : "text-green-500"
+                    }`}
+                  >
+                    {message.text}
+                  </div>
+                )}
+              </div>
+            )}
 
             {errors.department && (
               <p className="text-red-500 text-sm mt-1">{errors.department}</p>
@@ -309,19 +363,33 @@ const StaffRegistration = () => {
             <label className="text-sm font-medium text-gray-700 dark:text-slate-400">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.password ? "border-red-500" : "border-gray-200"
-              } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-              placeholder="Enter password"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.password ? "border-red-500" : "border-gray-200"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                placeholder="Enter password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-6 h-6" />
+                ) : (
+                  <Eye className="w-6 h-6" />
+                )}
+              </button>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
+            </div>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import {
   createDrug,
   listDrugs,
@@ -9,6 +9,7 @@ import {
   drugSchema,
   administerDrugSchema,
 } from "../../validation/pharmacistValidation";
+import authenticateUser from "../../middleware/auth";
 
 const pharmacistRouter = express.Router();
 /**
@@ -45,16 +46,58 @@ const pharmacistRouter = express.Router();
  *     responses:
  *       201:
  *         description: Drug added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "123e4567-e89b-12d3-a456-426614174000"
+ *                 name:
+ *                   type: string
+ *                   example: "Paracetamol"
+ *                 quantity:
+ *                   type: integer
+ *                   example: 100
  *       400:
  *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Validation failed"
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       message:
+ *                         type: string
+ *                         example: "\"name\" is required"
+ *                       path:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                           example: "name"
  *       401:
  *         description: Unauthorized
  */
-pharmacistRouter.post("/v1/drug/add", validateRequest(drugSchema), createDrug);
+pharmacistRouter.post(
+  "/add",
+  authenticateUser,
+  validateRequest(drugSchema),
+  (req: Request, res: Response) => {
+    createDrug(req, res);
+  },
+);
 
 /**
  * @swagger
- * /v1/drugs:
+ * /v1/drug/list:
  *   get:
  *     summary: Get all available drugs
  *     tags: [Pharmacist]
@@ -63,11 +106,33 @@ pharmacistRouter.post("/v1/drug/add", validateRequest(drugSchema), createDrug);
  *     responses:
  *       200:
  *         description: List of drugs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "123e4567-e89b-12d3-a456-426614174000"
+ *                   name:
+ *                     type: string
+ *                     example: "Paracetamol"
+ *                   quantity:
+ *                     type: integer
+ *                     example: 100
  *       401:
  *         description: Unauthorized
  */
+pharmacistRouter.get(
+  "/list",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    listDrugs(req, res);
+  },
+);
 
-pharmacistRouter.get("/v1/drugs", listDrugs);
 /**
  * @swagger
  * /v1/drug/administer:
@@ -83,29 +148,83 @@ pharmacistRouter.get("/v1/drugs", listDrugs);
  *           schema:
  *             type: object
  *             required:
- *               - id
+ *               - name
  *               - amount
  *             properties:
- *               id:
+ *               name:
  *                 type: string
- *                 format: uuid
- *                 example: "123e4567-e89b-12d3-a456-426614174000"
+ *                 example: "Paracetamol"
  *               amount:
  *                 type: integer
  *                 example: 5
  *     responses:
  *       200:
  *         description: Drug stock updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "123e4567-e89b-12d3-a456-426614174000"
+ *                 name:
+ *                   type: string
+ *                   example: "Paracetamol"
+ *                 quantity:
+ *                   type: integer
+ *                   example: 95
  *       400:
- *         description: Not enough stock or invalid ID
+ *         description: Validation error or server failure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Server failed to administer drug"
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       message:
+ *                         type: string
+ *                         example: "\"amount\" must be greater than or equal to 1"
+ *                       path:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                           example: "amount"
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized access"
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized access"
  */
-
 pharmacistRouter.post(
-  "/v1/drug/administer",
+  "/administer",
+  authenticateUser,
   validateRequest(administerDrugSchema),
-  handleAdministerDrug,
+  (req: Request, res: Response) => {
+    handleAdministerDrug(req, res);
+  },
 );
 
 export default pharmacistRouter;

@@ -14,10 +14,12 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
   try {
     // Fetch user from the database
+
     const user = await db
       .select()
       .from(UserTable)
       .where(eq(UserTable.email, email));
+    console.log(user);
 
     if (user.length === 0) {
       res.status(404).json({ error: "User not found" });
@@ -45,7 +47,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(200).json({
-      data: user[0], // return one user since it return an Array
+      data: user[0],
       token,
     });
     console.log(res);

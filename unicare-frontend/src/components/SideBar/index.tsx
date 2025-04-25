@@ -33,11 +33,6 @@ const Sidebar: React.FC = () => {
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state: any) => state.auth.user);
-  // console.log("Current user", currentUser, typeof currentUser);
-
-  useEffect(() => {
-    console.log("Current user  role", currentUser, typeof currentUser);
-  }, [currentUser]);
 
   const menuItems = [
     {
@@ -54,12 +49,12 @@ const Sidebar: React.FC = () => {
             route: "/admin/register-staff",
             color: "text-blue-600",
           },
-          {
-            icon: UserCheck,
-            label: "Manage Students",
-            route: "/admin/register-student",
-            color: "text-indigo-600",
-          },
+          // {
+          //   icon: UserCheck,
+          //   label: "Manage Students",
+          //   route: "/admin/register-student",
+          //   color: "text-indigo-600",
+          // },
           {
             icon: Activity,
             label: "Activity Log",
@@ -151,7 +146,7 @@ const Sidebar: React.FC = () => {
           <div className="flex justify-center flex-col w-full">
             <h3 className="font-semibold">{currentUser?.name}</h3>
             <p className="text-sm text-slate-700 dark:text-slate-400">
-              {currentUser?.department}
+              {currentUser?.work_id}
             </p>
           </div>
         </div>
