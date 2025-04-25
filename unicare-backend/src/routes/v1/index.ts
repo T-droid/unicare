@@ -6,8 +6,8 @@ import studentRouter from "./studentRoutes";
 import pharmacistRouter from "./pharmacistRoutes";
 import receptionistRouter from "./receptionistRoutes";
 import doctorRouter from "./doctorRoutes";
-import path from "path";
 import labTechRouter from "./labTechRoutes";
+import reportRouter from "./reportRoutes";
 
 const appRouter = Router();
 
@@ -44,6 +44,10 @@ const appRoutes = [
     path: "/lab-tech",
     router: labTechRouter,
   },
+  {
+    path: "/reports",
+    router: reportRouter,
+  }
   // add other routes hapa chini
 ];
 
