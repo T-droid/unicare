@@ -1,7 +1,7 @@
 import { Appointment } from "../types/appointment";
 import { db } from "../db";
 import { AppointmentsTable, StudentTable, UserTable } from "../db/schema";
-import { and, eq, count } from "drizzle-orm";
+import { and, eq, count, desc } from "drizzle-orm";
 import { d } from "drizzle-kit/index-BAUrj6Ib";
 
 const appointments: Appointment[] = [];
@@ -54,10 +54,8 @@ export const getAppointments = async (offset?: number, limit?: number) => {
         id: AppointmentsTable.id,
         // extract doctor details
         doctor_details: {
-          id: UserTable.id,
           name: UserTable.name,
           phone_number: UserTable.phone_number,
-          role: UserTable.role,
         },
         student_details: {
           reg_no: StudentTable.reg_no,
@@ -68,6 +66,7 @@ export const getAppointments = async (offset?: number, limit?: number) => {
         status: AppointmentsTable.status,
       })
       .from(AppointmentsTable)
+      .orderBy(desc(AppointmentsTable.created_at))
       .innerJoin(
         StudentTable,
         eq(AppointmentsTable.reg_no, StudentTable.reg_no),
