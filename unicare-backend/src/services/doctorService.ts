@@ -72,15 +72,20 @@ export async function getStudentMedicalHistory(regNo: string) {
     }));
 
     return medicalHistoryWithLabTests;
-  } catch (error) {console.error("Error fetching medical history with lab tests:", error);
+  } catch (error) {
+    console.error("Error fetching medical history with lab tests:", error);
     if (error instanceof CustomError) {
       throw error;
     }
-    throw new CustomError("Failed to fetch medical history with lab tests", 500);
+    throw new CustomError(
+      "Failed to fetch medical history with lab tests",
+      500,
+    );
   }
 }
 
 export async function createStudentPrescription(
+  doctorId: string,
   regNo: string,
   prescription: string,
 ) {
@@ -88,6 +93,7 @@ export async function createStudentPrescription(
     return await db
       .insert(PatientMedicalRecords)
       .values({
+        prescribed_by_id: doctorId,
         reg_no: regNo,
         prescription,
       })
@@ -232,3 +238,29 @@ export const getDoctorLabRequests = async (doctorId: string) => {
     throw new Error(error);
   }
 };
+
+export const getDoctorsPrescriptions = async (doctorId: string) => {
+  try {
+    const prescriptions = await db
+      .select({
+        student_namee: StudentTable.name,
+        reg_no: PatientMedicalRecords.reg_no,
+        prescription: PatientMedicalRecords.prescription,
+        doctor_recommendation: PatientMedicalRecords.doctor_recommendation,
+        prescribed_at: PatientMedicalRecords.created_at,
+      })
+      .from(PatientMedicalRecords)
+      .leftJoin(
+        StudentTable,
+        eq(StudentTable.reg_no, PatientMedicalRecords.reg_no),
+      )
+      .where(eq(PatientMedicalRecords.prescribed_by_id, doctorId))
+      .orderBy(desc(PatientMedicalRecords.created_at));
+    return prescriptions;
+  } catch (error: any) {
+    console.error("Error fetching prescriptions:", error);
+    throw new Error(error);
+  }
+};
+
+// Chimene Mercedez Zema avance

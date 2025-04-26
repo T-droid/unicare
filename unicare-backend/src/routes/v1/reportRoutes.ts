@@ -165,10 +165,9 @@ const reportRouter = express.Router();
 //   getRoomOccupancyReport(req, res);
 // });
 
-
 reportRouter.get("", (req: Request, res: Response) => {
-    getReports(req, res);
-  });
+  getReports(req, res);
+});
 
 export default reportRouter;
 
@@ -196,4 +195,3 @@ export default reportRouter;
  *       500:
  *         description: Internal server error
  */
-
