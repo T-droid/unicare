@@ -1,22 +1,30 @@
 import { Request, Response } from "express";
 import { getStudentByregNo } from "../../services/studentService";
 import { validateCreateLabResults } from "../../validation/labTechValidation";
-import { createLabResultsInDB } from "../../services/labTechService";
+import {
+  createLabResultsInDB,
+  getLabTechTestRequestsFromDB,
+} from "../../services/labTechService";
+import { CustomError } from "../../util/customerError";
 
 export const createLabResults = async (
   req: Request & { user?: { role: string; id: string | null } },
   res: Response,
 ) => {
-  const { regNo, labResults } = req.body;
+  const { labResult } = req.body;
+  let { regNo } = req.params;
+  console.log("regNo", regNo);
+
+  regNo = decodeURIComponent(regNo);
 
   const { role, id } = req.user || {};
-  if (!role && role !== "lab_technician") {
+  if (role !== "lab_technician") {
     return res.status(403).json({ message: "Unauthorized access" });
   }
 
   try {
     // Validate the lab results adn regNo
-    const { error } = validateCreateLabResults.validate(regNo, labResults);
+    const { error } = validateCreateLabResults.validate({ regNo, labResult });
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -28,7 +36,7 @@ export const createLabResults = async (
     }
 
     // Logic to create lab results
-    const result = await createLabResultsInDB(labResults, id as string, regNo);
+    const result = await createLabResultsInDB(labResult, id as string, regNo);
     if (result.length === 0) {
       return res.status(400).json({ message: "Failed to create lab results" });
     }
@@ -37,8 +45,35 @@ export const createLabResults = async (
       data: result,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Server failed to create lab results", error });
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getLabTechTestRequests = async (
+  req: Request & { user?: { role: string; id: string | null } },
+  res: Response,
+) => {
+  const { role, id } = req.user || {};
+  if (role !== "lab_technician") {
+    return res.status(403).json({ message: "Unauthorized access" });
+  }
+
+  try {
+    // Logic to get lab test requests for the lab technician
+    const testRequests = await getLabTechTestRequestsFromDB(id as string);
+
+    if (testRequests.length === 0) {
+      return res.status(207).json({ message: "No lab test requests found" });
+    }
+
+    return res.status(200).json({
+      message: "Lab test requests fetched successfully",
+      data: testRequests,
+    });
+  } catch (error) {
+    return res.status(500).json(`${error}`);
   }
 };
