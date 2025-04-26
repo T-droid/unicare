@@ -70,10 +70,10 @@ export const getMedicalHistoryController = async (
     });
   } catch (error) {
     if (error instanceof CustomError) {
-          return res.status(error.statusCode).json({ message: error.message });
-        }
-        return res.status(500).json({ message: "Internal server error" });
-      }
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 // Write a new prescription for a student

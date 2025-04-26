@@ -72,11 +72,15 @@ export async function getStudentMedicalHistory(regNo: string) {
     }));
 
     return medicalHistoryWithLabTests;
-  } catch (error) {console.error("Error fetching medical history with lab tests:", error);
+  } catch (error) {
+    console.error("Error fetching medical history with lab tests:", error);
     if (error instanceof CustomError) {
       throw error;
     }
-    throw new CustomError("Failed to fetch medical history with lab tests", 500);
+    throw new CustomError(
+      "Failed to fetch medical history with lab tests",
+      500,
+    );
   }
 }
 

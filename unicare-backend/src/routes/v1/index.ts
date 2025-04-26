@@ -47,7 +47,7 @@ const appRoutes = [
   {
     path: "/reports",
     router: reportRouter,
-  }
+  },
   // add other routes hapa chini
 ];
 

@@ -1,7 +1,7 @@
 import { Appointment } from "../types/appointment";
 import { db } from "../db";
 import { AppointmentsTable, StudentTable, UserTable } from "../db/schema";
-import { and, eq, count} from "drizzle-orm";
+import { and, eq, count } from "drizzle-orm";
 import { d } from "drizzle-kit/index-BAUrj6Ib";
 
 const appointments: Appointment[] = [];
@@ -46,10 +46,7 @@ export const doctorExists = async (doctorId: string): Promise<boolean> => {
   return doctor.length > 0;
 };
 
-export const getAppointments = async (
-  offset?: number,
-  limit?: number
-) => {
+export const getAppointments = async (offset?: number, limit?: number) => {
   try {
     // Base query
     let query = db
@@ -63,18 +60,20 @@ export const getAppointments = async (
           role: UserTable.role,
         },
         student_details: {
-          reg_no: StudentTable.reg_no,  
+          reg_no: StudentTable.reg_no,
           name: StudentTable.name,
           phone_number: StudentTable.phone_number,
         },
-        appointment_date: AppointmentsTable.appointment_date
+        appointment_date: AppointmentsTable.appointment_date,
       })
       .from(AppointmentsTable)
-      .innerJoin(StudentTable, eq(AppointmentsTable.reg_no, StudentTable.reg_no))
+      .innerJoin(
+        StudentTable,
+        eq(AppointmentsTable.reg_no, StudentTable.reg_no),
+      )
       .innerJoin(UserTable, eq(AppointmentsTable.doctor_id, UserTable.id));
     // Execute query
     const appointmentsList = await query.execute(); // Fix: Explicit execution of query
-
 
     return appointmentsList;
   } catch (error) {

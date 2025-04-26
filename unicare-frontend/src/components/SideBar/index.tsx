@@ -37,7 +37,7 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     {
       label: "Dashboard",
-      route: `${currentUser.role === "admin" ? "/admin" : "/doctor"}`,
+      route: `${currentUser.role}`,
       icon: AppWindow,
       color: "text-gray-400",
     },

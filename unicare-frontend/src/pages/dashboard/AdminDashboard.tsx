@@ -8,8 +8,12 @@ import {
   TrendingUp,
   Clock,
   Search,
+  UserPlus,
+  Pill,
+  Calendar,
+  UserCog
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -20,45 +24,135 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import StudentListing from "./students/StudentListing";
+import { setAlert } from "@/state/app";
+import { useDispatch } from "react-redux";
+import axiosInstance from "@/middleware/axiosInstance";
 
 const AdminDashboard = () => {
   const [showStudentListing, setShowStudentListing] = useState<boolean>(false);
-  // Sample data - replace with real data from your backend
-  const recordsData = [
-    { month: "Jan", records: 150 },
-    { month: "Feb", records: 245 },
-    { month: "Mar", records: 180 },
-    { month: "Apr", records: 290 },
-    { month: "May", records: 310 },
-    { month: "Jun", records: 285 },
-  ];
+  const [dashboardData, setDashboardData] = useState({
+    drugDetails: {
+      total_drugs: 0,
+      total_in_stock: 0,
+      total_out_of_stock: 0,
+      total_near_out_of_stock: 0,
+      drugs_out_of_stock: [],
+      drugs_near_out_of_stock: []
+    },
+    studentDetails: {
+      total_students: 0
+    },
+    staffDetails: {
+      total_staff: 0,
+      total_doctors: 0,
+      total_nurses: 0,
+      total_pharmacists: 0,
+      total_lab_technicians: 0,
+      total_added_today: 0
+    },
+    appointmentDetails: {
+      total_appointments: 0,
+      total_appointments_today: 0,
+      total_appointments_this_week: 0,
+      total_appointments_this_month: 0
+    }
+  });
+  const dispatch = useDispatch();
 
-  const recentActivities = [
-    {
-      id: 1,
-      action: "Patient record created - John Smith",
-      time: "2 minutes ago",
-      type: "create",
-    },
-    {
-      id: 2,
-      action: "Medical prescription updated - Sarah Johnson",
-      time: "15 minutes ago",
-      type: "update",
-    },
-    {
-      id: 3,
-      action: "Medical test results added - Mike Brown",
-      time: "1 hour ago",
-      type: "medical",
-    },
-    {
-      id: 4,
-      action: "Emergency treatment recorded - Jane Doe",
-      time: "2 hours ago",
-      type: "create",
-    },
-  ];
+  // Generate appointment data for chart based on backend data
+  const generateAppointmentChartData = () => {
+    // This is sample data - in a real scenario, we would use actual monthly data
+    // For now, we're using the weekly and monthly appointment counts as reference points
+    return [
+      { month: "Jan", appointments: dashboardData.appointmentDetails.total_appointments_this_month * 0.5 },
+      { month: "Feb", appointments: dashboardData.appointmentDetails.total_appointments_this_month * 0.7 },
+      { month: "Mar", appointments: dashboardData.appointmentDetails.total_appointments_this_month * 0.8 },
+      { month: "Apr", appointments: dashboardData.appointmentDetails.total_appointments_this_month * 0.9 },
+      { month: "May", appointments: dashboardData.appointmentDetails.total_appointments_this_month * 1.1 },
+      { month: "Jun", appointments: dashboardData.appointmentDetails.total_appointments_this_month },
+    ];
+  };
+
+  // Recent activities based on out-of-stock medications and other metrics
+  const generateRecentActivities = () => {
+    const activities = [];
+
+    // Add out of stock medications as activities
+    dashboardData.drugDetails.drugs_out_of_stock.forEach((drug, index) => {
+      activities.push({
+        id: `drug-${index}`,
+        action: `Out of stock - ${drug.drug_name}`,
+        time: "Requires attention",
+        type: "alert"
+      });
+    });
+
+    // Add near out of stock medications
+    dashboardData.drugDetails.drugs_near_out_of_stock.forEach((drug, index) => {
+      activities.push({
+        id: `near-${index}`,
+        action: `Low stock - ${drug.drug_name} (${drug.quantity} remaining)`,
+        time: "Monitor closely",
+        type: "warning"
+      });
+    });
+
+    // Add recent staff additions if any
+    if (dashboardData.staffDetails.total_added_today > 0) {
+      activities.push({
+        id: "staff-new",
+        action: `${dashboardData.staffDetails.total_added_today} new staff added`,
+        time: "Today",
+        type: "create"
+      });
+    }
+
+    // Add today's appointments if any
+    if (dashboardData.appointmentDetails.total_appointments_today > 0) {
+      activities.push({
+        id: "appt-today",
+        action: `${dashboardData.appointmentDetails.total_appointments_today} appointments scheduled`,
+        time: "Today",
+        type: "medical"
+      });
+    }
+
+    // If we don't have enough activities, add some default ones
+    if (activities.length < 3) {
+      activities.push({
+        id: "appt-week",
+        action: `${dashboardData.appointmentDetails.total_appointments_this_week} appointments scheduled`,
+        time: "This week",
+        type: "medical"
+      });
+    }
+
+    return activities.slice(0, 4); // Limit to 4 activities
+  };
+
+  const fetchDashboardData = async () => {
+    try {
+      const response = await axiosInstance.get("/reports");
+      if (response.status !== 200) {
+        throw new Error(response.data.message || "Failed to fetch dashboard data");
+      }
+
+      setDashboardData(response.data.data);
+      console.log("Dashboard data loaded:", response.data.data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      dispatch(
+        setAlert({
+          message: error.response?.data?.error || error.message || "Failed to fetch data",
+          type: `${error.response?.status === 404 ? "warning" : "error"}`,
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -69,7 +163,9 @@ const AdminDashboard = () => {
         <div className="relative">
           <input
             onChange={(e) => {
-              setShowStudentListing(true);
+              if (e.target.value) {
+                setShowStudentListing(true);
+              }
             }}
             type="text"
             placeholder="Search student records..."
@@ -89,8 +185,8 @@ const AdminDashboard = () => {
               </div>
               <div onClick={() => setShowStudentListing(!showStudentListing)}>
                 <p className="text-sm text-gray-500">Total Students</p>
-                <h3 className="text-2xl font-bold">2,543</h3>
-                <p className="text-xs text-green-600">+123 this semester</p>
+                <h3 className="text-2xl font-bold">{dashboardData.studentDetails.total_students}</h3>
+                <p className="text-xs text-blue-600">Registered in system</p>
               </div>
             </div>
           </CardContent>
@@ -100,12 +196,14 @@ const AdminDashboard = () => {
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-green-100 rounded-full">
-                <FileText className="h-6 w-6 text-green-600" />
+                <UserCog className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Active Records</p>
-                <h3 className="text-2xl font-bold">1,827</h3>
-                <p className="text-xs text-blue-600">94% up to date</p>
+                <p className="text-sm text-gray-500">Staff Members</p>
+                <h3 className="text-2xl font-bold">{dashboardData.staffDetails.total_staff}</h3>
+                <p className="text-xs text-green-600">
+                  +{dashboardData.staffDetails.total_added_today} today
+                </p>
               </div>
             </div>
           </CardContent>
@@ -115,12 +213,14 @@ const AdminDashboard = () => {
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-purple-100 rounded-full">
-                <Clock className="h-6 w-6 text-purple-600" />
+                <Calendar className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Pending Updates</p>
-                <h3 className="text-2xl font-bold">48</h3>
-                <p className="text-xs text-orange-600">Requires attention</p>
+                <p className="text-sm text-gray-500">Appointments</p>
+                <h3 className="text-2xl font-bold">{dashboardData.appointmentDetails.total_appointments}</h3>
+                <p className="text-xs text-purple-600">
+                  {dashboardData.appointmentDetails.total_appointments_this_week} this week
+                </p>
               </div>
             </div>
           </CardContent>
@@ -130,12 +230,14 @@ const AdminDashboard = () => {
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-yellow-100 rounded-full">
-                <AlertCircle className="h-6 w-6 text-yellow-600" />
+                <Pill className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Critical Alerts</p>
-                <h3 className="text-2xl font-bold">7</h3>
-                <p className="text-xs text-red-600">Immediate action needed</p>
+                <p className="text-sm text-gray-500">Medications</p>
+                <h3 className="text-2xl font-bold">{dashboardData.drugDetails.total_drugs}</h3>
+                <p className="text-xs text-red-600">
+                  {dashboardData.drugDetails.total_out_of_stock} out of stock
+                </p>
               </div>
             </div>
           </CardContent>
@@ -147,37 +249,34 @@ const AdminDashboard = () => {
       ) : (
         // Charts and Activity
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Records Management Chart */}
+          {/* Appointments Chart */}
           <Card className="bg-slate-50 dark:bg-boxdark border-0">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <TrendingUp className="h-5 w-5 text-blue-600" />
-                <span>Record Management Activity</span>
+                <span>Appointment Activity</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={recordsData}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      className="stroke-gray-600"
-                    />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip
-                      cursor={{ fill: "transparent" }}
-                      contentStyle={{
-                        backgroundColor: "#fff",
-                        borderRadius: "8px",
-                      }}
-                      itemStyle={{ color: "#000" }}
-                      labelStyle={{ fontWeight: "bold" }}
-                      formatter={(value) => [`${value}`, "Records"]}
-                    />
-                    <Bar dataKey="records" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
+                <div className="space-y-2">
+                  {dashboardData.drugDetails.drugs_out_of_stock.map((drug, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-4 p-3 bg-bodydark1 dark:bg-slate-700 rounded-lg"
+                    >
+                      <div className="rounded-full dark:bg-boxdark text-red-500">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {drug.drug_name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Last Updated: {drug.updated_at || new Date().toDateString(
+                            )}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -187,24 +286,27 @@ const AdminDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Activity className="h-5 w-5 text-blue-600" />
-                <span>Recent Record Activities</span>
+                <span>Recent Activities & Alerts</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentActivities.map((activity) => (
+                {generateRecentActivities().map((activity) => (
                   <div
                     key={activity.id}
                     className="flex items-center space-x-4 p-3 bg-bodydark1 dark:bg-slate-700 rounded-lg"
                   >
                     <div
                       className={`p-2 rounded-full dark:bg-boxdark 
-                    ${activity.type === "create" ? "text-green-500" : ""} 
-                    ${activity.type === "update" ? "text-blue-500" : ""} 
-                    ${activity.type === "medical" ? "text-purple-500" : ""}
-                    ${activity.type === "discipline" ? "text-orange-500" : ""}`}
+                      ${activity.type === "create" ? "text-green-500" : ""} 
+                      ${activity.type === "warning" ? "text-yellow-500" : ""} 
+                      ${activity.type === "medical" ? "text-purple-500" : ""}
+                      ${activity.type === "alert" ? "text-red-500" : ""}`}
                     >
-                      <Activity className="h-4 w-4 text-gray-60" />
+                      {activity.type === "create" && <UserPlus className="h-4 w-4" />}
+                      {activity.type === "warning" && <Clock className="h-4 w-4" />}
+                      {activity.type === "medical" && <Calendar className="h-4 w-4" />}
+                      {activity.type === "alert" && <AlertCircle className="h-4 w-4" />}
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -221,6 +323,54 @@ const AdminDashboard = () => {
           </Card>
         </div>
       )}
+
+      {/* Staff Overview */}
+      <Card className="bg-slate-50 dark:bg-boxdark border-0">
+        <CardHeader>
+          <CardTitle>Staff Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 rounded-lg">
+              <Users className="h-5 w-5 text-blue-600" />
+              <div>
+                <span className="text-sm text-gray-500">Doctors</span>
+                <p className="text-lg font-semibold text-blue-600">
+                  {dashboardData.staffDetails.total_doctors}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 rounded-lg">
+              <Users className="h-5 w-5 text-green-600" />
+              <div>
+                <span className="text-sm text-gray-500">Nurses</span>
+                <p className="text-lg font-semibold text-green-600">
+                  {dashboardData.staffDetails.total_nurses}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 rounded-lg">
+              <Pill className="h-5 w-5 text-purple-600" />
+              <div>
+                <span className="text-sm text-gray-500">Pharmacists</span>
+                <p className="text-lg font-semibold text-purple-600">
+                  {dashboardData.staffDetails.total_pharmacists}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 rounded-lg">
+              <FileText className="h-5 w-5 text-orange-600" />
+              <div>
+                <span className="text-sm text-gray-500">Lab Technicians</span>
+                <p className="text-lg font-semibold text-orange-600">
+                  {dashboardData.staffDetails.total_lab_technicians}
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Quick Actions */}
       <Card className="bg-slate-50 dark:bg-boxdark border-0">
         <CardHeader>
@@ -229,21 +379,21 @@ const AdminDashboard = () => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <button className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 hover:bg-green-100 rounded-lg transition-colors">
-              <Users className="h-5 w-5 text-blue-600" />
+              <GraduationCap className="h-5 w-5 text-blue-600" />
               <span className="text-sm font-medium text-blue-600">
-                New Student Record
+                Manage Students
               </span>
             </button>
             <button className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 hover:bg-green-100 rounded-lg transition-colors">
-              <FileText className="h-5 w-5 text-green-600" />
+              <Calendar className="h-5 w-5 text-green-600" />
               <span className="text-sm font-medium text-green-600">
-                Update Records
+                Schedule Appointment
               </span>
             </button>
             <button className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 hover:bg-green-100 rounded-lg transition-colors">
-              <Search className="h-5 w-5 text-purple-600" />
+              <Pill className="h-5 w-5 text-purple-600" />
               <span className="text-sm font-medium text-purple-600">
-                Search Records
+                Update Inventory
               </span>
             </button>
             <button className="flex items-center justify-center space-x-2 p-4 bg-green-50 dark:bg-slate-700 hover:bg-green-100 rounded-lg transition-colors">

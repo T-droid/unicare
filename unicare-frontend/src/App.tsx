@@ -190,7 +190,7 @@ function App() {
           </Route>
 
           <Route
-            path="/pharmacy"
+            path="/pharmacist"
             element={
               <>
                 <PageTitle title="Unicare | Pharmacy" />
