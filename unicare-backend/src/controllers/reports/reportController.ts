@@ -22,12 +22,12 @@ import { dashboardData } from "../../services/reportService";
 //     }
 
 //     return res.status(200).json({ message: "Drug usage report", data: getDrugUsageReport });
-    
+
 //   } catch (error) {
 //     return res
 //       .status(500)
 //       .json({ message: `${error}` });
-    
+
 //   }
 // };
 
@@ -96,20 +96,18 @@ import { dashboardData } from "../../services/reportService";
 //     return res
 //       .status(500)
 //       .json({ message: `${error}` });
-    
+
 //   }
 // };
 
-export const getReports = async(req: Request, res: Response) => {
-    try {
-      const { startDate, endDate } = req.query;
-      const data = await dashboardData();
-      return res.status(200).json({
-        data,
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: `${error}` });
-    }
-}
+export const getReports = async (req: Request, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const data = await dashboardData();
+    return res.status(200).json({
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: `${error}` });
+  }
+};
