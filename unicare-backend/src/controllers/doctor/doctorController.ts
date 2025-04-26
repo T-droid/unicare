@@ -4,6 +4,7 @@ import {
   getAllDoctors,
   getDoctorLabRequests,
   getDoctorsAppointments,
+  getDoctorsPrescriptions,
   getStudentLabTests,
   getStudentMedicalHistory,
   requestStudentLabTest,
@@ -78,13 +79,13 @@ export const getMedicalHistoryController = async (
 
 // Write a new prescription for a student
 export const createPrescriptionController = async (
-  req: Request & { user?: { role: string } },
+  req: Request & { user?: { role: string, id: string } },
   res: Response,
 ) => {
   const { regNo } = req.params;
   const { prescriptionDetails } = req.body;
 
-  const { role } = req.user || {};
+  const { role, id } = req.user || {};
   if (!role && role !== "doctor") {
     return res.status(403).json({ message: "Unauthorized access" });
   }
@@ -105,6 +106,7 @@ export const createPrescriptionController = async (
     }
     // Logic to create a new prescription
     const prescription = await createStudentPrescription(
+      id as string,
       regNo,
       prescriptionDetails,
     );
@@ -285,6 +287,28 @@ export const getDoctorsLabrequestsController = async (
     return res.status(200).json({
       message: "Lab requests fetched successfully",
       data: labRequests,
+    });
+  } catch (error) {
+    return res.status(500).json(`${error}`);
+  }
+};
+
+export const getDoctorsPrescriptionsController = async (
+  req: Request & { user?: { role: string; id: string } },
+  res: Response,
+) => {
+  const { role, id } = req.user || {};
+  if (!role && role !== "doctor") {
+    return res.status(403).json({ message: "Unauthorized access" });
+  }
+  try {
+    const prescriptions = await getDoctorsPrescriptions(id as string);
+    if (prescriptions.length === 0) {
+      return res.status(404).json({ message: "No prescriptions found" });
+    }
+    return res.status(200).json({
+      message: "Prescriptions fetched successfully",
+      data: prescriptions,
     });
   } catch (error) {
     return res.status(500).json(`${error}`);

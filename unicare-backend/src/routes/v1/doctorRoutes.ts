@@ -8,6 +8,7 @@ import {
   getAllDoctorsController,
   getDoctorsAppointmentsController,
   getDoctorsLabrequestsController,
+  getDoctorsPrescriptionsController,
 } from "../../controllers/doctor/doctorController";
 import authenticateUser from "../../middleware/auth";
 
@@ -371,6 +372,80 @@ doctorRouter.get(
   authenticateUser,
   (req: Request, res: Response) => {
     getDoctorsLabrequestsController(req, res);
+  },
+);
+
+/**
+ * @swagger
+ * /v1/doctor/prescriptions:
+ *   get:
+ *     summary: Get all prescriptions created by the logged-in doctor
+ *     tags:
+ *       - Doctor
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of prescriptions fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       prescriptionId:
+ *                         type: string
+ *                         description: Unique identifier for the prescription
+ *                       studentName:
+ *                         type: string
+ *                         description: Name of the student
+ *                       prescriptionDetails:
+ *                         type: string
+ *                         description: Details of the prescription
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Date and time when the prescription was created
+ *       403:
+ *         description: Unauthorized access (only doctors can access this route)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *       404:
+ *         description: No prescriptions found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               description: Error details
+ */
+doctorRouter.get(
+  "/prescriptions",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    getDoctorsPrescriptionsController(req, res);
   },
 );
 export default doctorRouter;
