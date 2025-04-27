@@ -8,9 +8,12 @@ export interface Student {
   }
   
   export interface Patient extends Partial<Student> {
+    student_details: any;
+    doctor_details: any;
     id: string;
     reg_no: string;
     patientId: string;
+    appointment_date: Date
     status: 'Waiting' | 'Ready' | 'In Treatment' | 'Pending Discharge' | 'Discharged';
     assignedTo?: string;
     type?: 'Outpatient' | 'Inpatient';

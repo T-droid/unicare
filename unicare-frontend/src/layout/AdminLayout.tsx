@@ -19,7 +19,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
   }
   useEffect(() => {
     const urlSuffix = window.location.pathname.split("/")[1];
-    if (user.role !== urlSuffix) {
+    if (user.role !== urlSuffix && urlSuffix !== "account") {
       window.location.href = `/${user.role}`;
     }
   }, [window.location.pathname]);
