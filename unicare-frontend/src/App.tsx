@@ -49,7 +49,8 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!currentUser || (currentUser && window.location.pathname != '/')) return;
+    if (!currentUser || (currentUser && window.location.pathname != "/"))
+      return;
     const userRole = currentUser?.role;
     window.location.href = `/${userRole}`;
   }, [currentUser?.role]);
@@ -203,7 +204,7 @@ function App() {
           {/* Labtech Route */}
           <Route element={<AdminLayout />}>
             <Route
-              path="/labtech"
+              path="/lab_technician"
               element={
                 <>
                   <PageTitle title="LabTech Dashboard" />

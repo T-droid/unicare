@@ -77,9 +77,9 @@ const Sidebar: React.FC = () => {
             color: "text-blue-600",
           },
         ]
-      : currentUser.role === 'receptionist' ? [
-
-      ] : []),
+      : currentUser.role === "receptionist"
+      ? []
+      : []),
     {
       icon: Settings,
       label: "Settings",
@@ -109,11 +109,12 @@ const Sidebar: React.FC = () => {
           </div>
 
           <nav className="mt-6">
-            {menuItems.map((item: any) => (
-              item && (
-              <div
-                key={item.route}
-                className={`
+            {menuItems.map(
+              (item: any) =>
+                item && (
+                  <div
+                    key={item.route}
+                    className={`
                 flex items-center px-6 py-4 cursor-pointer my-2
                 hover:bg-gray-50 hover:dark:bg-slate-700 transition-colors duration-200
                 ${
@@ -122,18 +123,18 @@ const Sidebar: React.FC = () => {
                     : ""
                 }
               `}
-                onClick={() => {
-                  navigate(item.route);
-                  dispatch(setSideBar(false));
-                }}
-              >
-                <item.icon className={`w-5 h-5 ${item.color}`} />
-                <span className="ml-3 text-gray-700 dark:text-slate-300">
-                  {item.label}
-                </span>
-              </div>
-              )
-            ))}
+                    onClick={() => {
+                      navigate(item.route);
+                      dispatch(setSideBar(false));
+                    }}
+                  >
+                    <item.icon className={`w-5 h-5 ${item.color}`} />
+                    <span className="ml-3 text-gray-700 dark:text-slate-300">
+                      {item.label}
+                    </span>
+                  </div>
+                )
+            )}
           </nav>
         </div>
         <div className="flex justify-between p-2 w-full mb-4 gap-4">

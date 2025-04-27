@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, UseDispatch } from "react-redux";
 import { Card, CardHeader, CardContent } from "../../components/ui/card";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { setAlert } from "@/state/app";
-import axios from "axios";
 import { setCurrentUser, setToken } from "@/state/auth";
 import axiosInstance from "@/middleware/axiosInstance";
 
@@ -21,11 +20,9 @@ const AdminSignIn: React.FC = () => {
     e.preventDefault();
     try {
       setSubmitting(true);
-      const loginResponse = await axiosInstance.post(
-        `/users/login`,
-        formData,
-        { withCredentials: true }
-      );
+      const loginResponse = await axiosInstance.post(`/users/login`, formData, {
+        withCredentials: true,
+      });
 
       if (loginResponse.status !== 200) {
         throw new Error(loginResponse.data.message || "Login failed");
@@ -55,10 +52,10 @@ const AdminSignIn: React.FC = () => {
       <Card className="w-full max-w-md">
         <CardHeader>
           <h1 className="text-2xl font-bold text-center text-gray-800">
-            UniCare Portal
+            Welcome to UniCare Portal
           </h1>
           <p className="text-center text-gray-600">
-            Sign in to manage dashboard
+            Sign in to access your account
           </p>
         </CardHeader>
         <CardContent>

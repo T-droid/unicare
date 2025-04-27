@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, CheckCircle, User, BookOpen, Calendar } from "lucide-react";
 import type { Student } from "../types";
+import axiosInstance from "@/middleware/axiosInstance";
 
 interface StudentSearchProps {
   onSelect: (student: Student) => void;
@@ -14,40 +15,42 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = `${import.meta.env.VITE_SERVER_HEAD}/students`;
-
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         setLoading(true);
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error("Failed to fetch students");
-        }
-        const data = await response.json();
-        console.log("API response:", data);
+        const response = await axiosInstance.get("/students");
+        const data = response.data;
 
         if (Array.isArray(data.data)) {
           setStudents(data.data);
         } else {
-          throw new Error("API did not return a valid students array");
+          throw new Error("Invalid students array received.");
         }
       } catch (err: any) {
-        console.error("Fetch error:", err);
-        setError(err.message || "Something went wrong");
+        setError(
+          err.response?.data?.message || err.message || "Something went wrong"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchStudents();
-  }, [API_URL]);
+  }, []);
+
+  const isSearchingByRegNo =
+    searchQuery.trim() !== "" && /^\d/.test(searchQuery);
 
   const filteredStudents = students.filter(
     (student) =>
       student.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.studentId?.toLowerCase().includes(searchQuery.toLowerCase())
+      student.reg_no?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const limitedStudents = isSearchingByRegNo
+    ? filteredStudents
+    : filteredStudents.slice(0, 3);
 
   return (
     <Card className="bg-white dark:bg-boxdark shadow-2xl border-gray-500">
@@ -87,7 +90,7 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
         {!loading && !error && (
           <>
             <div className="divide-y dark:divide-gray-500">
-              {filteredStudents.map((student) => (
+              {limitedStudents.map((student) => (
                 <div
                   key={student.id}
                   onClick={() => onSelect(student)}
@@ -99,7 +102,7 @@ const StudentSearch: React.FC<StudentSearchProps> = ({ onSelect, onClose }) => {
                         {student.name}
                       </h4>
                       <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                        {student.studentId}
+                        {student.reg_no}
                       </span>
                     </div>
                     <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
