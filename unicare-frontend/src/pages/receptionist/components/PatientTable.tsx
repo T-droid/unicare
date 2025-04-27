@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Calendar, DoorOpen, LogOut } from "lucide-react";
-import type { Patient } from '../types';
+import type { Patient } from "../types";
 
 interface PatientTableProps {
   patients: Patient[];
@@ -14,14 +14,14 @@ const PatientTable: React.FC<PatientTableProps> = ({
   patients,
   onScheduleAppointment,
   onAssignRoom,
-  onDischarge
+  onDischarge,
 }) => {
   return (
     <Card className="bg-slate-50 dark:bg-boxdark dark:border-none">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Users className="h-5 w-5 text-blue-600" />
-          <span>Current Patients</span>
+          <span>Current Appoinments</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -38,29 +38,52 @@ const PatientTable: React.FC<PatientTableProps> = ({
                 <th className="text-left p-4">Actions</th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-300 dark:divide-gray-600'>
+            <tbody className="divide-y divide-gray-300 dark:divide-gray-600">
               {patients.map((patient) => (
-                <tr key={`patient-${patient.id}`} className="hover:bg-slate-100 hover:dark:bg-gray-700 transition-colors duration-300">
-                  <td className="p-4">{patient.studentId}</td>
-                  <td className="p-4">{patient.name}</td>
+                <tr
+                  key={`patient-${patient.id}`}
+                  className="hover:bg-slate-100 hover:dark:bg-gray-700 transition-colors duration-300"
+                >
+                  <td className="p-4">{patient.student_details.reg_no}</td>
+                  <td className="p-4">{patient.student_details.name}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs
-                      ${patient.status === 'Waiting' ? 'bg-yellow-100 text-yellow-800' : ''}
-                      ${patient.status === 'In Treatment' ? 'bg-green-100 text-green-800' : ''}
-                      ${patient.status === 'Pending Discharge' ? 'bg-blue-100 text-blue-800' : ''}
-                    `}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs
+                      ${
+                        patient.status === "Waiting"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : ""
+                      }
+                      ${
+                        patient.status === "In Treatment"
+                          ? "bg-green-100 text-green-800"
+                          : ""
+                      }
+                      ${
+                        patient.status === "Pending Discharge"
+                          ? "bg-blue-100 text-blue-800"
+                          : ""
+                      }
+                    `}
+                    >
                       {patient.status}
                     </span>
                   </td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs
-                      ${patient.type === 'Inpatient' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}
-                    `}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs
+                      ${
+                        patient.type === "Inpatient"
+                          ? "bg-purple-100 text-purple-800"
+                          : "bg-gray-100 text-gray-800"
+                      }
+                    `}
+                    >
                       {patient.type}
                     </span>
                   </td>
-                  <td className="p-4">{patient.assignedTo}</td>
-                  <td className="p-4">{patient.room || '-'}</td>
+                  <td className="p-4">{patient.doctor_details.name}</td>
+                  <td className="p-4">{patient.room || "-"}</td>
                   <td className="p-4">
                     <div className="flex space-x-2">
                       <button
@@ -69,7 +92,7 @@ const PatientTable: React.FC<PatientTableProps> = ({
                       >
                         <Calendar className="h-4 w-4 text-blue-600" />
                       </button>
-                      {patient.type === 'Inpatient' && (
+                      {patient.type === "Inpatient" && (
                         <button
                           className="p-2 hover:bg-slate-200 rounded-full"
                           onClick={() => onAssignRoom(patient)}
