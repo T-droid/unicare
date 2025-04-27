@@ -16,8 +16,6 @@ import {
   FileText,
   FileX,
 } from "lucide-react";
-import { QueuedPatient } from "@/types/patient";
-import { Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setAlert } from "@/state/app";
@@ -28,8 +26,9 @@ import axiosInstance from "@/middleware/axiosInstance";
 
 const DoctorDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTabExec] = useState(searchParams.get('tab') || "queue");
+  const [activeTab, setActiveTabExec] = useState(searchParams.get('tab') || "appointments");
   const [labRequests, setLabRequests] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const [showLabRequestModal, setShowLabRequestModal] = useState<boolean>(false);
   const setActiveTab = (tab: string) => {
@@ -56,40 +55,6 @@ const DoctorDashboard = () => {
   const greeting = `${greetingText()}, ${currentDoctor.name}`;
   const [loadingAppointments, setLoadingAppointments] = useState<boolean>();
   const [upcomingAppointments, setAppointments] = useState<any[]>([]);
-
-  // Sample data for queue
-  const queuedPatients: Array<QueuedPatient> = [
-    {
-      id: "1",
-      studentId: "1",
-      course: "Biology",
-      name: "Sarah Johnson",
-      time: "9:00 AM",
-      reason: "Fever and headache",
-      waited: "10 min",
-      status: "Ready",
-    },
-    {
-      id: "2",
-      studentId: "2",
-      course: "Chemistry",
-      name: "Michael Smith",
-      time: "9:15 AM",
-      reason: "Follow-up for hypertension",
-      waited: "5 min",
-      status: "Ready",
-    },
-    {
-      id: "3",
-      studentId: "3",
-      course: "Physics",
-      name: "Emily Wong",
-      time: "9:30 AM",
-      reason: "Annual check-up",
-      waited: "Just arrived",
-      status: "Waiting",
-    },
-  ];
 
   // Sample data for appointments
   // const upcomingAppointments =
@@ -257,6 +222,22 @@ const DoctorDashboard = () => {
     },
   ];
 
+
+  const filteredLabRequests = labRequests.filter((labRequest) => {
+    return (
+      labRequest.student_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      labRequest.test_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      labRequest.reg_no.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  const filteredAppointments = upcomingAppointments.filter((appointment) => {
+    return (
+      appointment.student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment.student.reg_no.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       {/* Page Header */}
@@ -298,12 +279,6 @@ const DoctorDashboard = () => {
         <div className="border-b border-gray-200 dark:border-gray-700">
           <nav className="flex flex-wrap">
             <TabButton
-              active={activeTab === "queue"}
-              onClick={() => setActiveTab("queue")}
-              icon={<Users size={18} />}
-              label="Patient Queue"
-            />
-            <TabButton
               active={activeTab === "appointments"}
               onClick={() => setActiveTab("appointments")}
               icon={<CalendarDays size={18} />}
@@ -335,6 +310,7 @@ const DoctorDashboard = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div className="relative flex-grow max-w-md">
               <input
+                onChange={(e) => setSearchTerm(e.target.value)}
                 type="text"
                 placeholder="Search patients, appointments..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700"
@@ -344,13 +320,6 @@ const DoctorDashboard = () => {
                 size={18}
               />
             </div>
-
-            {activeTab === "queue" && (
-              <button className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition duration-150">
-                <Plus size={18} />
-                <span>Call Next Patient</span>
-              </button>
-            )}
 
 
 
@@ -382,17 +351,6 @@ const DoctorDashboard = () => {
             )}
           </div>
 
-          {/* Tab Content */}
-          {activeTab === "queue" && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Patient Queue</h2>
-              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                {queuedPatients.map((patient) => (
-                  <QueuedPatientCard key={patient.id} patient={patient} />
-                ))}
-              </div>
-            </div>
-          )}
 
           {activeTab === "appointments" && (
             <div>
@@ -403,7 +361,7 @@ const DoctorDashboard = () => {
                 {loadingAppointments ? (
                   <Loader className="animate-spin" />
                 )
-                  : !upcomingAppointments || upcomingAppointments.length === 0
+                  : !filteredAppointments || filteredAppointments.length === 0
                     ? (
                       <div className="flex flex-col items-center justify-center h-64">
                         <FileX className="w-16 h-16 text-gray-400 mb-4" />
@@ -412,9 +370,8 @@ const DoctorDashboard = () => {
                         </p>
                       </div>
                     )
-                    : upcomingAppointments.map((appointment) => (
-                      <AppointmentCard
-                        key={appointment.appointment_id}
+                    : filteredAppointments.map((appointment) => (
+                      <AppointmentCard key={appointment.appointment_id}
                         appointment={appointment}
                       />
                     ))}
@@ -426,7 +383,7 @@ const DoctorDashboard = () => {
             <div>
               <h2 className="text-xl font-semibold mb-4">Lab Requests</h2>
               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                {labRequests.length === 0 ? (
+                {filteredLabRequests.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-64">
                     <FileX className="w-16 h-16 text-gray-400 mb-4" />
                     <p className="text-center text-gray-500 dark:text-gray-400">
@@ -434,9 +391,9 @@ const DoctorDashboard = () => {
                     </p>
                   </div>
                 )
-                : labRequests.map((labRequest) => (
-                  <LabRequestCard key={labRequest.id} labRequest={labRequest} />
-                ))}
+                  : filteredLabRequests.map((labRequest) => (
+                    <LabRequestCard key={labRequest.id} labRequest={labRequest} />
+                  ))}
               </div>
             </div>
           )}
@@ -529,52 +486,6 @@ const TabButton = ({ active, onClick, icon, label }: TabButtonProps) => {
   );
 };
 
-// Queued Patient Card Component
-const QueuedPatientCard = ({ patient }: { patient: QueuedPatient }) => {
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition duration-150 cursor-pointer">
-      <div className="flex items-center mb-3 sm:mb-0">
-        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-500 rounded-full flex items-center justify-center mr-4">
-          <Avatar src={patient.name} alt={patient.name} />
-        </div>
-        <div>
-          <h4 className="font-medium">{patient.name}</h4>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {patient.time} • Waited: {patient.waited}
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-            {patient.reason}
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center space-x-2 ml-14 sm:ml-0">
-        <span
-          className={`px-2 py-1 text-xs rounded-full ${patient.status === "Ready"
-            ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-            : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
-            }`}
-        >
-          {patient.status}
-        </span>
-        <div className="flex items-center space-x-1">
-          <button
-            className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-green-500"
-            title="See Patient"
-          >
-            <CheckCircle size={20} />
-          </button>
-          <button
-            className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-red-500"
-            title="Return to Reception"
-          >
-            <CornerDownRight size={20} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 interface AppointmentProps {
   id: number;
   patient: string;
@@ -656,6 +567,7 @@ interface LabRequestCardProps {
 
 // Lab Request Card Component
 const LabRequestCard = ({ labRequest }: LabRequestCardProps) => {
+
   return (
     <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 transition duration-150">
       <div className="flex items-center">
@@ -663,30 +575,27 @@ const LabRequestCard = ({ labRequest }: LabRequestCardProps) => {
           <Beaker size={18} />
         </div>
         <div>
-          <h4 className="font-medium">{labRequest.patient}</h4>
+          <h4 className="font-medium">{labRequest.student_name}</h4>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            {labRequest.test}
+            {labRequest.test_name}
           </p>
           <span
-            className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${labRequest.urgency === "Urgent"
-              ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300"
-              : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-              }`}
+            className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300`}
           >
-            {labRequest.urgency}
+            {labRequest.test_description}
           </span>
         </div>
       </div>
       <div className="flex items-center">
         <span
-          className={`px-2 py-1 text-xs rounded-full mr-4 ${labRequest.status === "Results Ready"
+          className={`px-2 py-1 text-xs rounded-full mr-4 ${labRequest.test_status === "completed"
             ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-            : labRequest.status === "In Progress"
+            : labRequest.test_status === "pending"
               ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
               : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
             }`}
         >
-          {labRequest.status}
+          {labRequest.test_status}
         </span>
         <div className="flex items-center space-x-1">
           <button
