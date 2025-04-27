@@ -5,6 +5,7 @@ import {
   dischargePatient,
   getRooms,
   getStudent,
+  listAllAppointments,
 } from "../../controllers/receptionist/receptionistController";
 import validateRequest from "../../middleware/validateRequest";
 import {
@@ -253,4 +254,66 @@ receptionistRouter
     },
   );
 
+receptionistRouter.get("/appointments/list", (req, res) => {
+  listAllAppointments(req, res);
+});
+
 export default receptionistRouter;
+/**
+ * @swagger
+ * /v1/receptionist/appointments/list:
+ *   get:
+ *     summary: List all appointments
+ *     tags: [Receptionist]
+ *     responses:
+ *       200:
+ *         description: List of all appointments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 appointments:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: Appointment ID
+ *                       doctor_details:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             description: Doctor ID
+ *                           name:
+ *                             type: string
+ *                             description: Doctor's name
+ *                           phone_number:
+ *                             type: string
+ *                             description: Doctor's phone number
+ *                           role:
+ *                             type: string
+ *                             description: Doctor's role
+ *                       student_details:
+ *                         type: object
+ *                         properties:
+ *                           reg_no:
+ *                             type: string
+ *                             description: Student registration number
+ *                           name:
+ *                             type: string
+ *                             description: Student's name
+ *                           phone_number:
+ *                             type: string
+ *                             description: Student's phone number
+ *                       appointment_date:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Appointment date and time
+ *       404:
+ *         description: No appointments found
+ *       500:
+ *         description: Internal server error
+ */

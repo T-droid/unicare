@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import {
   createStudentPrescription,
   getAllDoctors,
+  getDoctorLabRequests,
   getDoctorsAppointments,
+  getDoctorsPrescriptions,
   getStudentLabTests,
   getStudentMedicalHistory,
   requestStudentLabTest,
@@ -14,6 +16,7 @@ import {
   validateUpdatePatientType,
   validateRequestStudentLabTest,
 } from "../../validation/doctorValidation";
+import { CustomError } from "../../util/customerError";
 
 // get all doctors details
 export const getAllDoctorsController = async (
@@ -67,20 +70,22 @@ export const getMedicalHistoryController = async (
       data: formattedMedicalHistory,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Server failed to get medical history", error });
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 // Write a new prescription for a student
 export const createPrescriptionController = async (
-  req: Request & { user?: { role: string } },
+  req: Request & { user?: { role: string, id: string } },
   res: Response,
 ) => {
   const { regNo } = req.params;
   const { prescriptionDetails } = req.body;
 
-  const { role } = req.user || {};
+  const { role, id } = req.user || {};
   if (!role && role !== "doctor") {
     return res.status(403).json({ message: "Unauthorized access" });
   }
@@ -101,6 +106,7 @@ export const createPrescriptionController = async (
     }
     // Logic to create a new prescription
     const prescription = await createStudentPrescription(
+      id as string,
       regNo,
       prescriptionDetails,
     );
@@ -261,5 +267,50 @@ export const getDoctorsAppointmentsController = async (
     return res
       .status(500)
       .json({ message: "Server failed to fetch appointments", error });
+  }
+};
+
+export const getDoctorsLabrequestsController = async (
+  req: Request & { user?: { role: string; id: string } },
+  res: Response,
+) => {
+  const { role, id } = req.user || {};
+  if (!role && role !== "doctor") {
+    return res.status(403).json({ message: "Unauthorized access" });
+  }
+
+  try {
+    const labRequests = await getDoctorLabRequests(id as string);
+    if (labRequests.length === 0) {
+      return res.status(404).json({ message: "No lab requests found" });
+    }
+    return res.status(200).json({
+      message: "Lab requests fetched successfully",
+      data: labRequests,
+    });
+  } catch (error) {
+    return res.status(500).json(`${error}`);
+  }
+};
+
+export const getDoctorsPrescriptionsController = async (
+  req: Request & { user?: { role: string; id: string } },
+  res: Response,
+) => {
+  const { role, id } = req.user || {};
+  if (!role && role !== "doctor") {
+    return res.status(403).json({ message: "Unauthorized access" });
+  }
+  try {
+    const prescriptions = await getDoctorsPrescriptions(id as string);
+    if (prescriptions.length === 0) {
+      return res.status(404).json({ message: "No prescriptions found" });
+    }
+    return res.status(200).json({
+      message: "Prescriptions fetched successfully",
+      data: prescriptions,
+    });
+  } catch (error) {
+    return res.status(500).json(`${error}`);
   }
 };

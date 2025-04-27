@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { saveDepartment } from "../../services/departmentService";
+import {
+  findDepartmentByName,
+  saveDepartment,
+} from "../../services/departmentService";
 
 export const createDepartment = async (
   req: Request,
@@ -7,7 +10,13 @@ export const createDepartment = async (
 ): Promise<void> => {
   try {
     const { name } = req.body;
-    console.log("name :", name);
+    const deptExists = await findDepartmentByName(name);
+
+    if (deptExists.length > 0) {
+      res.status(400).json({ error: "Department already exists" });
+      return;
+    }
+
     const newDepartment = await saveDepartment({ name });
 
     res.status(201).json({

@@ -9,6 +9,7 @@ import {
 } from "../db/schema";
 import { d } from "drizzle-kit/index-BAUrj6Ib";
 import { stat } from "fs";
+import { CustomError } from "../util/customerError";
 
 export async function getAllDoctors() {
   try {
@@ -46,6 +47,10 @@ export async function getStudentMedicalHistory(regNo: string) {
       .where(eq(PatientMedicalRecords.reg_no, regNo))
       .orderBy(desc(PatientMedicalRecords.created_at));
 
+    if (medicalHistory.length === 0) {
+      throw new CustomError("No medical history found for this student", 404);
+    }
+
     const labTests = await db
       .select({
         id: labTestRequestTable.id,
@@ -69,11 +74,18 @@ export async function getStudentMedicalHistory(regNo: string) {
     return medicalHistoryWithLabTests;
   } catch (error) {
     console.error("Error fetching medical history with lab tests:", error);
-    throw new Error("Failed to fetch medical history with lab tests");
+    if (error instanceof CustomError) {
+      throw error;
+    }
+    throw new CustomError(
+      "Failed to fetch medical history with lab tests",
+      500,
+    );
   }
 }
 
 export async function createStudentPrescription(
+  doctorId: string,
   regNo: string,
   prescription: string,
 ) {
@@ -81,6 +93,7 @@ export async function createStudentPrescription(
     return await db
       .insert(PatientMedicalRecords)
       .values({
+        prescribed_by_id: doctorId,
         reg_no: regNo,
         prescription,
       })
@@ -197,3 +210,57 @@ export async function getDoctorsAppointments(id: string) {
     throw new Error("Failed to fetch doctors appointments");
   }
 }
+
+export const getDoctorLabRequests = async (doctorId: string) => {
+  try {
+    const labRequests = await db
+      .select({
+        test_name: labTestRequestTable.test_name,
+        test_description: labTestRequestTable.test_description,
+        test_status: labTestRequestTable.test_status,
+        test_result: labTestRequestTable.test_result,
+        lab_tech_name: UserTable.name,
+        requested_at: labTestRequestTable.requested_at,
+        student_name: StudentTable.name,
+        reg_no: StudentTable.reg_no,
+      })
+      .from(labTestRequestTable)
+      .where(eq(labTestRequestTable.requested_by_id, doctorId))
+      .orderBy(desc(labTestRequestTable.requested_at))
+      .leftJoin(
+        StudentTable,
+        eq(StudentTable.reg_no, labTestRequestTable.reg_no),
+      )
+      .leftJoin(UserTable, eq(UserTable.id, labTestRequestTable.tested_by_id));
+    return labRequests;
+  } catch (error: any) {
+    console.error("Error fetching lab requests:", error);
+    throw new Error(error);
+  }
+};
+
+export const getDoctorsPrescriptions = async (doctorId: string) => {
+  try {
+    const prescriptions = await db
+      .select({
+        student_namee: StudentTable.name,
+        reg_no: PatientMedicalRecords.reg_no,
+        prescription: PatientMedicalRecords.prescription,
+        doctor_recommendation: PatientMedicalRecords.doctor_recommendation,
+        prescribed_at: PatientMedicalRecords.created_at,
+      })
+      .from(PatientMedicalRecords)
+      .leftJoin(
+        StudentTable,
+        eq(StudentTable.reg_no, PatientMedicalRecords.reg_no),
+      )
+      .where(eq(PatientMedicalRecords.prescribed_by_id, doctorId))
+      .orderBy(desc(PatientMedicalRecords.created_at));
+    return prescriptions;
+  } catch (error: any) {
+    console.error("Error fetching prescriptions:", error);
+    throw new Error(error);
+  }
+};
+
+// Chimene Mercedez Zema avance

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { findStudentByRegNo } from "../../services/userService";
+import { db } from "../../db";
 import {
   assignRoom,
   getAllRooms,
@@ -7,7 +8,11 @@ import {
   reassignRoom,
   updateDischargePatient,
 } from "../../services/roomServices";
-import { bookAppointment as bookAppointmentService } from "../../services/appoinmentService";
+import {
+  bookAppointment as bookAppointmentService,
+  getAppointments,
+} from "../../services/appoinmentService";
+import { get } from "http";
 
 export const getStudent = async (
   req: Request & { user?: { role: string; id: string | null } },
@@ -155,5 +160,19 @@ export const bookDoctorAppointment = async (
   } catch (error) {
     console.error("Error booking appointment:", error);
     res.status(500).json({ message: "Failed to book appointment" });
+  }
+};
+
+export const listAllAppointments = async (req: Request, res: Response) => {
+  try {
+    const appointments = await getAppointments();
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found" });
+    }
+    res.status(200).json({ appointments });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+    return;
   }
 };

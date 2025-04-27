@@ -1,13 +1,18 @@
 import express, { Response, Request } from "express";
-import { createLabResults } from "../../controllers/labTech/labTechController";
+import {
+  createLabResults,
+  getLabTechTestRequests,
+} from "../../controllers/labTech/labTechController";
+import authenticateUser from "../../middleware/auth";
+import { get } from "http";
 
 const labTechRouter = express.Router();
 
 /**
  * @swagger
- * /v1/lab-tech/students/{regNo}/lab-results:
+ * /v1/lab-tech/lab-results/{regNo}:
  *   post:
- *     summary: Create lab results for a student
+ *     summary: Create a lab result for a student
  *     tags:
  *       - Lab Technician
  *     security:
@@ -25,42 +30,15 @@ const labTechRouter = express.Router();
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - labResult
  *             properties:
- *               labResults:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     test_name:
- *                       type: string
- *                       description: Name of the lab test
- *                       example: Blood Test
- *                     test_description:
- *                       type: string
- *                       description: Description of the lab test
- *                       example: Routine blood test for anemia
- *                     test_status:
- *                       type: string
- *                       enum: [pending, completed, in-progress]
- *                       description: Status of the lab test
- *                       example: completed
- *                     test_result:
- *                       type: string
- *                       description: Result of the lab test
- *                       example: Normal
- *                     requested_at:
- *                       type: string
- *                       format: date-time
- *                       description: Date and time when the test was requested
- *                       example: 2025-04-22T10:00:00Z
- *                     completed_at:
- *                       type: string
- *                       format: date-time
- *                       description: Date and time when the test was completed
- *                       example: 2025-04-23T15:00:00Z
+ *               labResult:
+ *                 type: string
+ *                 example: "positive for tb and some other info"
  *     responses:
  *       201:
- *         description: Lab results created successfully
+ *         description: Lab result created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -68,23 +46,66 @@ const labTechRouter = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Lab results created successfully
+ *                   example: Lab result created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     labResult:
+ *                       type: string
+ *                       example: "positive for tb and some other info"
+ *       400:
+ *         description: Validation error or failed to create lab result
+ *       403:
+ *         description: Unauthorized
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /v1/lab-tech/lab-test-requests:
+ *   get:
+ *     summary: Get all lab test requests for the logged-in lab technician
+ *     tags:
+ *       - Lab Technician
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lab test requests fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
  *                 data:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
- *                       id:
+ *                       requestId:
  *                         type: string
- *                         description: Unique identifier for the lab result
- *                       test_name:
+ *                         description: Unique identifier for the lab test request
+ *                       studentName:
+ *                         type: string
+ *                         description: Name of the student
+ *                       testName:
  *                         type: string
  *                         description: Name of the lab test
- *                       test_result:
+ *                       requestedDate:
  *                         type: string
- *                         description: Result of the lab test
- *       400:
- *         description: Validation error or failed to create lab results
+ *                         format: date-time
+ *                         description: Date and time when the lab test was requested
+ *                       status:
+ *                         type: string
+ *                         description: Status of the lab test request
+ *       207:
+ *         description: No lab test requests found
  *         content:
  *           application/json:
  *             schema:
@@ -92,7 +113,7 @@ const labTechRouter = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Validation error or failed to create lab results
+ *                   description: Informational message
  *       403:
  *         description: Unauthorized access (only lab technicians can access this route)
  *         content:
@@ -102,28 +123,30 @@ const labTechRouter = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Unauthorized access
- *       404:
- *         description: Student not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Student not found
+ *                   description: Error message
  *       500:
  *         description: Server error
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Server failed to create lab results
+ *               type: string
+ *               description: Error details
  */
-labTechRouter.post("/", (req: Request, res: Response) => {
-  createLabResults(req, res);
-});
+
+labTechRouter.post(
+  "/lab-results/:regNo",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    createLabResults(req, res);
+  },
+);
+
+labTechRouter.get(
+  "/lab-test-requests",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    getLabTechTestRequests(req, res);
+  },
+);
+
+export default labTechRouter;
