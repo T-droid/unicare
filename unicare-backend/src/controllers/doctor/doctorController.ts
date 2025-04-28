@@ -79,7 +79,7 @@ export const getMedicalHistoryController = async (
 
 // Write a new prescription for a student
 export const createPrescriptionController = async (
-  req: Request & { user?: { role: string, id: string } },
+  req: Request & { user?: { role: string; id: string } },
   res: Response,
 ) => {
   const { regNo } = req.params;

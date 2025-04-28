@@ -12,7 +12,6 @@ import { CircularProgress } from "@mui/material";
 import ScheduleManager from "./pages/doctor/ScheduleManager";
 import LabTechnicianDashboard from "./pages/labtech/LabTechnicianDashboard";
 import PageNotFound from "./pages/error/NotFound";
-import DoctorsDashboard from "./pages/doctor/DoctorsDashboard";
 
 // Lazy-loaded Admin Pages
 const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
@@ -150,7 +149,7 @@ function App() {
               element={
                 <>
                   <PageTitle title="Doctor Dashboard" />
-                  <DoctorsDashboard />
+                  <DoctorDashboard />
                 </>
               }
             />
