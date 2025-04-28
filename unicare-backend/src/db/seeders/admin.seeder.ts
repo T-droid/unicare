@@ -36,6 +36,7 @@ export const seedAdminUser = async () => {
         work_id,
         name,
         role,
+        department_id: "e6df73a8-dcf6-402e-bce0-0961c5c12a3c",
       })
       .returning();
     console.log("Admin user seeded:", user);

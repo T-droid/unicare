@@ -47,7 +47,7 @@ export const saveUser = async (payload: User) => {
     })
     .returning({
       id: UserTable.id,
-      department_id: StaffTable.department_id,
+      department_id: UserTable.department_id,
       name: UserTable.name,
       phone_number: UserTable.phone_number,
       work_id: UserTable.work_id,

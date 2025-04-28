@@ -4,8 +4,8 @@ const seedDatabase = async () => {
   try {
     console.log("🚀 Starting database seeding...");
     // seeders here
-    // await seedAdminUser();
-    await seedStudents();
+    await seedAdminUser();
+    // await seedStudents();
     process.exit(0);
 
     console.log("✅ Database seeding complete!");

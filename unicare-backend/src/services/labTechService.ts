@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from "../db";
 import { labTestRequestTable, UserTable } from "../db/schema";
 import { CustomError } from "../util/customerError";
@@ -29,7 +29,9 @@ export const createLabResultsInDB = async (
         404,
       );
     }
+    console.log("labeResults", labResults);
 
+    const today = new Date().toISOString().split("T")[0];
     const result = await db
       .update(labTestRequestTable)
       .set({
@@ -38,7 +40,9 @@ export const createLabResultsInDB = async (
         test_status: "completed",
         completed_at: new Date(),
       })
-      .where(eq(labTestRequestTable.reg_no, regNo))
+      .where(
+        sql`DATE(${labTestRequestTable.requested_at}) = ${today} AND ${labTestRequestTable.reg_no} = ${regNo}`,
+      )
       .returning();
     return result;
   } catch (error: any) {

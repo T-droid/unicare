@@ -7,8 +7,6 @@ import {
   AppointmentsTable,
   StudentTable,
 } from "../db/schema";
-import { d } from "drizzle-kit/index-BAUrj6Ib";
-import { stat } from "fs";
 import { CustomError } from "../util/customerError";
 
 export async function getAllDoctors() {
@@ -34,7 +32,7 @@ export async function getAllDoctors() {
 }
 export async function getStudentMedicalHistory(regNo: string) {
   try {
-    // Fetch medical history and associated lab tests for the student
+    // Fetch medical history for the student
     const medicalHistory = await db
       .select({
         id: PatientMedicalRecords.id,
@@ -51,6 +49,7 @@ export async function getStudentMedicalHistory(regNo: string) {
       throw new CustomError("No medical history found for this student", 404);
     }
 
+    // Fetch lab tests for the student
     const labTests = await db
       .select({
         id: labTestRequestTable.id,
@@ -62,13 +61,17 @@ export async function getStudentMedicalHistory(regNo: string) {
         completed_at: labTestRequestTable.completed_at,
       })
       .from(labTestRequestTable)
-      .where(eq(labTestRequestTable.medical_history_id, medicalHistory[0].id))
+      .where(eq(labTestRequestTable.reg_no, regNo))
       .orderBy(desc(labTestRequestTable.requested_at));
 
     // Merge medical history and lab tests
     const medicalHistoryWithLabTests = medicalHistory.map((record) => ({
       ...record,
-      lab_results: labTests,
+      lab_results: labTests.filter(
+        (test) =>
+          new Date(test.requested_at as Date).toISOString().split("T")[0] ===
+          new Date(record.created_at as Date).toISOString().split("T")[0],
+      ),
     }));
 
     return medicalHistoryWithLabTests;

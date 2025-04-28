@@ -50,7 +50,7 @@ export const DepartmentsTable = pgTable("departments", {
 export const DepartmentsTableRelations = relations(
   DepartmentsTable,
   ({ many }) => ({
-    users: many(StaffTable),
+    users: many(UserTable),
   }),
 );
 
@@ -61,6 +61,11 @@ export const UserTable = pgTable("users", {
   email: varchar("email", { length: 70 }).unique().notNull(),
   password: varchar("password", { length: 255 }).notNull(),
   role: userRoleEnum("role").notNull(),
+  department_id: uuid("department_id")
+    .notNull()
+    .references(() => DepartmentsTable.id, {
+      onDelete: "cascade",
+    }),
   work_id: varchar("work_id", { length: 100 }).notNull().unique(),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
