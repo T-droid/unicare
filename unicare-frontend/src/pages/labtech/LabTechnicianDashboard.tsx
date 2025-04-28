@@ -267,7 +267,8 @@ const LabTechnicianDashboard = () => {
 
       await axiosInstance.post(
         `/lab-tech/lab-results/${encodeURIComponent(regNo)}`,
-        resultRequest
+        {labResult: JSON.stringify(resultRequest)},
+        {withCredentials: true}
       );
 
       const updatedTests = tests.map((test) =>

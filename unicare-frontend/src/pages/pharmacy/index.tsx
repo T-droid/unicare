@@ -116,7 +116,7 @@ const PharmacyDashboard = () => {
         }, { withCredentials: true })
 
 
-      if (response.status !== 200) {
+      if (response.status !== 201) {
         throw new Error(`Error: ${response.data.message}`);
       }
 
@@ -126,7 +126,7 @@ const PharmacyDashboard = () => {
       });
 
       if (updatedDrugsResponse.status === 201) {
-        const updatedDrugs = await updatedDrugsResponse.data.data;
+        const updatedDrugs = await updatedDrugsResponse.data;
         setDrugs(updatedDrugs);
         alert(`Drug "${drugName}" added successfully!`);
       }
@@ -157,9 +157,9 @@ const PharmacyDashboard = () => {
       });
 
       if (updatedDrugsResponse.status === 200) {
-        const updatedDrugs = await updatedDrugsResponse.data.data;
+        const updatedDrugs = await updatedDrugsResponse.data;
         console.log("Updated Drugs:", updatedDrugs);
-        
+
         setDrugs(updatedDrugs);
         alert(`Administered ${amount} of ${drugName} successfully!`);
       }

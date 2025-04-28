@@ -24,7 +24,7 @@ import axiosInstance from "@/middleware/axiosInstance";
 
 const DoctorDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTabExec] = useState(searchParams.get('tab') || "queue");
+  const [activeTab, setActiveTabExec] = useState(searchParams.get('tab') || "appointments");
   const [labRequests, setLabRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [labResults, setLabResults] = useState([]);
