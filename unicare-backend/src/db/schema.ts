@@ -1,4 +1,3 @@
-import { create } from "domain";
 import { relations } from "drizzle-orm";
 import {
   date,
@@ -192,7 +191,7 @@ export const labTestRequestTable = pgTable("lab_test_requests", {
   ),
   medical_history_id: uuid("medical_history_id").references(
     () => PatientMedicalRecords.id,
-    { onDelete: "cascade" },
+    { onDelete: "cascade", onUpdate: "cascade" },
   ),
   test_name: varchar("test_name", { length: 100 }).notNull(),
   test_description: varchar("test_description", { length: 200 }).notNull(),

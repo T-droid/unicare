@@ -79,7 +79,7 @@ export const getMedicalHistoryController = async (
 
 // Write a new prescription for a student
 export const createPrescriptionController = async (
-  req: Request & { user?: { role: string, id: string } },
+  req: Request & { user?: { role: string; id: string } },
   res: Response,
 ) => {
   const { regNo } = req.params;
@@ -128,8 +128,7 @@ export const requestLabTestController = async (
   req: Request & { user?: { role: string; id: string | null } },
   res: Response,
 ) => {
-  let { regNo } = req.params;
-  regNo = decodeURIComponent(regNo);
+  const { regNo } = req.params;
   const { testName, testDescription } = req.body;
   const { role, id } = req.user || {};
   if (!role && role !== "doctor") {

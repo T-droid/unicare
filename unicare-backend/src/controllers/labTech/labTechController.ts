@@ -3,6 +3,7 @@ import { getStudentByregNo } from "../../services/studentService";
 import { validateCreateLabResults } from "../../validation/labTechValidation";
 import {
   createLabResultsInDB,
+  getAllTestRequestsFromDB,
   getLabTechTestRequestsFromDB,
 } from "../../services/labTechService";
 import { CustomError } from "../../util/customerError";
@@ -69,6 +70,28 @@ export const getLabTechTestRequests = async (
       return res.status(207).json({ message: "No lab test requests found" });
     }
 
+    return res.status(200).json({
+      message: "Lab test requests fetched successfully",
+      data: testRequests,
+    });
+  } catch (error) {
+    return res.status(500).json(`${error}`);
+  }
+};
+
+export const getAllTestRequests = async (
+  req: Request & { user?: { role: string; id: string | null } },
+  res: Response,
+) => {
+  const { role } = req.user || {};
+  if (role !== "lab_technician") {
+    return res.status(403).json({ message: "Unauthorized access" });
+  }
+  try {
+    const testRequests = await getAllTestRequestsFromDB();
+    if (testRequests.length === 0) {
+      return res.status(207).json({ message: "No lab test requests found" });
+    }
     return res.status(200).json({
       message: "Lab test requests fetched successfully",
       data: testRequests,
