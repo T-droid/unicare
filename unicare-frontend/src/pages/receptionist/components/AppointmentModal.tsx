@@ -47,7 +47,6 @@ const AppointmentModal: React.FC<AppointmentModalProps> = ({
         const data = await response.json();
         console.log("API response:", data);
 
-        // Handle the data based on your API response structure
         if (Array.isArray(data.data)) {
           setDoctors(data.data);
         } else if (Array.isArray(data)) {
