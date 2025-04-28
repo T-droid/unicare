@@ -70,3 +70,23 @@ export const getLabTechTestRequestsFromDB = async (labTechId: string) => {
     throw new CustomError("Internal server error", 500);
   }
 };
+
+export const getAllTestRequestsFromDB = async () => {
+  try {
+    const testRequests = await db
+      .select({
+        id: labTestRequestTable.id,
+        reg_no: labTestRequestTable.reg_no,
+        test_name: labTestRequestTable.test_name,
+        test_description: labTestRequestTable.test_description,
+        requested_at: labTestRequestTable.requested_at,
+        test_status: labTestRequestTable.test_status,
+      })
+      .from(labTestRequestTable)
+      .orderBy(desc(labTestRequestTable.requested_at));
+    return testRequests;
+  } catch (error: any) {
+    console.error("Error fetching all test requests:", error);
+    throw new CustomError("Internal server error", 500);
+  }
+};

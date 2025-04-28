@@ -128,8 +128,7 @@ export const requestLabTestController = async (
   req: Request & { user?: { role: string; id: string | null } },
   res: Response,
 ) => {
-  let { regNo } = req.params;
-  regNo = decodeURIComponent(regNo);
+  const { regNo } = req.params;
   const { testName, testDescription } = req.body;
   const { role, id } = req.user || {};
   if (!role && role !== "doctor") {

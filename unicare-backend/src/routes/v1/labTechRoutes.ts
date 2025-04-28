@@ -2,6 +2,7 @@ import express, { Response, Request } from "express";
 import {
   createLabResults,
   getLabTechTestRequests,
+  getAllTestRequests,
 } from "../../controllers/labTech/labTechController";
 import authenticateUser from "../../middleware/auth";
 import { get } from "http";
@@ -133,6 +134,79 @@ const labTechRouter = express.Router();
  *               description: Error details
  */
 
+/**
+ * @swagger
+ * /v1/lab-tech/all-lab-test-requests:
+ *   get:
+ *     summary: Get all lab test requests
+ *     tags:
+ *       - Lab Technician
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lab test requests fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: Unique identifier for the lab test request
+ *                       reg_no:
+ *                         type: string
+ *                         description: Registration number of the student
+ *                       test_name:
+ *                         type: string
+ *                         description: Name of the lab test
+ *                       test_description:
+ *                         type: string
+ *                         description: Description of the lab test
+ *                       requested_at:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Date and time when the lab test was requested
+ *                       test_status:
+ *                         type: string
+ *                         description: Status of the lab test request
+ *       207:
+ *         description: No lab test requests found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Informational message
+ *       403:
+ *         description: Unauthorized access (only lab technicians can access this route)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               description: Error details
+ */
+
 labTechRouter.post(
   "/lab-results/:regNo",
   authenticateUser,
@@ -146,6 +220,14 @@ labTechRouter.get(
   authenticateUser,
   (req: Request, res: Response) => {
     getLabTechTestRequests(req, res);
+  },
+);
+
+labTechRouter.get(
+  "/all-lab-test-requests",
+  authenticateUser,
+  (req: Request, res: Response) => {
+    getAllTestRequests(req, res);
   },
 );
 

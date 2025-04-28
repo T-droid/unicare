@@ -162,9 +162,6 @@ doctorRouter.post(
  *               testDescription:
  *                 type: string
  *                 description: Description of the lab test
- *               requestedById:
- *                 type: string
- *                 description: ID of the staff requesting the test
  *     responses:
  *       201:
  *         description: Lab test requested successfully
