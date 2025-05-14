@@ -1,12 +1,12 @@
 # 🏥 UniCare – Comprehensive Healthcare Management System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Build](https://img.shields.io/github/actions/workflow/status/your-username/unicare/ci.yml?branch=main)](https://github.com/your-username/unicare/actions)
-[![Issues](https://img.shields.io/github/issues/your-username/unicare)](https://github.com/your-username/unicare/issues)
-[![Forks](https://img.shields.io/github/forks/your-username/unicare?style=social)](https://github.com/your-username/unicare/network/members)
-[![Stars](https://img.shields.io/github/stars/your-username/unicare?style=social)](https://github.com/your-username/unicare/stargazers)
-[![Last Commit](https://img.shields.io/github/last-commit/your-username/unicare)](https://github.com/your-username/unicare/commits/main)
-[![Contributors](https://img.shields.io/github/contributors/your-username/unicare)](https://github.com/your-username/unicare/graphs/contributors)
+[![Build](https://img.shields.io/github/actions/workflow/status/T-droid/unicare/ci.yml?branch=main)](https://github.com/T-droid/unicare/actions)
+[![Issues](https://img.shields.io/github/issuesT-droid/unicare)](https://github.com/T-droid/unicare/issues)
+[![Forks](https://img.shields.io/github/forks/T-droid/unicare?style=social)](https://github.com/T-droid/unicare/network/members)
+[![Stars](https://img.shields.io/github/stars/T-droid/unicare?style=social)](https://github.com/T-droid/unicare/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/T-droid/unicare)](https://github.com/T-droid/unicare/commits/main)
+[![Contributors](https://img.shields.io/github/contributors/T-droid/unicare)](https://github.com/T-droid/unicare/graphs/contributors)
 
 ---
 
