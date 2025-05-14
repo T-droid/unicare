@@ -1,4 +1,3 @@
----
 
 # 🏥 UniCare – Comprehensive Healthcare Management System
 
@@ -6,7 +5,6 @@
 
 Built with a powerful backend using **Node.js**, **TypeScript**, and **Drizzle ORM**, and a sleek frontend using **React**, **TypeScript**, and **TailwindCSS**.
 
----
 
 ## 🚀 Features
 
