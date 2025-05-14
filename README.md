@@ -1,50 +1,49 @@
 
+````md
 # 🏥 UniCare – Comprehensive Healthcare Management System
 
 **UniCare** is a modern, full-stack healthcare management system tailored for hospitals, clinics, and healthcare providers. It supports a variety of user roles including doctors, lab technicians, pharmacists, and administrators.
 
 Built with a powerful backend using **Node.js**, **TypeScript**, and **Drizzle ORM**, and a sleek frontend using **React**, **TypeScript**, and **TailwindCSS**.
 
+---
 
 ## 🚀 Features
 
 ### 🖥️ Frontend
-
-* ⚛️ **React + TypeScript** – Fast, reactive, and type-safe UI
-* ⚡ **Vite** – Super-fast dev environment & bundler
-* 🎨 **TailwindCSS** – Utility-first styling with full responsiveness
-* 🌙 **Dark Mode** – Elegant dark/light mode switching
-* 👥 **Role-Based Dashboards** – Custom interfaces per user role
-* 🔀 **Dynamic Routing** – Powered by React Router
+- ⚛️ **React + TypeScript** – Fast, reactive, and type-safe UI
+- ⚡ **Vite** – Super-fast dev environment & bundler
+- 🎨 **TailwindCSS** – Utility-first styling with full responsiveness
+- 🌙 **Dark Mode** – Elegant dark/light mode switching
+- 👥 **Role-Based Dashboards** – Custom interfaces per user role
+- 🔀 **Dynamic Routing** – Powered by React Router
 
 ### 🔧 Backend
-
-* 🧠 **Node.js + Express** – High-performance server architecture
-* 🔐 **JWT Authentication** – Secure login and session management
-* 🧱 **Drizzle ORM** – Elegant and type-safe PostgreSQL interactions
-* 🧾 **Swagger** – Auto-generated API documentation
-* 🧰 **Custom Middleware** – For authentication, error handling, and logging
+- 🧠 **Node.js + Express** – High-performance server architecture
+- 🔐 **JWT Authentication** – Secure login and session management
+- 🧱 **Drizzle ORM** – Elegant and type-safe PostgreSQL interactions
+- 🧾 **Swagger** – Auto-generated API documentation
+- 🧰 **Custom Middleware** – For authentication, error handling, and logging
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer     | Technology                                         |
-| --------- | -------------------------------------------------- |
-| Frontend  | React, TypeScript, Vite, TailwindCSS, Lucide Icons |
-| Backend   | Node.js, Express, TypeScript, Drizzle ORM          |
-| Utilities | Swagger, Morgan, CORS                              |
-| Database  | PostgreSQL                                         |
+| Layer      | Technology                              |
+|------------|------------------------------------------|
+| Frontend   | React, TypeScript, Vite, TailwindCSS, Lucide Icons |
+| Backend    | Node.js, Express, TypeScript, Drizzle ORM |
+| Utilities  | Swagger, Morgan, CORS                   |
+| Database   | PostgreSQL                              |
 
 ---
 
 ## 📦 Installation & Setup
 
 ### 🔍 Prerequisites
-
-* Node.js `v16+`
-* npm `v8+`
-* PostgreSQL `v12+`
+- Node.js `v16+`
+- npm `v8+`
+- PostgreSQL `v12+`
 
 ### ⚙️ Install & Run
 
@@ -67,7 +66,7 @@ cp .env.example .env
 cd ../unicare-backend
 npm run db:reset
 npm run db:seed
-```
+````
 
 ### 🚀 Running the Project
 
@@ -145,6 +144,3 @@ We welcome contributions from the community! Please feel free to:
 
 This project is licensed under the **MIT License**.
 
----
-
-Let me know if you'd like this converted to HTML/Markdown file format or if you'd like badges (build status, license, etc.) added!
