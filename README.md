@@ -2,6 +2,33 @@
 ````md
 # 🏥 UniCare – Comprehensive Healthcare Management System
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Build](https://img.shields.io/github/actions/workflow/status/your-username/unicare/ci.yml?branch=main)](https://github.com/your-username/unicare/actions)
+[![Issues](https://img.shields.io/github/issues/your-username/unicare)](https://github.com/your-username/unicare/issues)
+[![Forks](https://img.shields.io/github/forks/your-username/unicare?style=social)](https://github.com/your-username/unicare/network/members)
+[![Stars](https://img.shields.io/github/stars/your-username/unicare?style=social)](https://github.com/your-username/unicare/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/your-username/unicare)](https://github.com/your-username/unicare/commits/main)
+[![Contributors](https://img.shields.io/github/contributors/your-username/unicare)](https://github.com/your-username/unicare/graphs/contributors)
+
+---
+
+## 🧰 Built With
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Drizzle ORM-8B5CF6?style=for-the-badge&logo=drizzle&logoColor=white"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Lucide-121212?style=for-the-badge&logo=lucide&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black"/>
+</p>
+
+---
+
 **UniCare** is a modern, full-stack healthcare management system tailored for hospitals, clinics, and healthcare providers. It supports a variety of user roles including doctors, lab technicians, pharmacists, and administrators.
 
 Built with a powerful backend using **Node.js**, **TypeScript**, and **Drizzle ORM**, and a sleek frontend using **React**, **TypeScript**, and **TailwindCSS**.
@@ -49,7 +76,7 @@ Built with a powerful backend using **Node.js**, **TypeScript**, and **Drizzle O
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/unicare.git
+git clone https://github.com/your-username/unicare.git
 
 # Install backend dependencies
 cd unicare-backend
@@ -143,4 +170,5 @@ We welcome contributions from the community! Please feel free to:
 ## 📄 License
 
 This project is licensed under the **MIT License**.
+
 
